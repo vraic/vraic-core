@@ -10,7 +10,52 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_223447) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_30_230847) do
+  create_table "audits1984_audits", force: :cascade do |t|
+    t.integer "auditor_id", null: false
+    t.datetime "created_at", null: false
+    t.text "notes"
+    t.integer "session_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["auditor_id"], name: "index_audits1984_audits_on_auditor_id"
+    t.index ["session_id"], name: "index_audits1984_audits_on_session_id"
+  end
+
+  create_table "console1984_commands", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "sensitive_access_id"
+    t.integer "session_id", null: false
+    t.text "statements"
+    t.datetime "updated_at", null: false
+    t.index ["sensitive_access_id"], name: "index_console1984_commands_on_sensitive_access_id"
+    t.index ["session_id", "created_at", "sensitive_access_id"], name: "on_session_and_sensitive_chronologically"
+  end
+
+  create_table "console1984_sensitive_accesses", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "justification"
+    t.integer "session_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_console1984_sensitive_accesses_on_session_id"
+  end
+
+  create_table "console1984_sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "reason"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["created_at"], name: "index_console1984_sessions_on_created_at"
+    t.index ["user_id", "created_at"], name: "index_console1984_sessions_on_user_id_and_created_at"
+  end
+
+  create_table "console1984_users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "username", null: false
+    t.index ["username"], name: "index_console1984_users_on_username"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
