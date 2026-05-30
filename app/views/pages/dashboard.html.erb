@@ -1,6 +1,16 @@
-<div class="container space-y-4">
-  <h1>Dashboard</h1>
-  <%= link_to "Home", root_path %>
-  <p>Welcome, <%= Current.user.email_address %>!</p>
-  <%= button_to "Logout", session_path, method: :delete %>
+<% content_for :title, "Users" %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Séyiz les beinv'nus</h1>
+  </div>
+
+  <div class="mt-10">
+    <p class="mb-4">Welcome, <%= Current.user.email_address %>! (user type: <%= Current.user.user_type %>)</p>
+    <%= button_to "Logout", session_path, method: :delete %>
+  </div>
 </div>

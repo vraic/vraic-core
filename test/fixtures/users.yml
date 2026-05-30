@@ -3,7 +3,15 @@
 one:
   email_address: one@example.com
   password_digest: <%= password_digest %>
+  user_type: staff
 
 two:
   email_address: two@example.com
   password_digest: <%= password_digest %>
+  user_type: external
+
+administrator:
+  email_address: admin@example.com
+  password_digest: <%= password_digest %>
+  user_type: staff
+  admin: true
