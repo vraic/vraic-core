@@ -32,7 +32,6 @@ This is a proof-of-concept (pre-alpha). Here's what's coming next:
 ## Contributing
 
 - Bug reports and pull requests are welcome on [GitHub Issues](https://github.com/vraic/vraic-core/issues). Help is especially welcome with [those tagged as "Help Wanted"](https://github.com/vraic/vraic-core/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22).
-- For questions and general discussion, please use the [Discussions section](https://github.com/vraic/vraic-core/discussions)
 
 ## License
 
