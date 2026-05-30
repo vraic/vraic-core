@@ -1,24 +1,43 @@
-# README
+# Vraic.net
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A proof-of-concept for schools on the [island of Jersey](https://jerseyheritage.org). Séyiz les beinv'nus.
 
-Things you may want to cover:
+## Features
 
-* Ruby version
+- Built on top of [Rails](https://rubyonrails.org), the powerful web application framework and [TailwindCSS](https://tailwindcss.com).
+- Useful as a service and teaching aide.
+- Incorporated with best practice from 25+ years experience.
+- Open source, MIT licensed.
+- Aligned with the [Rails Doctrine](https://rubyonrails.org/doctrine).
 
-* System dependencies
+## Documentation
 
-* Configuration
+Visit the **[documentation site](https://docs.vraic.net)**.
 
-* Database creation
+## Roadmap
 
-* Database initialization
+This is a proof-of-concept (pre-alpha). Here's what's coming next:
 
-* How to run the test suite
+- [] Scope definitions
+- [] On-island servers for POC deployment
+- [] Documentation
+- [x] Rails initialisation
+    - [x] Scaffold core app
+    - [x] Authentication
+    - [x] Dockerfile
+    - [x] Test suite, Rubocop, linter green
+    - [x] Base Tailwind designs
+    - [] New features
 
-* Services (job queues, cache servers, search engines, etc.)
+## Contributing
 
-* Deployment instructions
+- Bug reports and pull requests are welcome on [GitHub Issues](https://github.com/vraic/vraic-core/issues). Help is especially welcome with [those tagged as "Help Wanted"](https://github.com/vraic/vraic-core/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22).
+- For questions and general Vraic.net discussion, please use the [Discussions section](https://github.com/vraic/vraic-core/discussions)
 
-* ...
+## License
+
+This software is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+[![CI](https://github.com/vraic/vraic-core/actions/workflows/ci.yml/badge.svg)](https://github.com/vraic/vraic-core/actions/workflows/ci.yml)
