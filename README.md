@@ -27,7 +27,7 @@ This is a proof-of-concept (pre-alpha). Here's what's coming next:
     - [x] Dockerfile
     - [x] Test suite, Rubocop, linter green
     - [x] Base Tailwind designs
-    - [] New features
+    - [ ] New features
 
 ## Contributing
 
