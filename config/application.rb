@@ -23,5 +23,7 @@ module VraicNet
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.console1984.protected_environments = %i[ production staging ]
+    config.console1984.ask_for_username_if_empty = true
   end
 end

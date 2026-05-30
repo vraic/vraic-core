@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Audits1984::Engine => "/console"
+
   resources :users
   resource :session
   resources :passwords, param: :token
