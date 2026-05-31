@@ -1,5 +1,6 @@
 class StudentsController < ApplicationController
   before_action :set_student, only: %i[ show edit update destroy ]
+  after_action :verify_authorized, except: :index
 
   # GET /students or /students.json
   def index
@@ -8,6 +9,7 @@ class StudentsController < ApplicationController
 
   # GET /students/1 or /students/1.json
   def show
+    authorize @student
   end
 
   # GET /students/new
@@ -17,11 +19,14 @@ class StudentsController < ApplicationController
 
   # GET /students/1/edit
   def edit
+    authorize @student
   end
 
   # POST /students or /students.json
   def create
     @student = Student.new(student_params)
+
+    authorize @student
 
     respond_to do |format|
       if @student.save
@@ -36,6 +41,8 @@ class StudentsController < ApplicationController
 
   # PATCH/PUT /students/1 or /students/1.json
   def update
+    authorize @student
+
     respond_to do |format|
       if @student.update(student_params)
         format.html { redirect_to @student, notice: "Student was successfully updated.", status: :see_other }
