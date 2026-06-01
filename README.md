@@ -1,6 +1,6 @@
 # Vraic
 
-A proof-of-concept for schools on the [island of Jersey](https://jerseyheritage.org). Séyiz les beinv'nus.
+A proof-of-concept for the [island of Jersey](https://jerseyheritage.org). Séyiz les beinv'nus.
 
 ![20260601-ART-01-512px.jpg](vendor/whanau/20260601-ART-01-512px.jpg)
 
