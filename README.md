@@ -2,8 +2,6 @@
 
 A proof-of-concept for the [island of Jersey](https://jerseyheritage.org). Séyiz les beinv'nus.
 
-![20260601-ART-01-512px.jpg](vendor/whanau/20260601-ART-01-512px.jpg)
-
 ## Features
 
 - Built on top of [Rails](https://rubyonrails.org), the powerful web application framework and [TailwindCSS](https://tailwindcss.com).
