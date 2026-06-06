@@ -12,7 +12,7 @@ A proof-of-concept for the [island of Jersey](https://jerseyheritage.org). Séyi
 
 ## Documentation
 
-Visit our [self-hosted Fizzy instance](https://fizzy.vraic.net).
+Visit our [self-hosted Fizzy instance](https://fizzy.vraic.net/1/public/boards/LRGyGQRKBV4WpqSAGPtgdPVb).
 
 ## Roadmap
 
