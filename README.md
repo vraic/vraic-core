@@ -12,7 +12,7 @@ A proof-of-concept for the [island of Jersey](https://jerseyheritage.org). Séyi
 
 ## Documentation
 
-Visit the **[documentation site](https://docs.vraic.net)**.
+Visit our [self-hosted Fizzy instance](https://fizzy.vraic.net).
 
 ## Roadmap
 
@@ -31,11 +31,13 @@ This is a proof-of-concept (pre-alpha). Here's what's coming next:
 
 ## Contributing
 
-- Bug reports and pull requests are welcome on [GitHub Issues](https://github.com/vraic/vraic-core/issues). Help is especially welcome with [those tagged as "Help Wanted"](https://github.com/vraic/vraic-core/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22).
+Bug reports and pull requests are welcome on [GitHub Issues](https://github.com/vraic/vraic-core/issues). 
+
+Help is especially welcome with [those tagged as "Help Wanted"](https://github.com/vraic/vraic-core/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22).
 
 ## License
 
-This software is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+This software is available the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
 
