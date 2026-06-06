@@ -37,7 +37,7 @@ Help is especially welcome with [those tagged as "Help Wanted"](https://github.c
 
 ## License
 
-This software is available the terms of the [MIT License](https://opensource.org/licenses/MIT).
+This software is available under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
 
