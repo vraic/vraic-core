@@ -24,7 +24,7 @@ gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use TailwindCSS for css styling
-gem "tailwindcss-rails", "~> 4.5"
+gem "tailwindcss-rails", "~> 4.6"
 
 # Audits in the console
 gem "audits1984"
