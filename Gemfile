@@ -30,6 +30,9 @@ gem "tailwindcss-rails", "~> 4.6"
 gem "audits1984"
 gem "console1984"
 
+# Authorisation
+gem "pundit", "~> 2.5"
+
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache"
 gem "solid_queue"
