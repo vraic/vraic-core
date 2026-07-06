@@ -47,7 +47,7 @@ class InventoryFlowTest < ApplicationSystemTestCase
     click_on "Transfer"
 
     assert_text "Successfully transferred stock"
-    assert_text "40" # Remaining in Store Room
+    assert_text "40" # Remaining in Storage Room
     assert_text "10" # New on Shop Floor
   end
 
