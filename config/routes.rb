@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :tasks do
+    member do
+      patch :complete
+      patch :incomplete
+    end
+  end
   resources :inventory_items do
     member do
       delete :really_destroy
