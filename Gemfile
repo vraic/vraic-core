@@ -33,6 +33,9 @@ gem "console1984"
 # Authorisation
 gem "pundit", "~> 2.5"
 
+# Multi-tenant
+gem "acts_as_tenant"
+
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache"
 gem "solid_queue"

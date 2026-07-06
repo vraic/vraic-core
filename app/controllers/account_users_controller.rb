@@ -65,6 +65,8 @@ class AccountUsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def account_user_params
-      params.expect(account_user: [ :account_id, :user_id, :user_role ])
+      attributes = [ :user_id, :user_role ]
+      attributes << :account_id if Current.user.admin?
+      params.expect(account_user: attributes)
     end
 end
