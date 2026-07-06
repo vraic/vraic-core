@@ -29,10 +29,10 @@ class InventoryFlowTest < ApplicationSystemTestCase
     assert_text "Inventory item was successfully created"
     assert_text "Test Product"
     assert_text "£19.99"
-    
+
     parent = InventoryItem.find_by!(name: "Test Product")
     find("#add_variant").click
-    
+
     assert_no_selector "h1", text: "Test Product", wait: 10
     assert_selector "h1", text: "New inventory item"
     assert_current_path new_inventory_item_path(parent_id: parent.id)
