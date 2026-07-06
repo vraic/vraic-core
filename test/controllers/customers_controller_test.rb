@@ -1,0 +1,82 @@
+require "test_helper"
+
+class CustomersControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @user = users(:one) # Account admin for account one
+    @customer = customers(:one) # Customer in account one
+    sign_in_as(@user)
+  end
+
+  test "should get index" do
+    get customers_url
+    assert_response :success
+  end
+
+  test "should get new" do
+    get new_customer_url
+    assert_response :success
+  end
+
+  test "should create customer" do
+    assert_difference("Customer.count") do
+      post customers_url, params: { customer: { email_address: "new@example.com", name: "New Customer", phone: "555-1234" } }
+    end
+
+    assert_redirected_to customer_url(Customer.last)
+    assert_equal accounts(:one).id, Customer.last.account_id
+  end
+
+  test "should show customer" do
+    get customer_url(@customer)
+    assert_response :success
+  end
+
+  test "should get edit" do
+    get edit_customer_url(@customer)
+    assert_response :success
+  end
+
+  test "should update customer" do
+    patch customer_url(@customer), params: { customer: { name: "Updated Name" } }
+    assert_redirected_to customer_url(@customer)
+    assert_equal "Updated Name", @customer.reload.name
+  end
+
+  test "should destroy customer (soft delete)" do
+    assert_difference("Customer.count", -1) do
+      delete customer_url(@customer)
+    end
+
+    assert_redirected_to customers_url
+    assert_not_nil Customer.with_deleted.find_by(id: @customer.id).deleted_at
+  end
+
+  test "should really destroy customer as account admin" do
+    assert_difference("Customer.count", -1) do
+      delete really_destroy_customer_url(@customer)
+    end
+
+    assert_redirected_to customers_url
+    assert_nil Customer.with_deleted.find_by(id: @customer.id)
+  end
+
+  test "should not really destroy customer as standard user" do
+    sign_in_as(users(:three)) # Standard user for account one
+    assert_no_difference("Customer.count") do
+      delete really_destroy_customer_url(@customer)
+    end
+
+    assert_redirected_to root_path # user_not_authorized redirects here
+  end
+
+  test "should enforce tenant isolation on index" do
+    get customers_url
+    assert_match customers(:one).name, response.body
+    assert_no_match customers(:two).name, response.body
+  end
+
+  test "should enforce tenant isolation on show" do
+    get customer_url(customers(:two))
+    assert_response :not_found # acts_as_tenant raises RecordNotFound or scopes it
+  end
+end

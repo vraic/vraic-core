@@ -7,7 +7,7 @@ module Authorization
     # Add `skip_after_action :verify_authorized` for public controllers.
 
     # after_action :verify_authorized
-    # rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+    rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   end
 
   def pundit_user

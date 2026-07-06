@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_06_175718) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_06_181951) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -72,6 +72,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_175718) do
     t.index ["username"], name: "index_console1984_users_on_username"
   end
 
+  create_table "customers", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "email_address"
+    t.string "name"
+    t.string "phone"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_customers_on_account_id"
+    t.index ["deleted_at"], name: "index_customers_on_deleted_at"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -93,5 +105,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_175718) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "customers", "accounts"
   add_foreign_key "sessions", "users"
 end

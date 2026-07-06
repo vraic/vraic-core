@@ -3,9 +3,14 @@
 one:
   account: one
   user: one
-  user_role: standard
+  user_role: admin
 
 two:
   account: two
   user: two
+  user_role: standard
+
+three:
+  account: one
+  user: three
   user_role: standard
