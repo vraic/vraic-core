@@ -10,7 +10,7 @@
   </div>
 
   <div class="mt-10">
-    <p class="mb-4">Welcome, <%= Current.user.email_address %>! (user type: <%= Current.user.user_type %>)</p>
+    <p class="mb-4">Welcome, <%= Current.user.email_address %>!</p>
     <%= button_to "Logout", session_path, method: :delete %>
   </div>
 </div>

@@ -1,0 +1,14 @@
+<div id="<%= dom_id account_user %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Account:</strong>
+    <%= account_user.account&.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">User:</strong>
+    <%= account_user.user&.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Role:</strong>
+    <%= account_user.user_role %>
+  </div>
+</div>

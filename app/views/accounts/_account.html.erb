@@ -1,0 +1,22 @@
+<div id="<%= dom_id account %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= account.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Address:</strong>
+    <%= account.address %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Owner:</strong>
+    <%= account.owner&.user&.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Users:</strong>
+    <ul class="list-disc list-inside">
+      <% account.users.each do |ac_usr| %>
+        <li><%= ac_usr.name %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>

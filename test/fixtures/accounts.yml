@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: Account One
+  address: 1 King Street
+  owner_id: <%= ActiveRecord::FixtureSet.identify(:user, :one) %>
+
+two:
+  name: Account Two
+  address: 2 King Street
+  owner_id: <%= ActiveRecord::FixtureSet.identify(:user, :two) %>
