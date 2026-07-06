@@ -50,6 +50,7 @@ class InventoryItemsController < ApplicationController
         format.html { redirect_to @inventory_item.parent || @inventory_item, notice: "Inventory item was successfully created." }
         format.json { render :show, status: :created, location: @inventory_item }
       else
+        flash.now[:alert] = @inventory_item.errors.full_messages.to_sentence
         format.html { render :new, status: :unprocessable_content }
         format.json { render json: @inventory_item.errors, status: :unprocessable_content }
       end
@@ -64,6 +65,7 @@ class InventoryItemsController < ApplicationController
         format.html { redirect_to @inventory_item.parent || @inventory_item, notice: "Inventory item was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @inventory_item }
       else
+        flash.now[:alert] = @inventory_item.errors.full_messages.to_sentence
         format.html { render :edit, status: :unprocessable_content }
         format.json { render json: @inventory_item.errors, status: :unprocessable_content }
       end
@@ -96,11 +98,11 @@ class InventoryItemsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_inventory_item
-      @inventory_item = InventoryItem.find(params.expect(:id))
+      @inventory_item = InventoryItem.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def inventory_item_params
-      params.expect(inventory_item: [ :name, :description, :price, :inventory_group_id, :parent_id, :unit_type, :weight_value, :weight_unit ])
+      params.fetch(:inventory_item, {}).permit(:name, :description, :price, :inventory_group_id, :parent_id, :unit_type, :weight_value, :weight_unit)
     end
 end

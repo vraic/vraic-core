@@ -93,7 +93,7 @@ class InventoryLevelsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_inventory_level
-      @inventory_level = InventoryLevel.find(params.expect(:id))
+      @inventory_level = InventoryLevel.find(params[:id])
     end
 
     def set_inventory_item
@@ -102,6 +102,6 @@ class InventoryLevelsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_level_params
-      params.expect(inventory_level: [ :inventory_item_id, :location_id, :quantity ])
+      params.fetch(:inventory_level, {}).permit(:inventory_item_id, :location_id, :quantity)
     end
 end

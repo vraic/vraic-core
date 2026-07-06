@@ -66,11 +66,11 @@ class AccountsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_account
-      @account = Account.find(params.expect(:id))
+      @account = Account.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def account_params
-      params.expect(account: [ :name, :address, :owner_id ])
+      params.fetch(:account, {}).permit(:name, :address, :owner_id)
     end
 end

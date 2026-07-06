@@ -67,11 +67,11 @@ class InventoryGroupsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_inventory_group
-      @inventory_group = InventoryGroup.find(params.expect(:id))
+      @inventory_group = InventoryGroup.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def inventory_group_params
-      params.expect(inventory_group: [ :name ])
+      params.fetch(:inventory_group, {}).permit(:name)
     end
 end

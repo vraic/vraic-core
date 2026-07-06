@@ -12,5 +12,5 @@
 
 # These inflection rules are supported but not enabled by default:
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.uncountable %w( g kg ml cl l lb oz )
+  inflect.uncountable %w[g kg ml cl l lb oz]
 end

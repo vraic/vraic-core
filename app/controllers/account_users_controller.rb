@@ -60,13 +60,13 @@ class AccountUsersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_account_user
-      @account_user = AccountUser.find(params.expect(:id))
+      @account_user = AccountUser.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def account_user_params
       attributes = [ :user_id, :user_role ]
       attributes << :account_id if Current.user.admin?
-      params.expect(account_user: attributes)
+      params.fetch(:account_user, {}).permit(attributes)
     end
 end

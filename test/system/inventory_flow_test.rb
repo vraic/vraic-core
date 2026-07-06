@@ -14,7 +14,7 @@ class InventoryFlowTest < ApplicationSystemTestCase
     fill_in "Description", with: "Product description"
     fill_in "Price", with: "19.99"
     select "Meat", from: "Group"
-    click_on "Create Inventory item"
+    click_button "Create Inventory item"
 
     assert_text "Inventory item was successfully created"
     assert_text "Test Product"
@@ -26,7 +26,7 @@ class InventoryFlowTest < ApplicationSystemTestCase
     select "Per weight", from: "Pricing Unit"
     fill_in "Weight / Quantity", with: "250"
     fill_in "Unit of Measure", with: "g"
-    click_on "Create Inventory item"
+    click_button "Create Inventory item"
 
     assert_text "Inventory item was successfully created"
     assert_text "Small Pack"
