@@ -13,6 +13,8 @@ module ApplicationHelper
       controller_name == "pages" && [ "home", "dashboard" ].include?(action_name)
     when :customers
       controller_name == "customers"
+    when :tasks
+      controller_name == "tasks"
     when :inventory
       [ "inventory_items", "locations", "inventory_groups", "inventory_levels" ].include?(controller_name)
     when :settings

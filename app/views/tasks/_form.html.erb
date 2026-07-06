@@ -1,0 +1,43 @@
+<%= form_with(model: task, class: "space-y-6") do |form| %>
+  <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+    <div class="sm:col-span-4">
+      <%= form.label :title, class: label_class %>
+      <div class="mt-2">
+        <%= form.text_field :title, class: input_class(task.errors[:title].any?), placeholder: "Task title" %>
+      </div>
+    </div>
+
+    <div class="sm:col-span-2">
+      <%= form.label :due_date, class: label_class %>
+      <div class="mt-2">
+        <%= form.date_field :due_date, class: input_class(task.errors[:due_date].any?) %>
+      </div>
+    </div>
+
+    <div class="col-span-full">
+      <%= form.label :description, class: label_class %>
+      <div class="mt-2">
+        <%= form.textarea :description, rows: 3, class: "block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white dark:ring-gray-700", placeholder: "Task description..." %>
+      </div>
+    </div>
+
+    <div class="sm:col-span-3">
+      <%= form.label :responsible_user_id, "Responsible", class: label_class %>
+      <div class="mt-2">
+        <%= form.collection_select :responsible_user_id, @users, :id, :name, { include_blank: "Select a user" }, class: input_class(task.errors[:responsible_user_id].any?) %>
+      </div>
+    </div>
+
+    <div class="sm:col-span-3">
+      <%= form.label :attachments, class: label_class %>
+      <div class="mt-2">
+        <%= form.file_field :attachments, multiple: true, class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:text-gray-400 dark:file:bg-gray-700 dark:file:text-gray-300" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-x-6 border-t border-gray-900/10 pt-6 dark:border-white/10">
+    <%= form.submit class: primary_button_class %>
+    <%= link_to "Cancel", tasks_path, class: "text-sm font-semibold leading-6 text-gray-900 dark:text-white" %>
+  </div>
+<% end %>

@@ -1,0 +1,15 @@
+one:
+  title: Task One
+  description: Description for task one
+  account: one
+  responsible_user: one
+  assigned_by: one
+  due_date: <%= 1.week.from_now.to_date %>
+
+two:
+  title: Task Two
+  description: Description for task two
+  account: one
+  responsible_user: one
+  assigned_by: one
+  due_date: <%= 2.weeks.from_now.to_date %>

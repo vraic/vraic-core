@@ -1,0 +1,90 @@
+<% content_for :title, "Task: #{@task.title}" %>
+
+<div class="w-full">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="font-bold text-4xl text-gray-900 dark:text-white"><%= @task.title %></h1>
+    <div class="flex gap-2">
+      <% if @task.completed? %>
+        <%= button_to "Mark as Incomplete", incomplete_task_path(@task), method: :patch, class: secondary_button_class %>
+      <% else %>
+        <%= button_to "Mark as Done", complete_task_path(@task), method: :patch, class: primary_button_class %>
+      <% end %>
+      <%= link_to "Edit", edit_task_path(@task), class: secondary_button_class %>
+      <%= link_to "Back", tasks_path, class: secondary_button_class %>
+      <%= button_to "Destroy", @task, method: :delete, class: danger_button_class, data: { turbo_confirm: "Are you sure?" } %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-bold mb-4">Description</h2>
+        <div class="prose dark:prose-invert max-w-none">
+          <%= simple_format @task.description %>
+        </div>
+      </div>
+
+      <% if @task.attachments.attached? %>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-bold mb-4">Attachments</h2>
+          <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+            <% @task.attachments.each do |attachment| %>
+              <li class="flex items-center justify-between py-4 pl-4 pr-5 text-sm/6">
+                <div class="flex w-0 flex-1 items-center">
+                  <svg class="size-5 shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                    <path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.242 4.241l7-7a3 3 0 0 0-4.242-4.242l-7 7a3 3 0 0 0 4.242 4.242l7-7a3 3 0 0 0-4.242-4.242Zm-1.414 1.414a1 1 0 0 1 1.414 0 1 1 0 0 1 0 1.414l-7 7a1 1 0 0 1-1.414-1.414l7-7Z" clip-rule="evenodd" />
+                  </svg>
+                  <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                    <span class="truncate font-medium text-gray-900 dark:text-white"><%= attachment.filename %></span>
+                    <span class="shrink-0 text-gray-400"><%= number_to_human_size attachment.byte_size %></span>
+                  </div>
+                </div>
+                <div class="ml-4 shrink-0">
+                  <%= link_to "Download", rails_blob_path(attachment, disposition: "attachment"), class: "font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400" %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-bold mb-4">Details</h2>
+        <dl class="space-y-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500 uppercase">Status</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+              <% if @task.completed? %>
+                <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">
+                  Done (at <%= @task.completed_at.to_formatted_s(:long) %>)
+                </span>
+              <% else %>
+                <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20 dark:bg-yellow-500/10 dark:text-yellow-400 dark:ring-yellow-500/20">
+                  Pending
+                </span>
+              <% end %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500 uppercase">Responsible</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @task.responsible_user&.name || "Unassigned" %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500 uppercase">Assigned By</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @task.assigned_by&.name %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500 uppercase">Due Date</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @task.due_date&.to_formatted_s(:long) || "None" %></dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500 uppercase">Created At</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white"><%= @task.created_at.to_formatted_s(:long) %></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
