@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: Customer One
+  email_address: one@example.com
+  phone: "1234567890"
+  account: one
+
+two:
+  name: Customer Two
+  email_address: two@example.com
+  phone: "0987654321"
+  account: two

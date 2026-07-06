@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :customers do
+    member do
+      delete :really_destroy
+    end
+  end
   resources :account_users
   resources :accounts
   # Auditing
