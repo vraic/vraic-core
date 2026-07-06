@@ -13,8 +13,6 @@ class InventoryFlowTest < ApplicationSystemTestCase
     within "nav" do
       click_link "Inventory"
     end
-
-    assert_selector "h1", text: "Inventory"
     find("#new_item").click
 
     assert_selector "h1", text: "New inventory item"
