@@ -43,6 +43,7 @@ class InventoryItemsController < ApplicationController
   # POST /inventory_items or /inventory_items.json
   def create
     @inventory_item = InventoryItem.new(inventory_item_params)
+    @inventory_item.account ||= Current.account
     authorize @inventory_item
 
     respond_to do |format|
@@ -103,6 +104,6 @@ class InventoryItemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_item_params
-      params.fetch(:inventory_item, {}).permit(:name, :description, :price, :inventory_group_id, :parent_id, :unit_type, :weight_value, :weight_unit)
+      params.require(:inventory_item).permit(:name, :description, :price, :inventory_group_id, :parent_id, :unit_type, :weight_value, :weight_unit)
     end
 end

@@ -102,6 +102,6 @@ class InventoryLevelsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_level_params
-      params.fetch(:inventory_level, {}).permit(:inventory_item_id, :location_id, :quantity)
+      params.require(:inventory_level).permit(:inventory_item_id, :location_id, :quantity)
     end
 end

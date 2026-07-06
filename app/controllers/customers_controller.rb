@@ -83,6 +83,6 @@ class CustomersController < ApplicationController
     def customer_params
       attributes = [ :name, :email_address, :phone ]
       attributes << :account_id if Current.user.admin?
-      params.fetch(:customer, {}).permit(attributes)
+      params.require(:customer).permit(attributes)
     end
 end

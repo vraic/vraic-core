@@ -67,6 +67,6 @@ class AccountUsersController < ApplicationController
     def account_user_params
       attributes = [ :user_id, :user_role ]
       attributes << :account_id if Current.user.admin?
-      params.fetch(:account_user, {}).permit(attributes)
+      params.require(:account_user).permit(attributes)
     end
 end
