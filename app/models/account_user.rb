@@ -1,4 +1,5 @@
 class AccountUser < ApplicationRecord
+  has_prefix_id :au
   acts_as_tenant :account
   belongs_to :user
 
