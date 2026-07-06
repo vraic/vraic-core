@@ -26,10 +26,14 @@ class InventoryItem < ApplicationRecord
   end
 
   def variant_label
-    if per_weight?
-      "#{weight_value}#{weight_unit}"
+    return name unless per_weight?
+
+    formatted_weight = weight_value.to_s.gsub(/\.0\z/, "")
+
+    if name == parent&.name || name.blank?
+      "#{formatted_weight}#{weight_unit}"
     else
-      name
+      "#{name} (#{formatted_weight}#{weight_unit})"
     end
   end
 

@@ -31,7 +31,7 @@ class InventoryItemTest < ActiveSupport::TestCase
 
   test "display_name for variant" do
     variant = inventory_items(:two)
-    assert_equal "Ribeye Steak - 500.0g", variant.display_name
+    assert_equal "Ribeye Steak - 500g", variant.display_name
   end
 
   test "price inheritance" do
