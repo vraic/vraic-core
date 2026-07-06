@@ -5,7 +5,11 @@ Rails.application.routes.draw do
   mount Audits1984::Engine => "/console"
 
   # Authentication
-  resources :users
+  resources :users do
+    member do
+      delete :really_destroy
+    end
+  end
   resource :session
   resources :passwords, param: :token
 

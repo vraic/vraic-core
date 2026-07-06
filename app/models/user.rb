@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include Anony::Anonymisable
+  acts_as_paranoid
 
   has_prefix_id :user
   has_secure_password

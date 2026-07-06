@@ -42,6 +42,9 @@ gem "prefixed_ids"
 # Anonymisation
 gem "anony"
 
+# Soft delete
+gem "acts_as_paranoid"
+
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache"
 gem "solid_queue"

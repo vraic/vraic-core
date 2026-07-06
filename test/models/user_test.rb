@@ -5,4 +5,18 @@ class UserTest < ActiveSupport::TestCase
     user = User.new(email_address: " DOWNCASED@EXAMPLE.COM ")
     assert_equal("downcased@example.com", user.email_address)
   end
+
+  test "soft deletes user" do
+    user = users(:one)
+    user.destroy
+    assert_not_nil user.deleted_at
+    assert_nil User.find_by(id: user.id)
+    assert_not_nil User.with_deleted.find_by(id: user.id)
+  end
+
+  test "really deletes user" do
+    user = users(:one)
+    user.destroy_fully!
+    assert_nil User.with_deleted.find_by(id: user.id)
+  end
 end

@@ -11,6 +11,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get users_url
     assert_response :success
+    assert_select "button", "Really Delete"
+  end
+
+  test "index should not show really delete for non-admin" do
+    sign_in_as(@user)
+    get users_url
+    assert_response :success
+    assert_select "button", text: "Really Delete", count: 0
   end
 
   test "should get new" do
@@ -47,5 +55,23 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to users_url
+    assert_not_nil User.with_deleted.find_by(id: @user.id).deleted_at
+  end
+
+  test "should really destroy user" do
+    assert_difference("User.count", -1) do
+      delete really_destroy_user_url(@user)
+    end
+
+    assert_redirected_to users_url
+    assert_nil User.with_deleted.find_by(id: @user.id)
+  end
+
+  test "non-admin cannot really destroy user" do
+    sign_in_as(@user)
+    delete really_destroy_user_url(users(:two))
+    assert_redirected_to users_url
+    assert_equal "Only global admins can permanently delete users.", flash[:alert]
+    assert_not_nil User.find(users(:two).id)
   end
 end
