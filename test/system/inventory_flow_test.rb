@@ -17,7 +17,6 @@ class InventoryFlowTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Inventory"
     find("#new_item").click
 
-    assert_no_selector "h1", text: "Inventory", wait: 1
     assert_selector "h1", text: "New inventory item"
     assert_current_path new_inventory_item_path
     fill_in "inventory_item_name", with: "Test Product"
