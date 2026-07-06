@@ -9,9 +9,9 @@ class InventoryFlowTest < ApplicationSystemTestCase
   test "creating a parent item, then a variant, and adjusting stock" do
     visit inventory_items_url
     assert_selector "h1", text: "Inventory"
-    click_on "new_item"
+    click_link "New Item", id: "new_item"
 
-    assert_selector "h1", text: "New inventory item"
+    assert_selector "h1", text: "New inventory item", wait: 10
     fill_in "inventory_item_name", with: "Test Product"
     fill_in "inventory_item_description", with: "Product description"
     fill_in "inventory_item_price", with: "19.99"
@@ -22,8 +22,8 @@ class InventoryFlowTest < ApplicationSystemTestCase
     assert_text "Test Product"
     assert_text "£19.99"
 
-    click_on "add_variant"
-    assert_selector "h1", text: "New inventory item"
+    click_link "Add Variant", id: "add_variant"
+    assert_selector "h1", text: "New inventory item", wait: 10
     fill_in "inventory_item_name", with: "Small Pack"
     fill_in "inventory_item_price", with: "9.99"
     select "Per weight", from: "Pricing Unit"
@@ -61,6 +61,6 @@ class InventoryFlowTest < ApplicationSystemTestCase
     fill_in "Email", with: user.email_address
     fill_in "Password", with: "password"
     click_on "Sign in"
-    assert_text "Dashboard"
+    assert_text "Dashboard", wait: 10
   end
 end
