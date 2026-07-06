@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  inventory_item: one
+  location: one
+  quantity: 10
+  account: one
+
+two:
+  inventory_item: two
+  location: two
+  quantity: 50
+  account: one

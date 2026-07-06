@@ -1,0 +1,26 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: Ribeye Steak
+  description: Premium grass-fed ribeye steak
+  price_cents: 2500
+  price_currency: GBP
+  account: one
+  inventory_group: one
+  unit_type: 0
+
+two:
+  account: one
+  parent: one
+  unit_type: 1
+  weight_value: 500
+  weight_unit: g
+
+apple:
+  name: Braeburn Apple
+  description: Fresh apples
+  price_cents: 50
+  price_currency: GBP
+  account: one
+  inventory_group: two
+  unit_type: 0

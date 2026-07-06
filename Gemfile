@@ -45,6 +45,9 @@ gem "anony"
 # Soft delete
 gem "acts_as_paranoid"
 
+# Money
+gem "money-rails"
+
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache"
 gem "solid_queue"

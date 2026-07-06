@@ -21,9 +21,14 @@ class ApplicationController < ActionController::Base
       return unless authenticated?
 
       if Current.user.admin?
-        set_current_tenant(nil)
+        account = Account.find_by(id: session[:managed_account_id]) if session[:managed_account_id]
+        set_current_tenant(account)
       else
-        set_current_tenant(Current.user.accounts.first)
+        # Use unscoped to avoid potential issues when AccountUser itself acts_as_tenant
+        account_user = AccountUser.unscoped.where(user: Current.user).first
+        set_current_tenant(account_user&.account)
       end
+
+      Current.account = ActsAsTenant.current_tenant
     end
 end

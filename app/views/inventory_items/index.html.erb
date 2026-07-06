@@ -1,0 +1,81 @@
+<% content_for :title, "Inventory items" %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Inventory</h1>
+    <div class="flex gap-2">
+      <%= link_to "Groups", inventory_groups_path, class: secondary_button_class %>
+      <%= link_to "Locations", locations_path, class: secondary_button_class %>
+      <%= link_to "New Item", new_inventory_item_path, class: primary_button_class, id: "new_item" %>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-end border border-gray-200 dark:border-gray-700 mt-5">
+    <%= form_with url: inventory_items_path, method: :get, class: "contents" do |f| %>
+      <div class="flex-1 min-w-[200px]">
+        <%= f.label :location_id, "Location", class: label_class %>
+        <div class="mt-1">
+          <%= f.select :location_id, options_from_collection_for_select(@locations, :id, :name, params[:location_id]), { include_blank: "All Locations" }, class: input_class %>
+        </div>
+      </div>
+      <div class="flex-1 min-w-[200px]">
+        <%= f.label :inventory_group_id, "Group", class: label_class %>
+        <div class="mt-1">
+          <%= f.select :inventory_group_id, options_from_collection_for_select(@inventory_groups, :id, :name, params[:inventory_group_id]), { include_blank: "All Groups" }, class: input_class %>
+        </div>
+      </div>
+      <div class="flex gap-2 items-center">
+        <%= f.submit "Filter", class: primary_button_class %>
+        <%= link_to "Clear", inventory_items_path, class: "text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-8 <%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">Item</th>
+          <th class="<%= th_class %>">Group</th>
+          <th class="<%= th_class %> text-right">Price</th>
+          <th class="<%= th_class %> text-right">Stock</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>" id="inventory_items">
+        <% if @inventory_items.any? %>
+          <% @inventory_items.each do |inventory_item| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %>">
+                <%= link_to inventory_item.display_name, inventory_item, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+                <% if inventory_item.description.present? %>
+                  <p class="text-xs text-gray-500 truncate max-w-xs"><%= inventory_item.description %></p>
+                <% end %>
+              </td>
+              <td class="<%= td_class %>">
+                <% if inventory_item.inventory_group %>
+                  <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20">
+                    <%= inventory_item.inventory_group.name %>
+                  </span>
+                <% end %>
+              </td>
+              <td class="<%= td_class %> text-right">
+                <%= humanized_money_with_symbol inventory_item.price %>
+              </td>
+              <td class="<%= td_class %> text-right">
+                <%= pluralize(inventory_item.total_quantity, inventory_item.stock_unit) %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="4" class="<%= td_class %> text-center py-10">No inventory items found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

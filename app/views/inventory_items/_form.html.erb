@@ -1,0 +1,72 @@
+<%= form_with(model: inventory_item, class: "contents", data: { controller: "inventory-item" }) do |form| %>
+  <% if inventory_item.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(inventory_item.errors.count, "error") %> prohibited this inventory_item from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% inventory_item.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :parent_id %>
+
+  <div class="my-5">
+    <%= form.label :name, class: label_class %>
+    <%= form.text_field :name, class: input_class(inventory_item.errors[:name].any?) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :description, class: label_class %>
+    <%= form.textarea :description, rows: 4, class: input_class(inventory_item.errors[:description].any?, "h-auto") %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :inventory_group_id, "Group", class: label_class %>
+    <%= form.collection_select :inventory_group_id, policy_scope(InventoryGroup), :id, :name, { include_blank: "No Group" }, class: input_class %>
+  </div>
+
+  <div class="my-5 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div>
+      <%= form.label :price, class: label_class %>
+      <div class="relative mt-2">
+        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <span class="text-gray-500 sm:text-sm">£</span>
+        </div>
+        <%= form.text_field :price, class: input_class(false, "pl-7"), placeholder: "0.00" %>
+      </div>
+      <p class="mt-2 text-xs text-gray-500">
+        <% if inventory_item.parent %>
+          Inherit: <strong><%= humanized_money_with_symbol inventory_item.parent.price %></strong>
+        <% end %>
+      </p>
+    </div>
+
+    <div>
+      <%= form.label :unit_type, "Pricing Unit", class: label_class %>
+      <div class="mt-2">
+        <%= form.select :unit_type, InventoryItem.unit_types.keys.map { |k| [k.humanize, k] }, {}, class: input_class, data: { inventory_item_target: "unitType", action: "change->inventory-item#updatePlaceholders" } %>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :weight_value, "Weight / Quantity", class: label_class %>
+      <div class="mt-2">
+        <%= form.text_field :weight_value, class: input_class(inventory_item.errors[:weight_value].any?), placeholder: "e.g. 500", data: { inventory_item_target: "weightValue" } %>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :weight_unit, "Unit of Measure", class: label_class %>
+      <div class="mt-2">
+        <%= form.text_field :weight_unit, class: input_class(inventory_item.errors[:weight_unit].any?), placeholder: "e.g. g, kg, ml", data: { inventory_item_target: "weightUnit" } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: primary_button_class("w-full sm:w-auto") %>
+  </div>
+<% end %>

@@ -13,22 +13,22 @@
 
   <% if Current.user.admin? %>
     <div class="my-5">
-      <%= form.label :account_id %>
-      <%= form.select(:account_id, Account.unscoped.all.order(:name).map{|ac| [ac.name.to_s, ac.id]}, { selected: form.object.persisted? ? @account_user&.account_id : params[:account_id], include_blank: false }, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full select #{"border-red-400 focus:outline-red-600" if account_user.errors[:account_id].any?}") %>
+      <%= form.label :account_id, class: label_class %>
+      <%= form.select(:account_id, Account.unscoped.all.order(:name).map{|ac| [ac.name.to_s, ac.id]}, { selected: form.object.persisted? ? @account_user&.account_id : params[:account_id], include_blank: false }, class: input_class(account_user.errors[:account_id].any?)) %>
     </div>
   <% end %>
 
   <div class="my-5">
-    <%= form.label :user_id %>
-    <%= form.select(:user_id, User.all.order(:name).map{|usr| [usr.name.to_s, usr.id]}, { selected: form.object.persisted? ? @account_user&.user_id : params[:user_id], include_blank: false }, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full select #{"border-red-400 focus:outline-red-600" if account_user.errors[:user_id].any?}") %>
+    <%= form.label :user_id, class: label_class %>
+    <%= form.select(:user_id, User.all.order(:name).map{|usr| [usr.name.to_s, usr.id]}, { selected: form.object.persisted? ? @account_user&.user_id : params[:user_id], include_blank: false }, class: input_class(account_user.errors[:user_id].any?)) %>
   </div>
 
   <div class="my-5">
-    <%= form.label :user_role %>
-    <%= form.select(:user_role, enum_options_for_select(@account_user, :user_role), { selected: form.object.persisted? ? @account_user&.user_role : params[:user_role], include_blank: false }, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full select #{"border-red-400 focus:outline-red-600" if account_user.errors[:user_role].any?}") %>
+    <%= form.label :user_role, class: label_class %>
+    <%= form.select(:user_role, enum_options_for_select(@account_user, :user_role), { selected: form.object.persisted? ? @account_user&.user_role : params[:user_role], include_blank: false }, class: input_class(account_user.errors[:user_role].any?)) %>
   </div>
 
   <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+    <%= form.submit class: primary_button_class("w-full sm:w-auto") %>
   </div>
 <% end %>

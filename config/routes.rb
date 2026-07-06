@@ -1,4 +1,17 @@
 Rails.application.routes.draw do
+  resources :inventory_items do
+    member do
+      delete :really_destroy
+    end
+    resources :inventory_levels, only: [ :create, :update, :destroy ] do
+      collection do
+        post :transfer
+      end
+    end
+  end
+  resources :inventory_levels, only: [ :index, :show, :edit, :update, :destroy ]
+  resources :locations
+  resources :inventory_groups
   resources :customers do
     member do
       delete :really_destroy
@@ -16,6 +29,7 @@ Rails.application.routes.draw do
     end
   end
   resource :session
+  resource :managed_account, only: [ :update, :destroy ]
   resources :passwords, param: :token
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
