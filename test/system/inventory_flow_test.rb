@@ -23,9 +23,9 @@ class InventoryFlowTest < ApplicationSystemTestCase
     click_on "Add Variant"
     fill_in "Name", with: "Small Pack"
     fill_in "Price", with: "9.99"
-    select "Per weight", from: "Unit type"
-    fill_in "Weight value", with: "250"
-    fill_in "Weight unit", with: "g"
+    select "Per weight", from: "Pricing Unit"
+    fill_in "Weight / Quantity", with: "250"
+    fill_in "Unit of Measure", with: "g"
     click_on "Create Inventory item"
 
     assert_text "Inventory item was successfully created"
@@ -33,20 +33,20 @@ class InventoryFlowTest < ApplicationSystemTestCase
     assert_text "£9.99"
 
     # Adjust stock
-    select "Store Room", from: "location_id"
-    fill_in "quantity", with: "50"
-    click_on "Update"
+    select "Storage Room", from: "Location"
+    fill_in "New Total Quantity", with: "50"
+    click_on "Update Stock"
 
-    assert_text "Stock level updated"
+    assert_text "Stock was successfully adjusted"
     assert_text "50"
 
     # Move stock
-    select "Store Room", from: "From"
-    select "Shop Floor", from: "To"
-    fill_in "Quantity", with: "10"
+    select "Storage Room", from: "From Location"
+    select "Shop Floor", from: "To Location"
+    fill_in "Quantity to Move", with: "10"
     click_on "Transfer"
 
-    assert_text "Successfully moved stock"
+    assert_text "Successfully transferred stock"
     assert_text "40" # Remaining in Store Room
     assert_text "10" # New on Shop Floor
   end
@@ -55,7 +55,7 @@ class InventoryFlowTest < ApplicationSystemTestCase
 
   def login_as(user)
     visit new_session_url
-    fill_in "Email address", with: user.email_address
+    fill_in "Email", with: user.email_address
     fill_in "Password", with: "password"
     click_on "Sign in"
   end
