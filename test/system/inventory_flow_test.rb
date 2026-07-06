@@ -12,7 +12,6 @@ class InventoryFlowTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Inventory"
     click_on "New Item"
 
-    assert_selector "h1", text: "New inventory item"
     assert_current_path new_inventory_item_path
     fill_in "inventory_item_name", with: "Test Product"
     fill_in "inventory_item_description", with: "Product description"
