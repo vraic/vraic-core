@@ -16,8 +16,6 @@ class TasksFlowTest < ApplicationSystemTestCase
     fill_in "task_description", with: "This task should appear instantly"
     select @user.name, from: "Responsible"
 
-    # Optional: Test attachments if environment supports it, but usually standard file fields are fine.
-
     click_button "Create Task"
 
     assert_text "Task was successfully created"

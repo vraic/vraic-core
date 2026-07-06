@@ -3,17 +3,14 @@ require "application_system_test_case"
 class InventoryFlowTest < ApplicationSystemTestCase
   setup do
     @user = users(:one)
+    @account = accounts(:one)
     login_as @user
   end
 
   test "creating a parent item, then a variant, and adjusting stock" do
-    visit root_url
-    assert_text "Dashboard"
-
-    within "nav" do
-      click_link "Inventory"
-    end
-    find("#new_item").click
+    visit inventory_items_url
+    assert_selector "h1", text: "Inventory"
+    click_on "New Item"
 
     assert_selector "h1", text: "New inventory item"
     assert_current_path new_inventory_item_path
