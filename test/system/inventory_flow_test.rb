@@ -7,11 +7,19 @@ class InventoryFlowTest < ApplicationSystemTestCase
   end
 
   test "creating a parent item, then a variant, and adjusting stock" do
-    visit inventory_items_url
-    assert_selector "h1", text: "Inventory"
-    click_link "New Item", id: "new_item"
+    visit root_url
+    assert_text "Dashboard"
 
-    assert_selector "h1", text: "New inventory item", wait: 10
+    within "nav" do
+      click_link "Inventory"
+    end
+
+    assert_selector "h1", text: "Inventory"
+    find("#new_item").click
+
+    assert_no_selector "h1", text: "Inventory", wait: 1
+    assert_selector "h1", text: "New inventory item"
+    assert_current_path new_inventory_item_path
     fill_in "inventory_item_name", with: "Test Product"
     fill_in "inventory_item_description", with: "Product description"
     fill_in "inventory_item_price", with: "19.99"
@@ -21,9 +29,13 @@ class InventoryFlowTest < ApplicationSystemTestCase
     assert_text "Inventory item was successfully created"
     assert_text "Test Product"
     assert_text "£19.99"
-
-    click_link "Add Variant", id: "add_variant"
-    assert_selector "h1", text: "New inventory item", wait: 10
+    
+    parent = InventoryItem.find_by!(name: "Test Product")
+    find("#add_variant").click
+    
+    assert_no_selector "h1", text: "Test Product", wait: 10
+    assert_selector "h1", text: "New inventory item"
+    assert_current_path new_inventory_item_path(parent_id: parent.id)
     fill_in "inventory_item_name", with: "Small Pack"
     fill_in "inventory_item_price", with: "9.99"
     select "Per weight", from: "Pricing Unit"
@@ -62,5 +74,6 @@ class InventoryFlowTest < ApplicationSystemTestCase
     fill_in "Password", with: "password"
     click_on "Sign in"
     assert_text "Dashboard", wait: 10
+    assert_current_path dashboard_path
   end
 end
