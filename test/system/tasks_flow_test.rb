@@ -12,6 +12,7 @@ class TasksFlowTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Tasks"
     click_on "New Task"
 
+    assert_selector "h1", text: "New task"
     fill_in "task_title", with: "Real-time task"
     fill_in "task_description", with: "This task should appear instantly"
     select @user.name, from: "Responsible"
