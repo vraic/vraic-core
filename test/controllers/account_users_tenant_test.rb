@@ -40,14 +40,14 @@ class AccountUsersTenantTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "select[name='account_user[account_id]']"
   end
-  
+
   test "admin can create account_user for any account" do
     sign_in_as(users(:administrator))
     @unassigned = users(:unassigned)
     assert_difference("AccountUser.count") do
       post account_users_url, params: { account_user: { account_id: @other_account.id, user_id: @unassigned.id, user_role: "standard" } }
     end
-    
+
     assert_equal @other_account.id, AccountUser.last.account_id
   end
 end
