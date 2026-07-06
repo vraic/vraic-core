@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :account_users
   resources :accounts
   # Auditing
   mount Audits1984::Engine => "/console"

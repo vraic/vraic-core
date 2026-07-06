@@ -3,8 +3,8 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
-
-  enum :user_type, [ :staff, :external ]
+  normalizes :name, with: ->(n) { n.strip.downcase }
+  validates :name, presence: true
 
   before_destroy :check_admin_flag
 

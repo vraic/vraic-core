@@ -1,0 +1,32 @@
+<%= form_with(model: account_user, class: "contents") do |form| %>
+  <% if account_user.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(account_user.errors.count, "error") %> prohibited this account_user from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% account_user.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :account_id %>
+    <%= form.select(:account_id, Account.all.order(:name).map{|ac| [ac.name.to_s, ac.id]}, { selected: form.object.persisted? ? @account_user&.account_id : params[:account_id], include_blank: false }, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full select #{"border-red-400 focus:outline-red-600" if account_user.errors[:account_id].any?}") %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :user_id %>
+    <%= form.select(:user_id, User.all.order(:name).map{|usr| [usr.name.to_s, usr.id]}, { selected: form.object.persisted? ? @account_user&.user_id : params[:user_id], include_blank: false }, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full select #{"border-red-400 focus:outline-red-600" if account_user.errors[:user_id].any?}") %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :user_role %>
+    <%= form.select(:user_role, enum_options_for_select(@account_user, :user_role), { selected: form.object.persisted? ? @account_user&.user_role : params[:user_role], include_blank: false }, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full select #{"border-red-400 focus:outline-red-600" if account_user.errors[:user_role].any?}") %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

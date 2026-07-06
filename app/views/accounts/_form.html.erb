@@ -24,7 +24,6 @@
   <div class="my-5">
     <%= form.label :owner_id %>
     <%= form.select(:owner_id, User.all.order(:name).map{|u| [u.name.to_s, u.id]}, { selected: form.object.persisted? ? @account&.owner_id : params[:owner_id], include_blank: false }, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full select #{"border-red-400 focus:outline-red-600" if account.errors[:owner_id].any?}") %>
-
   </div>
 
   <div class="inline">
