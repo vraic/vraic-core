@@ -20,6 +20,7 @@
             <%= link_to "Edit", edit_user_path(user), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
             <% if Current.user.admin? && Current.user != user %>
               <%= button_to "Destroy", user, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+              <%= button_to "Really Delete", really_destroy_user_path(user), method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-800 hover:bg-red-700 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure? This is permanent." } %>
             <% end %>
           </div>
         </div>

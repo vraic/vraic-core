@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :set_user, only: %i[ show edit update destroy really_destroy ]
 
   # GET /users or /users.json
   def index
@@ -58,6 +58,25 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to users_path, notice: "User was successfully destroyed.", status: :see_other }
+      format.json { head :no_content }
+    end
+  end
+
+  def really_destroy
+    unless Current.user.admin?
+      redirect_to users_path, alert: "Only global admins can permanently delete users."
+      return
+    end
+
+    if @user.admin?
+      redirect_to users_path, alert: "Cannot delete admin users."
+      return
+    end
+
+    @user.destroy_fully!
+
+    respond_to do |format|
+      format.html { redirect_to users_path, notice: "User was permanently deleted.", status: :see_other }
       format.json { head :no_content }
     end
   end
