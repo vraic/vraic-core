@@ -1,0 +1,48 @@
+<% content_for :title, "Showing location" %>
+
+<div class="md:w-2/3 w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl">Showing location</h1>
+
+  <%= render @location %>
+
+  <div class="mt-8 mb-8">
+    <h2 class="text-2xl font-bold mb-4">Inventory at this location</h2>
+    <div class="<%= table_container_class %>">
+      <table class="<%= table_class %>">
+        <thead class="<%= thead_class %>">
+          <tr>
+            <th class="<%= th_class %>">Item</th>
+            <th class="<%= th_class %> text-right">Quantity</th>
+          </tr>
+        </thead>
+        <tbody class="<%= tbody_class %>">
+          <% @inventory_levels.each do |level| %>
+            <tr>
+              <td class="<%= td_class %>">
+                <%= link_to level.inventory_item.display_name, level.inventory_item, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+              </td>
+              <td class="<%= td_class %> text-right">
+                <%= pluralize(level.quantity, level.inventory_item.stock_unit) %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @inventory_levels.empty? %>
+            <tr>
+              <td colspan="2" class="<%= td_class %> text-center py-10 text-gray-500">No inventory at this location.</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mt-4">
+    <%= link_to "Edit this location", edit_location_path(@location), class: secondary_button_class("w-full sm:w-auto text-center") %>
+    <%= link_to "Back to locations", locations_path, class: secondary_button_class("w-full sm:w-auto text-center") %>
+    <%= button_to "Destroy this location", @location, method: :delete, form_class: "w-full sm:w-auto", class: danger_button_class("w-full"), data: { turbo_confirm: "Are you sure?" } %>
+  </div>
+</div>

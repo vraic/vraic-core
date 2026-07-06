@@ -10,16 +10,16 @@
     <div class="bg-white px-6 py-12 border-1 border-gray-300 sm:rounded-lg sm:px-12 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
       <%= form_with url: session_path, class: "space-y-4" do |form| %>
         <div>
-          <label for="email" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Email</label>
+          <%= form.label :email_address, "Email", class: label_class %>
           <div class="mt-2">
-            <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address], class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500" %>
+            <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address], class: input_class %>
           </div>
         </div>
 
         <div>
-          <label for="password" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Password</label>
+          <%= form.label :password, class: label_class %>
           <div class="mt-2">
-            <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500" %>
+            <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: input_class %>
           </div>
         </div>
 
@@ -30,7 +30,7 @@
         </div>
 
         <div>
-          <%= form.submit "Sign in", class: "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:shadow-none dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500" %>
+          <%= form.submit "Sign in", class: primary_button_class("flex w-full justify-center") %>
         </div>
       <% end %>
 

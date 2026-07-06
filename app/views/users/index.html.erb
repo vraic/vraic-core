@@ -7,26 +7,36 @@
 
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Users</h1>
-    <%= link_to "New user", new_user_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+    <%= link_to "New user", new_user_path, class: primary_button_class %>
   </div>
 
-  <div id="users" class="min-w-full divide-y divide-gray-200 space-y-5">
-    <% if @users.any? %>
-      <% @users.each do |user| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <%= render user %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", user, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= link_to "Edit", edit_user_path(user), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <% if Current.user.admin? && Current.user != user %>
-              <%= button_to "Destroy", user, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
-              <%= button_to "Really Delete", really_destroy_user_path(user), method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-800 hover:bg-red-700 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure? This is permanent." } %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    <% else %>
-      <p class="text-center my-10">No users found.</p>
-    <% end %>
+  <div class="mt-8 <%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">Email</th>
+          <th class="<%= th_class %>">Admin</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>" id="users">
+        <% if @users.any? %>
+          <% @users.each do |user| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %>">
+                <%= link_to user.name, user, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+                <p class="text-xs text-gray-500"><%= user.email_address %></p>
+              </td>
+              <td class="<%= td_class %>">
+                <%= user.admin? ? "Yes" : "No" %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="2" class="<%= td_class %> text-center py-10">No users found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>

@@ -1,0 +1,53 @@
+<% content_for :title, "Showing inventory group" %>
+
+<div class="md:w-2/3 w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl">Showing inventory group</h1>
+
+  <%= render @inventory_group %>
+
+  <div class="mt-8 mb-8">
+    <h2 class="text-2xl font-bold mb-4">Items in this group</h2>
+    <div class="<%= table_container_class %>">
+      <table class="<%= table_class %>">
+        <thead class="<%= thead_class %>">
+          <tr>
+            <th class="<%= th_class %>">Item</th>
+            <th class="<%= th_class %> text-right">Price</th>
+            <th class="<%= th_class %> text-right">Stock</th>
+          </tr>
+        </thead>
+        <tbody class="<%= tbody_class %>">
+          <% if @inventory_items.any? %>
+            <% @inventory_items.each do |item| %>
+              <tr>
+                <td class="<%= td_class %>">
+                  <%= link_to item.display_name, item, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+                </td>
+                <td class="<%= td_class %> text-right">
+                  <%= humanized_money_with_symbol item.price %>
+                </td>
+                <td class="<%= td_class %> text-right">
+                  <%= pluralize(item.total_quantity, item.stock_unit) %>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="3" class="<%= td_class %> text-center py-10 text-gray-500">No items in this group.</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mt-4">
+    <%= link_to "Edit this inventory group", edit_inventory_group_path(@inventory_group), class: secondary_button_class("w-full sm:w-auto text-center") %>
+    <%= link_to "Back to inventory groups", inventory_groups_path, class: secondary_button_class("w-full sm:w-auto text-center") %>
+    <%= button_to "Destroy this inventory group", @inventory_group, method: :delete, form_class: "w-full sm:w-auto", class: danger_button_class("w-full"), data: { turbo_confirm: "Are you sure?" } %>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<% content_for :title, "Inventory levels" %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Inventory levels</h1>
+    <%= link_to "New inventory level", new_inventory_level_path, class: primary_button_class %>
+  </div>
+
+  <div class="mt-8 <%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">Item</th>
+          <th class="<%= th_class %>">Location</th>
+          <th class="<%= th_class %> text-right">Quantity</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>" id="inventory_levels">
+        <% if @inventory_levels.any? %>
+          <% @inventory_levels.each do |inventory_level| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %>">
+                <%= link_to inventory_level.inventory_item.display_name, inventory_level.inventory_item, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= link_to inventory_level.location.name, inventory_level.location, class: "text-indigo-600 hover:text-indigo-900" %>
+              </td>
+              <td class="<%= td_class %> text-right">
+                <%= pluralize(inventory_level.quantity, inventory_level.inventory_item.stock_unit) %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="3" class="<%= td_class %> text-center py-10">No inventory levels found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -3,25 +3,29 @@ class AccountsController < ApplicationController
 
   # GET /accounts or /accounts.json
   def index
-    @accounts = Account.all
+    @accounts = policy_scope(Account)
   end
 
   # GET /accounts/1 or /accounts/1.json
   def show
+    authorize @account
   end
 
   # GET /accounts/new
   def new
     @account = Account.new
+    authorize @account
   end
 
   # GET /accounts/1/edit
   def edit
+    authorize @account
   end
 
   # POST /accounts or /accounts.json
   def create
     @account = Account.new(account_params)
+    authorize @account
 
     respond_to do |format|
       if @account.save
@@ -36,6 +40,7 @@ class AccountsController < ApplicationController
 
   # PATCH/PUT /accounts/1 or /accounts/1.json
   def update
+    authorize @account
     respond_to do |format|
       if @account.update(account_params)
         format.html { redirect_to @account, notice: "Account was successfully updated.", status: :see_other }
@@ -49,6 +54,7 @@ class AccountsController < ApplicationController
 
   # DELETE /accounts/1 or /accounts/1.json
   def destroy
+    authorize @account
     @account.destroy!
 
     respond_to do |format|

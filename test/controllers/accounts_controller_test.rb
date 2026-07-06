@@ -42,8 +42,9 @@ class AccountsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should destroy account" do
+    account = Account.create!(name: "To Destroy", owner_id: @administrator.id)
     assert_difference("Account.count", -1) do
-      delete account_url(@account)
+      delete account_url(account)
     end
 
     assert_redirected_to accounts_url

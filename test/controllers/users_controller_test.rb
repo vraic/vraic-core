@@ -11,12 +11,18 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get users_url
     assert_response :success
+    assert_select "a", "Test Administrator"
+  end
+
+  test "show should have really delete for admin" do
+    get user_url(@user)
+    assert_response :success
     assert_select "button", "Really Delete"
   end
 
-  test "index should not show really delete for non-admin" do
+  test "show should not show really delete for non-admin" do
     sign_in_as(@user)
-    get users_url
+    get user_url(users(:two))
     assert_response :success
     assert_select "button", text: "Really Delete", count: 0
   end

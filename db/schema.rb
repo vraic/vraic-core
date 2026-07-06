@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_06_181951) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_06_212927) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -84,6 +84,54 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_181951) do
     t.index ["deleted_at"], name: "index_customers_on_deleted_at"
   end
 
+  create_table "inventory_groups", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_inventory_groups_on_account_id"
+  end
+
+  create_table "inventory_items", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.text "description"
+    t.integer "inventory_group_id"
+    t.string "name"
+    t.integer "parent_id"
+    t.integer "price_cents"
+    t.string "price_currency"
+    t.integer "unit_type", default: 0
+    t.datetime "updated_at", null: false
+    t.string "weight_unit"
+    t.decimal "weight_value", precision: 10, scale: 2
+    t.index ["account_id"], name: "index_inventory_items_on_account_id"
+    t.index ["deleted_at"], name: "index_inventory_items_on_deleted_at"
+    t.index ["inventory_group_id"], name: "index_inventory_items_on_inventory_group_id"
+    t.index ["parent_id"], name: "index_inventory_items_on_parent_id"
+  end
+
+  create_table "inventory_levels", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "inventory_item_id", null: false
+    t.integer "location_id", null: false
+    t.integer "quantity", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_inventory_levels_on_account_id"
+    t.index ["inventory_item_id"], name: "index_inventory_levels_on_inventory_item_id"
+    t.index ["location_id"], name: "index_inventory_levels_on_location_id"
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_locations_on_account_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -106,5 +154,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_181951) do
   end
 
   add_foreign_key "customers", "accounts"
+  add_foreign_key "inventory_groups", "accounts"
+  add_foreign_key "inventory_items", "accounts"
+  add_foreign_key "inventory_items", "inventory_groups"
+  add_foreign_key "inventory_items", "inventory_items", column: "parent_id"
+  add_foreign_key "inventory_levels", "accounts"
+  add_foreign_key "inventory_levels", "inventory_items"
+  add_foreign_key "inventory_levels", "locations"
+  add_foreign_key "locations", "accounts"
   add_foreign_key "sessions", "users"
 end

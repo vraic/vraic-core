@@ -1,0 +1,37 @@
+<%= form_with(model: inventory_level, class: "contents") do |form| %>
+  <% if inventory_level.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(inventory_level.errors.count, "error") %> prohibited this inventory_level from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% inventory_level.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :inventory_item_id, class: label_class %>
+    <%= form.text_field :inventory_item_id, class: input_class(inventory_level.errors[:inventory_item_id].any?) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :location_id, class: label_class %>
+    <%= form.text_field :location_id, class: input_class(inventory_level.errors[:location_id].any?) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :quantity, class: label_class %>
+    <%= form.number_field :quantity, class: input_class(inventory_level.errors[:quantity].any?) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :account_id, class: label_class %>
+    <%= form.text_field :account_id, class: input_class(inventory_level.errors[:account_id].any?) %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: primary_button_class("w-full sm:w-auto") %>
+  </div>
+<% end %>
