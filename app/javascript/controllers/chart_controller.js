@@ -12,12 +12,18 @@ export default class extends Controller {
     this.renderChart()
   }
 
+  disconnect() {
+    if (this.chart) {
+      this.chart.destroy()
+    }
+  }
+
   renderChart() {
     const ctx = this.element.getContext('2d')
     const labels = this.dataValue.map(item => item.label)
     const values = this.dataValue.map(item => item.value)
 
-    new Chart(ctx, {
+    this.chart = new Chart(ctx, {
       type: this.typeValue,
       data: {
         labels: labels,
