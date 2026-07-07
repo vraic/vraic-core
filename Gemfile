@@ -92,3 +92,4 @@ end
 
 gem "pagy", "~> 43.5"
 gem "ffaker", group: [ :development, :test ]
+gem "search_cop"

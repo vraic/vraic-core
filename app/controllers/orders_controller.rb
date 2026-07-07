@@ -4,7 +4,33 @@ class OrdersController < ApplicationController
 
   # GET /orders or /orders.json
   def index
-    @pagy, @orders = pagy(policy_scope(Order).order(created_at: :desc))
+    @query = params[:query]
+    scope = policy_scope(Order).order(created_at: :desc)
+
+    if @query.present?
+      clean_query = @query.delete("#").strip
+
+      begin
+        decoded_id = Order.decode_prefix_id(clean_query)
+      rescue StandardError
+        decoded_id = nil
+      end
+
+      if decoded_id
+        scope = scope.where(id: decoded_id)
+      elsif clean_query.match?(/^\d{3}[A-Z]{3}$/)
+        scope = scope.where(number: clean_query)
+      else
+        if @query.match?(/^\d+(\.\d{2})?$/)
+          cents = (@query.to_f * 100).to_i
+          scope = scope.search("#{@query} OR total_amount_cents: #{cents}")
+        else
+          scope = scope.search(@query)
+        end
+      end
+    end
+
+    @pagy, @orders = pagy(scope)
   end
 
   def awaiting_collection

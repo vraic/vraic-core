@@ -8,6 +8,7 @@ one:
   currency: GBP
   notes: Staff order
   user: one
+  number: 123ABC
 
 two:
   account: one
@@ -16,3 +17,4 @@ two:
   total_amount_cents: 2000
   currency: GBP
   notes: Customer order
+  number: 456DEF

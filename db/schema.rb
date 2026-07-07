@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_07_075737) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_07_160658) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -203,12 +203,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_07_075737) do
     t.string "currency", default: "GBP", null: false
     t.integer "customer_id", null: false
     t.text "notes"
+    t.string "number"
     t.integer "status", default: 0, null: false
     t.integer "total_amount_cents", default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.index ["account_id"], name: "index_orders_on_account_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
+    t.index ["number"], name: "index_orders_on_number", unique: true
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
