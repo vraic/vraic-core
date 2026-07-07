@@ -11,9 +11,8 @@ class OrdersTest < ApplicationSystemTestCase
     login_as @admin
     visit new_order_url
 
-    # Add an order item
-    click_on "Add Item"
-
+    # Use the initial item row built by the controller
+    assert_selector ".nested-form-wrapper", count: 1
     within ".nested-form-wrapper" do
       # Select product
       select @item.display_name, from: "Product"
@@ -44,5 +43,6 @@ class OrdersTest < ApplicationSystemTestCase
     fill_in "Password", with: "password"
     click_button "Sign in"
     assert_text "Dashboard"
+    assert_current_path dashboard_path
   end
 end
