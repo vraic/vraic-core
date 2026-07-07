@@ -10,7 +10,7 @@ class InventoryFlowTest < ApplicationSystemTestCase
   test "creating a parent item, then a variant, and adjusting stock" do
     visit inventory_items_url
     assert_selector "h1", text: "Inventory"
-    find("#new_item").click
+    click_on "New Item"
 
     assert_selector "h1", text: "New inventory item"
     fill_in "inventory_item_name", with: "Test Product"
@@ -24,7 +24,7 @@ class InventoryFlowTest < ApplicationSystemTestCase
     assert_text "£19.99"
 
     parent = InventoryItem.find_by!(name: "Test Product")
-    find("#add_variant").click
+    click_on "Add Variant"
 
     assert_selector "h1", text: "New inventory item"
     fill_in "inventory_item_name", with: "Small Pack"

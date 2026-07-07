@@ -3,14 +3,13 @@ require "application_system_test_case"
 class TasksFlowTest < ApplicationSystemTestCase
   setup do
     @user = users(:one)
-    @account = accounts(:one)
     login_as(@user)
   end
 
   test "creating a task and seeing it on the index" do
     visit tasks_url
     assert_selector "h1", text: "Tasks"
-    find("#new_task").click
+    click_link "New Task"
 
     assert_selector "h1", text: "New task"
     fill_in "task_title", with: "Real-time task"
