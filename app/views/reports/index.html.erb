@@ -1,0 +1,178 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto">
+  <div class="sm:flex sm:items-center sm:justify-between mb-8 print:hidden">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= Current.account&.name %> - Business Analysis</h1>
+      <p class="mt-2 text-sm text-gray-700">Overview of store performance over the last 30 days.</p>
+    </div>
+  </div>
+
+  <div class="hidden print:block mb-8">
+    <h1 class="text-3xl font-bold text-gray-900"><%= Current.account&.name %> - Business Report</h1>
+    <p class="text-gray-600">Generated on <%= Time.current.strftime("%d %B %Y, %H:%M") %></p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+    <!-- Customers Served -->
+    <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
+      <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 truncate text-pretty">Customers Served (30d)</dt>
+        <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+          <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+            <%= @stats[:current][:customer_count] %>
+            <span class="ml-2 text-sm font-medium text-gray-500">from <%= @stats[:previous][:customer_count] %></span>
+          </div>
+          <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium <%= @stats[:changes][:customer_count] >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> md:mt-2 lg:mt-0">
+            <% if @stats[:changes][:customer_count] >= 0 %>
+              <svg class="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.57a.75.75 0 01-1.08-1.04l5.25-5.25a.75.75 0 011.08 0l5.25 5.25a.75.75 0 11-1.08 1.04l-3.96-3.958V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              </svg>
+            <% else %>
+              <svg class="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-3.958a.75.75 0 111.08 1.04l-5.25 5.25a.75.75 0 01-1.08 0l-5.25-5.25a.75.75 0 111.08-1.04l3.96 3.958V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              </svg>
+            <% end %>
+            <%= @stats[:changes][:customer_count].abs %>%
+          </div>
+        </dd>
+      </div>
+    </div>
+
+    <!-- Total Orders -->
+    <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
+      <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 truncate text-pretty">Number of Orders (30d)</dt>
+        <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+          <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+            <%= @stats[:current][:order_count] %>
+            <span class="ml-2 text-sm font-medium text-gray-500">from <%= @stats[:previous][:order_count] %></span>
+          </div>
+          <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium <%= @stats[:changes][:order_count] >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> md:mt-2 lg:mt-0">
+            <% if @stats[:changes][:order_count] >= 0 %>
+              <svg class="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.57a.75.75 0 01-1.08-1.04l5.25-5.25a.75.75 0 011.08 0l5.25 5.25a.75.75 0 11-1.08 1.04l-3.96-3.958V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              </svg>
+            <% else %>
+              <svg class="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-3.958a.75.75 0 111.08 1.04l-5.25 5.25a.75.75 0 01-1.08 0l-5.25-5.25a.75.75 0 111.08-1.04l3.96 3.958V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              </svg>
+            <% end %>
+            <%= @stats[:changes][:order_count].abs %>%
+          </div>
+        </dd>
+      </div>
+    </div>
+
+    <!-- Total Value -->
+    <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
+      <div class="px-4 py-5 sm:p-6">
+        <dt class="text-sm font-medium text-gray-500 truncate text-pretty">Total Order Value (30d)</dt>
+        <dd class="mt-1 flex items-baseline justify-between md:block lg:flex">
+          <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+            <%= humanized_money_with_symbol @stats[:current][:total_value] %>
+            <span class="ml-2 text-sm font-medium text-gray-500">from <%= humanized_money_with_symbol @stats[:previous][:total_value] %></span>
+          </div>
+          <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium <%= @stats[:changes][:total_value] >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %> md:mt-2 lg:mt-0">
+            <% if @stats[:changes][:total_value] >= 0 %>
+              <svg class="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.57a.75.75 0 01-1.08-1.04l5.25-5.25a.75.75 0 011.08 0l5.25 5.25a.75.75 0 11-1.08 1.04l-3.96-3.958V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+              </svg>
+            <% else %>
+              <svg class="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-3.958a.75.75 0 111.08 1.04l-5.25 5.25a.75.75 0 01-1.08 0l-5.25-5.25a.75.75 0 111.08-1.04l3.96 3.958V3.75A.75.75 0 0110 3z" clip-rule="evenodd" />
+              </svg>
+            <% end %>
+            <%= @stats[:changes][:total_value].abs %>%
+          </div>
+        </dd>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Order Value Growth Chart -->
+    <div class="bg-white p-6 shadow rounded-lg border border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Order Value Growth</h3>
+      <div class="h-64">
+        <canvas data-controller="chart" 
+                data-chart-data-value="<%= @stats[:order_value_data].to_json %>"
+                data-chart-label-value="Order Value"
+                data-chart-type-value="line"></canvas>
+      </div>
+    </div>
+
+    <!-- Number of Orders Growth Chart -->
+    <div class="bg-white p-6 shadow rounded-lg border border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Number of Orders</h3>
+      <div class="h-64">
+        <canvas data-controller="chart" 
+                data-chart-data-value="<%= @stats[:order_count_data].to_json %>"
+                data-chart-label-value="Orders"
+                data-chart-type-value="bar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breakdown Table -->
+  <div class="bg-white shadow rounded-lg border border-gray-200 overflow-hidden break-inside-avoid">
+    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Order Value Breakdown by Category</h3>
+      <p class="mt-1 text-sm text-gray-500">Breakdown of total sales by inventory group for the last 30 days.</p>
+    </div>
+    <div class="<%= table_container_class('overflow-x-auto') %>">
+      <table class="<%= table_class %>">
+        <thead class="<%= thead_class %>">
+          <tr>
+            <th class="<%= th_class %>">Category</th>
+            <th class="<%= th_class %> text-right">Total Value</th>
+            <th class="<%= th_class %> text-right">% of Total</th>
+          </tr>
+        </thead>
+        <tbody class="<%= tbody_class %>">
+          <% @stats[:breakdown].sort_by { |_k, v| -v[:value].cents }.each do |name, data| %>
+            <tr>
+              <td class="<%= td_class %> font-medium text-gray-900"><%= name %></td>
+              <td class="<%= td_class %> text-right"><%= humanized_money_with_symbol data[:value] %></td>
+              <td class="<%= td_class %> text-right">
+                <div class="flex items-center justify-end">
+                  <span class="mr-2 text-sm text-gray-600"><%= data[:percentage] %>%</span>
+                  <div class="w-24 bg-gray-200 rounded-full h-1.5 hidden sm:block">
+                    <div class="bg-indigo-600 h-1.5 rounded-full" style="width: <%= data[:percentage] %>%"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+          <% if @stats[:breakdown].empty? %>
+            <tr>
+              <td colspan="3" class="<%= td_class %> text-center text-gray-500 italic">No data available for this period</td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot class="bg-gray-50">
+          <tr>
+            <td class="<%= td_class %> font-bold text-gray-900">Total</td>
+            <td class="<%= td_class %> text-right font-bold text-gray-900"><%= humanized_money_with_symbol @stats[:current][:total_value] %></td>
+            <td class="<%= td_class %> text-right font-bold text-gray-900">100%</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style type="text/css" media="print">
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+  body {
+    background-color: white !important;
+  }
+  .shadow, .border {
+    box-shadow: none !important;
+  }
+  canvas {
+    max-height: 250px !important;
+  }
+</style>

@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       get :inventory
     end
   end
+  resources :reports, only: [ :index ]
   resources :supplier_requests, only: [ :index, :new, :create, :update, :destroy ]
   resources :order_items
   resources :orders do
