@@ -20,7 +20,7 @@ class AdminManagedMembershipTest < ApplicationSystemTestCase
 
     # Join Account Two
     within find("h2", text: "Join a Store").find(:xpath, "..") do
-      select "Account Two", from: "Select Store"
+      select "Account Two", from: "Select Store to Join"
       click_on "Join Store"
     end
 
@@ -28,13 +28,13 @@ class AdminManagedMembershipTest < ApplicationSystemTestCase
 
     # Verify we are still managing Account One and see Account Two joined
     assert_text "Stores joined by Account One"
-    within ".grid" do
+    within "#business-stores" do
       assert_text "Account Two"
     end
 
     # Join Account Three
     within find("h2", text: "Join a Store").find(:xpath, "..") do
-      select "Account Three", from: "Select Store"
+      select "Account Three", from: "Select Store to Join"
       click_on "Join Store"
     end
 

@@ -39,9 +39,10 @@ class ApplicationController < ActionController::Base
         if account_id && AccountUser.unscoped.where(user_id: Current.user.id, account_id: account_id).exists?
           account = Account.find(account_id)
           set_current_tenant(account)
-        elsif Current.user.accounts.count == 1
+        elsif ActsAsTenant.without_tenant { Current.user.accounts.count } == 1
           # Fallback only if they have exactly one account
-          set_current_tenant(Current.user.accounts.first)
+          account = ActsAsTenant.without_tenant { Current.user.accounts.first }
+          set_current_tenant(account)
         else
           # Multiple accounts or none - require selection
           set_current_tenant(nil)

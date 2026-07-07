@@ -28,8 +28,10 @@ class B2bContextRestrictionTest < ApplicationSystemTestCase
     assert_text "Switched to Account One"
 
     # Switch to Account Two
-    within find("h3", text: "Account Two").find(:xpath, "../..") do
-      click_on "Select"
+    within "#your-stores" do
+      within find("h3", text: "Account Two").find(:xpath, "../..") do
+        click_on "Select"
+      end
     end
 
     assert_text "Switched to Account Two"

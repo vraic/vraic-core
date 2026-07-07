@@ -6,6 +6,7 @@ class InventoryItem < ApplicationRecord
 
   search_scope :search do
     attributes :name, :description, :weight_value, :weight_unit
+    attributes weight: [ :weight_value, :weight_unit ]
     attributes inventory_group: "inventory_group.name"
   end
 
