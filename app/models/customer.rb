@@ -56,7 +56,7 @@ class Customer < ApplicationRecord
   end
 
   def ensure_account_user
-    return unless user && account
+    return unless user_id && account_id
     # We use unscoped here to find/create AccountUser across any existing tenant context
     AccountUser.unscoped.where(account_id: account_id, user_id: user_id).first_or_create!(user_role: :customer)
   end

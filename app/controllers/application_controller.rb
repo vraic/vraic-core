@@ -30,22 +30,25 @@ class ApplicationController < ActionController::Base
       return unless authenticated?
 
       account_id = session[:managed_account_id]
+      user = Current.user
 
-      if Current.user.admin?
+      if user.admin?
         account = Account.find_by(id: account_id) if account_id
         set_current_tenant(account)
       else
         # For non-admins, they must belong to the account
-        if account_id && AccountUser.unscoped.where(user_id: Current.user.id, account_id: account_id).exists?
+        if account_id && AccountUser.unscoped.where(user_id: user.id, account_id: account_id).exists?
           account = Account.find(account_id)
           set_current_tenant(account)
-        elsif ActsAsTenant.without_tenant { Current.user.accounts.count } == 1
-          # Fallback only if they have exactly one account
-          account = ActsAsTenant.without_tenant { Current.user.accounts.first }
-          set_current_tenant(account)
         else
-          # Multiple accounts or none - require selection
-          set_current_tenant(nil)
+          # Fallback to single account if no account selected or membership lost
+          user_account_ids = AccountUser.unscoped.where(user_id: user.id).pluck(:account_id)
+          if user_account_ids.count == 1
+            account = Account.find(user_account_ids.first)
+            set_current_tenant(account)
+          else
+            set_current_tenant(nil)
+          end
         end
       end
 

@@ -6,7 +6,7 @@ class StoreMembershipsController < ApplicationController
     already_member = if Current.user.admin? && Current.account
       account.customers.exists?(customer_account: Current.account)
     else
-      ActsAsTenant.without_tenant { Current.user.accounts.include?(account) }
+      AccountUser.unscoped.where(user_id: Current.user.id, account_id: account.id).exists?
     end
 
     if already_member
