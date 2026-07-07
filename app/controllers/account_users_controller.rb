@@ -3,7 +3,7 @@ class AccountUsersController < ApplicationController
 
   # GET /account_users or /account_users.json
   def index
-    @account_users = AccountUser.all
+    @pagy, @account_users = pagy(AccountUser.all)
   end
 
   # GET /account_users/1 or /account_users/1.json

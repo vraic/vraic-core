@@ -96,4 +96,12 @@
       </table>
     <% end %>
   </div>
+
+  <div class="mt-8 flex justify-center">
+    <% if tab == "they_supply" %>
+      <%== pagy_tailwind_nav(@pagy_suppliers) %>
+    <% else %>
+      <%== pagy_tailwind_nav(@pagy_customers) %>
+    <% end %>
+  </div>
 </div>

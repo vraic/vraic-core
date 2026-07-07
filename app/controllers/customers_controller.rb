@@ -4,7 +4,7 @@ class CustomersController < ApplicationController
 
   # GET /customers or /customers.json
   def index
-    @customers = policy_scope(Customer)
+    @pagy, @customers = pagy(policy_scope(Customer))
   end
 
   # GET /customers/1 or /customers/1.json

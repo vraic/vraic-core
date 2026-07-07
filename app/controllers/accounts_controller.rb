@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
 
   # GET /accounts or /accounts.json
   def index
-    @accounts = policy_scope(Account)
+    @pagy, @accounts = pagy(policy_scope(Account))
   end
 
   # GET /accounts/1 or /accounts/1.json

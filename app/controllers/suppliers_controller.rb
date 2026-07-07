@@ -3,8 +3,8 @@ class SuppliersController < ApplicationController
   before_action :set_supplier, only: %i[ show edit update destroy inventory ]
 
   def index
-    @suppliers = policy_scope(Supplier)
-    @customers_i_supply = Customer.where.not(customer_account_id: nil)
+    @pagy_suppliers, @suppliers = pagy(policy_scope(Supplier), page_param: :page_suppliers)
+    @pagy_customers, @customers_i_supply = pagy(Customer.where.not(customer_account_id: nil), page_param: :page_customers)
   end
 
   def show

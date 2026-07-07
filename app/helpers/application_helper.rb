@@ -1,4 +1,7 @@
 module ApplicationHelper
+  def pagy_tailwind_nav(pagy)
+    pagy.series_nav('tailwind')
+  end
   def enum_options_for_select(instance, enum)
     options_for_select(enum_collection(instance, enum), instance.send(enum))
   end

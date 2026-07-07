@@ -3,7 +3,7 @@ class SupplierRequestsController < ApplicationController
   before_action :set_supplier_request, only: %i[ update destroy ]
 
   def index
-    @supplier_requests = policy_scope(SupplierRequest)
+    @pagy, @supplier_requests = pagy(policy_scope(SupplierRequest))
   end
 
   def new
