@@ -4,6 +4,7 @@ class SuppliersController < ApplicationController
 
   def index
     @suppliers = policy_scope(Supplier)
+    @customers_i_supply = Customer.where.not(customer_account_id: nil)
   end
 
   def show

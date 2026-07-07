@@ -7,6 +7,7 @@
 
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Séyiz les beinv'nus</h1>
+    <%= link_to "Create a Store", new_account_path, class: primary_button_class %>
   </div>
 
   <div class="mt-10">
@@ -60,6 +61,28 @@
           <%= f.submit "Join Store", class: primary_button_class %>
         <% end %>
       </div>
+    <% end %>
+
+    <% if Current.account && (Current.user.admin? || Current.user.account_users.find_by(account: Current.account)&.admin?) %>
+      <% 
+        supply_available_accounts = Account.where.not(id: Current.account.id)
+          .where.not(id: Current.account.customers.pluck(:customer_account_id).compact)
+          .where.not(id: SupplierRequest.where(sender_account: Current.account).pluck(:receiver_account_id))
+      %>
+      <% if supply_available_accounts.any? %>
+        <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+          <h2 class="text-xl font-bold mb-4">Supply a Store</h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Request to become a supplier for another farm shop on the platform using <strong><%= Current.account.name %></strong>.</p>
+          
+          <%= form_with model: SupplierRequest.new, class: "flex gap-2 items-end max-w-md" do |f| %>
+            <div class="flex-grow">
+              <%= f.label :receiver_account_id, "Select Store", class: label_class %>
+              <%= f.collection_select :receiver_account_id, supply_available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
+            </div>
+            <%= f.submit "Request to Supply", class: primary_button_class %>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
 
     <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">

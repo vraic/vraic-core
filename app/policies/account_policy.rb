@@ -8,7 +8,7 @@ class AccountPolicy < ApplicationPolicy
   end
 
   def create?
-    user.admin?
+    user.present?
   end
 
   def update?

@@ -13,7 +13,7 @@ class AccountsController < ApplicationController
 
   # GET /accounts/new
   def new
-    @account = Account.new
+    @account = Account.new(owner_id: Current.user.id)
     authorize @account
   end
 
@@ -25,11 +25,28 @@ class AccountsController < ApplicationController
   # POST /accounts or /accounts.json
   def create
     @account = Account.new(account_params)
+    @account.owner_id ||= Current.user&.id
     authorize @account
 
     respond_to do |format|
       if @account.save
-        format.html { redirect_to @account, notice: "Account was successfully created." }
+        # Create AccountUser for the owner
+        if @account.owner_id
+          AccountUser.unscoped.where(account_id: @account.id, user_id: @account.owner_id).first_or_create(user_role: :admin)
+        end
+
+        # Also make the creator an admin if different from owner
+        if Current.user&.id && Current.user.id != @account.owner_id.to_i
+          AccountUser.unscoped.where(account_id: @account.id, user_id: Current.user.id).first_or_create(user_role: :admin)
+        end
+
+        session[:managed_account_id] ||= @account.id
+
+        if Current.user&.admin?
+          format.html { redirect_to @account, notice: "Account was successfully created." }
+        else
+          format.html { redirect_to dashboard_path, notice: "Account was successfully created." }
+        end
         format.json { render :show, status: :created, location: @account }
       else
         format.html { render :new, status: :unprocessable_content }

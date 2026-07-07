@@ -29,7 +29,7 @@ class AccountPolicyTest < ActiveSupport::TestCase
 
   def test_create
     assert AccountPolicy.new(@admin, Account).create?
-    assert_not AccountPolicy.new(@user_one, Account).create?
+    assert AccountPolicy.new(@user_one, Account).create?
   end
 
   def test_update

@@ -13,42 +13,87 @@
     </div>
   </div>
 
+  <div class="border-b border-gray-200 dark:border-gray-700 mt-6">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+      <% tab = params[:tab] || "they_supply" %>
+      <%= link_to "They Supply", suppliers_path(tab: "they_supply"), class: "#{tab == "they_supply" ? "border-indigo-500 text-indigo-600" : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" %>
+      <%= link_to "I Supply", suppliers_path(tab: "i_supply"), class: "#{tab == "i_supply" ? "border-indigo-500 text-indigo-600" : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" %>
+    </nav>
+  </div>
+
   <div class="mt-8 <%= table_container_class %>">
-    <table class="<%= table_class %>">
-      <thead class="<%= thead_class %>">
-        <tr>
-          <th class="<%= th_class %>">Supplier</th>
-          <th class="<%= th_class %>">Email</th>
-          <th class="<%= th_class %>">Phone</th>
-          <th class="<%= th_class %>">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="<%= tbody_class %>" id="suppliers">
-        <% if @suppliers.any? %>
-          <% @suppliers.each do |supplier| %>
-            <tr class="<%= tr_class %>">
-              <td class="<%= td_class %>">
-                <%= link_to supplier.name, supplier, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
-              </td>
-              <td class="<%= td_class %>">
-                <%= supplier.email_address %>
-              </td>
-              <td class="<%= td_class %>">
-                <%= supplier.phone %>
-              </td>
-              <td class="<%= td_class %>">
-                <% if supplier.supplier_account_id.present? %>
-                  <%= link_to "View Inventory", inventory_supplier_path(supplier), class: "text-indigo-600 hover:text-indigo-900" %>
-                <% end %>
-              </td>
+    <% if tab == "they_supply" %>
+      <table class="<%= table_class %>">
+        <thead class="<%= thead_class %>">
+          <tr>
+            <th class="<%= th_class %>">Supplier</th>
+            <th class="<%= th_class %>">Email</th>
+            <th class="<%= th_class %>">Phone</th>
+            <th class="<%= th_class %>">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="<%= tbody_class %>" id="suppliers">
+          <% if @suppliers.any? %>
+            <% @suppliers.each do |supplier| %>
+              <tr class="<%= tr_class %>">
+                <td class="<%= td_class %>">
+                  <%= link_to supplier.name, supplier, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+                </td>
+                <td class="<%= td_class %>">
+                  <%= supplier.email_address %>
+                </td>
+                <td class="<%= td_class %>">
+                  <%= supplier.phone %>
+                </td>
+                <td class="<%= td_class %>">
+                  <% if supplier.supplier_account_id.present? %>
+                    <%= link_to "View Inventory", inventory_supplier_path(supplier), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="4" class="<%= td_class %> text-center py-10">No suppliers found.</td>
             </tr>
           <% end %>
-        <% else %>
+        </tbody>
+      </table>
+    <% else %>
+      <table class="<%= table_class %>">
+        <thead class="<%= thead_class %>">
           <tr>
-            <td colspan="5" class="<%= td_class %> text-center py-10">No suppliers found.</td>
+            <th class="<%= th_class %>">Store Name</th>
+            <th class="<%= th_class %>">Email</th>
+            <th class="<%= th_class %>">Phone</th>
+            <th class="<%= th_class %>">Actions</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody class="<%= tbody_class %>" id="customers_i_supply">
+          <% if @customers_i_supply.any? %>
+            <% @customers_i_supply.each do |customer| %>
+              <tr class="<%= tr_class %>">
+                <td class="<%= td_class %>">
+                  <%= link_to customer.name, customer, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+                </td>
+                <td class="<%= td_class %>">
+                  <%= customer.email_address %>
+                </td>
+                <td class="<%= td_class %>">
+                  <%= customer.phone %>
+                </td>
+                <td class="<%= td_class %>">
+                  <span class="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded">Supplying</span>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="4" class="<%= td_class %> text-center py-10">You are not supplying any stores yet.</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </div>
 </div>
