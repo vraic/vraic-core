@@ -20,7 +20,7 @@
 
   <div class="my-5">
     <%= form.label :description, class: label_class %>
-    <%= form.textarea :description, rows: 4, class: input_class(inventory_item.errors[:description].any?, "h-auto") %>
+    <%= form.text_area :description, rows: 4, class: input_class(inventory_item.errors[:description].any?, "h-auto") %>
   </div>
 
   <div class="my-5">

@@ -10,7 +10,7 @@ class TasksFlowTest < ApplicationSystemTestCase
   test "creating a task and seeing it on the index" do
     visit tasks_url
     assert_selector "h1", text: "Tasks"
-    click_on "New Task"
+    find("#new_task").click
 
     assert_selector "h1", text: "New task"
     fill_in "task_title", with: "Real-time task"
