@@ -12,7 +12,7 @@
         <%= f.text_field :query, value: params[:query], placeholder: "Search by ID, customer name or total...", class: input_class %>
       </div>
       <%= f.submit "Search", class: secondary_button_class %>
-      <%= link_to "Clear", orders_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" if params[:query].present? %>
+      <%= link_to "Clear", orders_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" if params[:query].present? || params[:filter].present? %>
     <% end %>
   </div>
 

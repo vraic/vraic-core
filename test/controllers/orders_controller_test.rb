@@ -12,6 +12,34 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should filter orders by today" do
+    account = @order.account
+    customer = @order.customer
+    
+    # Create an order from today
+    today_order = Order.create!(
+      account: account,
+      customer: customer,
+      total_amount_cents: 1000,
+      status: :ordered,
+      created_at: Time.current
+    )
+    
+    # Create an order from yesterday
+    yesterday_order = Order.create!(
+      account: account,
+      customer: customer,
+      total_amount_cents: 2000,
+      status: :ordered,
+      created_at: 1.day.ago
+    )
+
+    get orders_url(filter: "today")
+    assert_response :success
+    assert_select "td", text: /#{today_order.number}/
+    assert_select "td", text: /#{yesterday_order.number}/, count: 0
+  end
+
   test "should get new" do
     get new_order_url
     assert_response :success

@@ -7,6 +7,10 @@ class OrdersController < ApplicationController
     @query = params[:query]
     scope = policy_scope(Order).order(created_at: :desc)
 
+    if params[:filter] == "today"
+      scope = scope.where(created_at: Time.current.all_day)
+    end
+
     if @query.present?
       clean_query = @query.delete("#").strip
 

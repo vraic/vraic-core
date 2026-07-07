@@ -9,12 +9,13 @@ class StoreMembershipsController < ApplicationController
     end
 
     # Create Customer record - this will also create AccountUser via callback
-    Customer.create!(
-      account: account,
-      user: Current.user,
-      name: Current.user.name,
-      email_address: Current.user.email_address
-    )
+    ActsAsTenant.with_tenant(account) do
+      Customer.create!(
+        user: Current.user,
+        name: Current.user.name,
+        email_address: Current.user.email_address
+      )
+    end
 
     session[:managed_account_id] = account.id
     redirect_to root_path, notice: "You have successfully joined #{account.name}."
