@@ -2,12 +2,13 @@ require "application_system_test_case"
 
 class InventoryFlowTest < ApplicationSystemTestCase
   setup do
-    @user = users(:one)
-    @account = accounts(:one)
-    login_as @user
+    @admin = users(:administrator)
+    login_as @admin
   end
 
   test "creating a parent item, then a variant, and adjusting stock" do
+    select_account("Account One")
+
     visit inventory_items_url
     assert_selector "h1", text: "Inventory"
     click_on "New Item"
@@ -58,13 +59,4 @@ class InventoryFlowTest < ApplicationSystemTestCase
   end
 
   private
-
-  def login_as(user)
-    visit new_session_url
-    fill_in "Email", with: user.email_address
-    fill_in "Password", with: "password"
-    click_on "Sign in"
-    assert_text "Dashboard"
-    assert_current_path dashboard_path
-  end
 end

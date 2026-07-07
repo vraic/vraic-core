@@ -10,13 +10,7 @@ class OrdersTest < ApplicationSystemTestCase
   test "staff member sees auto-filled price and stock limit" do
     login_as @admin
 
-    # Select account
-    visit dashboard_path
-    within "form[action='#{managed_account_path}']" do
-      select "Account One", from: "account_id"
-      click_on "Go"
-    end
-    assert_text "Now managing Account One"
+    select_account("Account One")
 
     visit new_order_url
 
@@ -48,13 +42,4 @@ class OrdersTest < ApplicationSystemTestCase
   end
 
   private
-
-  def login_as(user)
-    visit new_session_url
-    fill_in "Email", with: user.email_address
-    fill_in "Password", with: "password"
-    click_button "Sign in"
-    assert_text "Dashboard"
-    assert_current_path dashboard_path
-  end
 end
