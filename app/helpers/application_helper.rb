@@ -7,7 +7,7 @@ module ApplicationHelper
   end
 
   def enum_collection(instance, enum)
-    instance.class.send(enum.to_s.pluralize).keys.to_a.map { |key| [ key.humanize, key ] }
+    instance.class.send(enum.to_s.pluralize).keys.to_a.map { |key| [ key.titleize, key ] }
   end
 
   def nav_item_active?(item)
@@ -77,15 +77,6 @@ module ApplicationHelper
 
   def danger_button_class(extra_classes = nil)
     [ "rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer", extra_classes ].compact.join(" ")
-  end
-
-  def staff?
-    return true if Current.user&.admin?
-    Current.user&.account_users&.exists?(account: Current.account, user_role: [ :admin, :standard ])
-  end
-
-  def customer?
-    Current.user&.account_users&.exists?(account: Current.account, user_role: :customer)
   end
 
   def table_container_class(extra_classes = nil)

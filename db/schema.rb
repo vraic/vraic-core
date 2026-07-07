@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_07_160658) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_07_175801) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -183,6 +183,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_07_160658) do
     t.index ["account_id"], name: "index_locations_on_account_id"
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.integer "notable_id", null: false
+    t.string "notable_type", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["account_id"], name: "index_notes_on_account_id"
+    t.index ["notable_type", "notable_id"], name: "index_notes_on_notable"
+    t.index ["user_id"], name: "index_notes_on_user_id"
+  end
+
   create_table "order_items", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "currency", default: "GBP", null: false
@@ -304,6 +317,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_07_160658) do
   add_foreign_key "inventory_levels", "inventory_items"
   add_foreign_key "inventory_levels", "locations"
   add_foreign_key "locations", "accounts"
+  add_foreign_key "notes", "accounts"
+  add_foreign_key "notes", "users"
   add_foreign_key "order_items", "inventory_items"
   add_foreign_key "order_items", "locations"
   add_foreign_key "order_items", "orders"

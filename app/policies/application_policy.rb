@@ -36,6 +36,19 @@ class ApplicationPolicy
     false
   end
 
+  def staff?
+    return true if user.admin?
+    tenant = ActsAsTenant.current_tenant || Current.account
+    return false unless tenant
+    user.account_users.exists?(account: tenant, user_role: [ :store_manager, :store_staff ])
+  end
+
+  def customer?
+    tenant = ActsAsTenant.current_tenant || Current.account
+    return false unless tenant
+    user.account_users.exists?(account: tenant, user_role: :customer)
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user
@@ -44,6 +57,19 @@ class ApplicationPolicy
 
     def resolve
       raise NoMethodError, "You must define #resolve in #{self.class}"
+    end
+
+    def staff?
+      return true if user.admin?
+      tenant = ActsAsTenant.current_tenant || Current.account
+      return false unless tenant
+      user.account_users.exists?(account: tenant, user_role: [ :store_manager, :store_staff ])
+    end
+
+    def customer?
+      tenant = ActsAsTenant.current_tenant || Current.account
+      return false unless tenant
+      user.account_users.exists?(account: tenant, user_role: :customer)
     end
 
     private

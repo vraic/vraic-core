@@ -38,15 +38,15 @@ namespace :db do
       email_address: "account-one@example.com",
       password: "password"
     )
-    AccountUser.create!(account: account_one, user: account_one_admin, user_role: :admin)
+    AccountUser.create!(account: account_one, user: account_one_admin, user_role: :store_manager)
 
     account_one_staff = User.create!(
       name: "John Doe at Vraic Farms",
       email_address: "account-one-staff@example.com",
       password: "password"
     )
-    AccountUser.create!(account: account_one, user: account_one_staff, user_role: :standard)
-    puts "Created Vraic Farms with admin (account-one@example.com) and staff (account-one-staff@example.com)"
+    AccountUser.create!(account: account_one, user: account_one_staff, user_role: :store_staff)
+    puts "Created Vraic Farms with store manager (account-one@example.com) and staff (account-one-staff@example.com)"
 
     # 3. Suppliers
     supplier_names = [ "Paradise Veg", "Jolly Hoggs", "Dark Shrooms", "Coastal Fish" ]
@@ -64,7 +64,7 @@ namespace :db do
         email_address: email,
         password: "password"
       )
-      AccountUser.create!(account: s_acc, user: s_user, user_role: :admin)
+      AccountUser.create!(account: s_acc, user: s_user, user_role: :store_manager)
       suppliers << s_acc
       puts "Created #{name}: #{email}"
     end

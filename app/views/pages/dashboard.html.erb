@@ -19,7 +19,7 @@
               <div>
                 <h3 class="font-bold text-gray-900 dark:text-white"><%= account.name %></h3>
                 <p class="text-sm text-gray-500">
-                  Role: <%= Current.user.account_users.find_by(account: account).user_role.humanize %>
+                  Role: <%= Current.user.account_users.find_by(account: account).user_role.titleize %>
                 </p>
                 <% if Current.account == account %>
                   <span class="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700 mt-1">Active</span>
@@ -41,18 +41,58 @@
       </div>
     <% end %>
 
+    <% if Current.account && staff? %>
+      <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+        <h2 class="text-xl font-bold mb-4">Stores joined by <%= Current.account.name %></h2>
+        <% 
+          joined_customers = Customer.unscoped.where(customer_account_id: Current.account.id).includes(:account)
+        %>
+        <% if joined_customers.any? %>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Business memberships represent a wholesale relationship for your entire account. 
+            Any member of your team can access these stores to place orders and manage the relationship on behalf of <%= Current.account.name %>.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% joined_customers.each do |customer| %>
+              <div class="p-4 border rounded-lg flex justify-between items-center <%= Current.account == customer.account ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-200' %>">
+                <div>
+                  <h3 class="font-bold text-gray-900 dark:text-white"><%= customer.account.name %></h3>
+                  <p class="text-sm text-gray-500">Membership type: Business</p>
+                  <% if Current.account == customer.account %>
+                    <span class="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700 mt-1">Active</span>
+                  <% end %>
+                </div>
+                <div>
+                  <% if Current.account != customer.account %>
+                    <%= button_to "Select", managed_account_path(account_id: customer.account.id), method: :patch, class: secondary_button_class("text-xs") %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-500 italic">No stores joined yet.</p>
+        <% end %>
+      </div>
+    <% end %>
+
     <% 
-      available_accounts = Account.where.not(id: Current.user.account_ids)
+      if Current.user.admin? && Current.account
+        joined_account_ids = Customer.unscoped.where(customer_account_id: Current.account.id).pluck(:account_id)
+        available_accounts = Account.where.not(id: joined_account_ids).where.not(id: Current.account.id)
+      else
+        available_accounts = Account.where.not(id: Current.user.account_ids)
+      end
     %>
 
-    <% if available_accounts.any? %>
+    <% if available_accounts.any? && (!customer? || AccountUser.unscoped.where(user_id: Current.user.id).count <= 1) %>
       <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
         <h2 class="text-xl font-bold mb-4">Join a Store</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Associate your account with an available farm shop to start ordering.</p>
         
         <%= form_with url: store_memberships_path, method: :post, class: "flex gap-2 items-end max-w-md" do |f| %>
           <div class="flex-grow">
-            <%= f.label :account_id, "Select Store", class: label_class %>
+            <%= f.label :account_id, "Select Store to Join", class: label_class %>
             <%= f.collection_select :account_id, available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
           </div>
           <%= f.submit "Join Store", class: primary_button_class %>
@@ -60,7 +100,7 @@
       </div>
     <% end %>
 
-    <% if Current.account && (Current.user.admin? || Current.user.account_users.find_by(account: Current.account)&.admin?) %>
+    <% if Current.account && (Current.user.admin? || Current.user.account_users.find_by(account: Current.account)&.store_manager?) %>
       <% 
         supply_available_accounts = Account.where.not(id: Current.account.id)
           .where.not(id: Current.account.customers.pluck(:customer_account_id).compact)
@@ -73,7 +113,7 @@
           
           <%= form_with model: SupplierRequest.new, class: "flex gap-2 items-end max-w-md" do |f| %>
             <div class="flex-grow">
-              <%= f.label :receiver_account_id, "Select Store", class: label_class %>
+              <%= f.label :receiver_account_id, "Select Store to Supply", class: label_class %>
               <%= f.collection_select :receiver_account_id, supply_available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
             </div>
             <%= f.submit "Request to Supply", class: primary_button_class %>

@@ -1,31 +1,35 @@
 class SupplierPolicy < ApplicationPolicy
   def index?
-    true
+    staff?
   end
 
   def show?
-    true
+    staff?
   end
 
   def create?
-    true
+    staff?
   end
 
   def update?
-    true
+    staff?
   end
 
   def destroy?
-    true
+    staff?
   end
 
   def inventory?
-    record.supplier_account_id.present?
+    staff? && record.supplier_account_id.present?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.all
+      if staff?
+        scope.all
+      else
+        scope.none
+      end
     end
   end
 end

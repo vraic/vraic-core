@@ -12,8 +12,24 @@ class ManagedAccountsController < ApplicationController
         flash[:notice] = "Switched to Global view"
       end
     elsif account_id.present?
-      if AccountUser.unscoped.exists?(user: Current.user, account_id: account_id)
-        account = Account.find(account_id)
+      account = Account.find(account_id)
+
+      # Check direct access
+      has_access = AccountUser.unscoped.exists?(user: Current.user, account_id: account.id)
+
+      # Check B2B access through any of the user's accounts
+      if !has_access
+        user_account_ids = Current.user.account_users.pluck(:account_id)
+        if Customer.unscoped.where(account: account, customer_account_id: user_account_ids).exists?
+          # Ensure they have an AccountUser in the target account so set_tenant works
+          ActsAsTenant.with_tenant(account) do
+            AccountUser.where(user: Current.user).first_or_create!(user_role: :customer)
+          end
+          has_access = true
+        end
+      end
+
+      if has_access
         session[:managed_account_id] = account.id
         flash[:notice] = "Switched to #{account.name}"
       else

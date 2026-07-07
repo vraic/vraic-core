@@ -11,6 +11,7 @@ class Order < ApplicationRecord
   belongs_to :customer
   belongs_to :user, optional: true
   has_many :order_items, dependent: :destroy
+  has_many :staff_notes, as: :notable, class_name: "Note", dependent: :destroy
 
   accepts_nested_attributes_for :order_items, allow_destroy: true
 

@@ -3,14 +3,13 @@
 one:
   account: one
   user: one
-  user_role: store_manager
+  notable: one
+  notable_type: Notable
+  content: MyText
 
 two:
   account: two
   user: two
-  user_role: store_staff
-
-three:
-  account: one
-  user: three
-  user_role: customer
+  notable: two
+  notable_type: Notable
+  content: MyText

@@ -8,10 +8,20 @@ module Authorization
 
     # after_action :verify_authorized
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+    helper_method :staff?, :customer?
   end
 
   def pundit_user
     Current.user
+  end
+
+  def staff?
+    Current.user&.admin? || Current.user&.account_users&.exists?(account: Current.account, user_role: [ :store_manager, :store_staff ])
+  end
+
+  def customer?
+    Current.user&.account_users&.exists?(account: Current.account, user_role: :customer)
   end
 
   private

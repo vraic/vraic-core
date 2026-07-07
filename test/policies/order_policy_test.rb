@@ -9,6 +9,7 @@ class OrderPolicyTest < ActiveSupport::TestCase
 
     # Set current account for policy helpers
     Current.account = accounts(:one)
+    ActsAsTenant.current_tenant = accounts(:one)
   end
 
   def test_scope

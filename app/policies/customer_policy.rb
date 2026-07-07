@@ -1,22 +1,22 @@
 class CustomerPolicy < ApplicationPolicy
   def index?
-    true
+    staff?
   end
 
   def show?
-    true
+    staff?
   end
 
   def create?
-    true
+    staff?
   end
 
   def update?
-    true
+    staff?
   end
 
   def destroy?
-    true
+    staff?
   end
 
   def really_destroy?
@@ -26,16 +26,16 @@ class CustomerPolicy < ApplicationPolicy
   private
 
   def account_admin?
-    # ActsAsTenant.current_tenant should be set by the controller before this is called
-    tenant = ActsAsTenant.current_tenant
-    return false unless tenant
-
-    user.account_users.find_by(account: tenant)&.admin?
+    user.account_users.find_by(account: Current.account)&.store_manager?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.all
+      if staff?
+        scope.all
+      else
+        scope.none
+      end
     end
   end
 end

@@ -25,7 +25,7 @@ class UserPolicy < ApplicationPolicy
     tenant = ActsAsTenant.current_tenant
     return false unless tenant
 
-    user.account_users.find_by(account: tenant)&.admin?
+    user.account_users.find_by(account: tenant)&.store_manager?
   end
 
   def same_account?

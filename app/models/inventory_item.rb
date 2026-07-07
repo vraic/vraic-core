@@ -5,7 +5,7 @@ class InventoryItem < ApplicationRecord
   has_prefix_id :item
 
   search_scope :search do
-    attributes :name, :description
+    attributes :name, :description, :weight_value, :weight_unit
     attributes inventory_group: "inventory_group.name"
   end
 

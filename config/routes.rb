@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       patch :awaiting_collection
       patch :complete
     end
+    resources :notes, only: [ :create ]
   end
   resources :tasks do
     member do

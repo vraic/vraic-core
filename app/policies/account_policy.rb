@@ -22,7 +22,7 @@ class AccountPolicy < ApplicationPolicy
   private
 
   def account_admin?
-    user.account_users.find_by(account: record)&.admin?
+    user.account_users.find_by(account: record)&.store_manager?
   end
 
   class Scope < ApplicationPolicy::Scope

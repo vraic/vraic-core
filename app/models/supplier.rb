@@ -53,7 +53,7 @@ class Supplier < ApplicationRecord
         # Use unscoped to find account users across all tenants
         target_account_users = AccountUser.unscoped.where(user_id: user.id)
         # Try to find account where they are owner
-        account = Account.where(owner_id: target_account_users.select(:id)).first
+        account = Account.where(owner_id: user.id).first
         # Fallback to any account they belong to
         account ||= Account.where(id: target_account_users.select(:account_id)).first
         self.supplier_account = account

@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :tasks, foreign_key: :responsible_user_id, dependent: :destroy
   has_many :assigned_tasks, class_name: "Task", foreign_key: :assigned_by_id, dependent: :destroy
   has_many :orders, dependent: :nullify
+  has_many :notes, dependent: :destroy
 
   anonymise do
     overwrite do

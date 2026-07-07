@@ -7,6 +7,10 @@ class OrdersController < ApplicationController
     @query = params[:query]
     scope = policy_scope(Order).order(created_at: :desc)
 
+    if params[:filter] == "today"
+      scope = scope.where(created_at: Time.current.all_day)
+    end
+
     if @query.present?
       clean_query = @query.delete("#").strip
 
@@ -68,8 +72,18 @@ class OrdersController < ApplicationController
     @order.account = Current.account
     @order.user = Current.user if staff?
 
+    if Current.user&.admin? && session[:managed_account_id].present?
+      @order.user = Current.account.owner
+    end
+
     if customer?
       @order.customer = Customer.find_by(user: Current.user, account: Current.account)
+
+      # B2B Fallback: if no personal record, use the one linked to any of the user's accounts
+      if @order.customer.nil?
+        user_account_ids = AccountUser.unscoped.where(user: Current.user).pluck(:account_id)
+        @order.customer = Customer.find_by(account: Current.account, customer_account_id: user_account_ids)
+      end
     end
 
     authorize @order
@@ -123,13 +137,5 @@ class OrdersController < ApplicationController
                                order_items_attributes: [ :id, :inventory_item_id, :location_id, :quantity, :price, :_destroy ] ]
 
       params.require(:order).permit(permitted_attributes)
-    end
-
-    def staff?
-      Current.user.account_users.exists?(account: Current.account, user_role: [ :admin, :standard ])
-    end
-
-    def customer?
-      Current.user.account_users.exists?(account: Current.account, user_role: :customer)
     end
 end
