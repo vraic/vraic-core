@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  allow_unauthenticated_access only: %i[ new create ]
+  layout :resolve_layout
   before_action :set_user, only: %i[ show edit update destroy really_destroy ]
 
   # GET /users or /users.json
@@ -13,6 +15,7 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+    @account = Account.find_by(id: params[:account_id]) if params[:account_id]
   end
 
   # GET /users/1/edit
@@ -25,7 +28,19 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to @user, notice: "User was successfully created." }
+        # Handle account association if provided during signup
+        is_signup = !authenticated?
+        if params[:account_id].present? && is_signup
+          account = Account.find_by(id: params[:account_id])
+          if account
+            # Create Customer record - this will also create AccountUser via callback
+            Customer.create!(account: account, user: @user, name: @user.name, email_address: @user.email_address)
+            session[:managed_account_id] = account.id
+          end
+        end
+
+        start_new_session_for(@user) if is_signup
+        format.html { redirect_to (is_signup ? root_path : @user), notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
         format.html { render :new, status: :unprocessable_content }
@@ -85,6 +100,10 @@ class UsersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
+    end
+
+    def resolve_layout
+      authenticated? ? "application" : "sessions"
     end
 
     # Only allow a list of trusted parameters through.

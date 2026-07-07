@@ -29,3 +29,4 @@
 
 en:
   hello: "Hello world"
+  unauthorized: "You are not authorized to perform this action."

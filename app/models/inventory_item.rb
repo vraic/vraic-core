@@ -8,6 +8,7 @@ class InventoryItem < ApplicationRecord
   has_many :variants, class_name: "InventoryItem", foreign_key: "parent_id", dependent: :destroy
   has_many :inventory_levels, dependent: :destroy
   has_many :locations, through: :inventory_levels
+  has_many :order_items, dependent: :delete_all
 
   monetize :price_cents, allow_nil: true
 
@@ -50,5 +51,17 @@ class InventoryItem < ApplicationRecord
 
   def stock_unit
     weight_unit.presence || "unit"
+  end
+
+  def stock_by_location
+    inventory_levels.pluck(:location_id, :quantity).to_h
+  end
+
+  def stock_data
+    {
+      price: price.to_f,
+      total: total_quantity,
+      locations: stock_by_location
+    }
   end
 end

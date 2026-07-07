@@ -40,6 +40,14 @@ class LocationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to location_url(@location)
   end
 
+  test "should update location and collection_point" do
+    assert_not @location.collection_point?
+    patch location_url(@location), params: { location: { name: "Updated Name", collection_point: "1" } }
+    assert_redirected_to location_url(@location)
+    @location.reload
+    assert @location.collection_point?, "Collection point should have been updated to true"
+  end
+
   test "should destroy location" do
     assert_difference("Location.count", -1) do
       delete location_url(@location)

@@ -17,6 +17,8 @@ module ApplicationHelper
       controller_name == "tasks"
     when :inventory
       [ "inventory_items", "locations", "inventory_groups", "inventory_levels" ].include?(controller_name)
+    when :orders
+      controller_name == "orders"
     when :settings
       [ "accounts", "account_users", "users" ].include?(controller_name)
     else
@@ -70,6 +72,15 @@ module ApplicationHelper
 
   def danger_button_class(extra_classes = nil)
     [ "rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer", extra_classes ].compact.join(" ")
+  end
+
+  def staff?
+    return true if Current.user&.admin?
+    Current.user&.account_users&.exists?(account: Current.account, user_role: [ :admin, :standard ])
+  end
+
+  def customer?
+    Current.user&.account_users&.exists?(account: Current.account, user_role: :customer)
   end
 
   def table_container_class(extra_classes = nil)

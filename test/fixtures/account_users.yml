@@ -13,4 +13,4 @@ two:
 three:
   account: one
   user: three
-  user_role: standard
+  user_role: customer

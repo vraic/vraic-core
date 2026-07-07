@@ -1,4 +1,5 @@
 class InventoryGroupsController < ApplicationController
+  before_action :require_account!
   before_action :set_inventory_group, only: %i[ show edit update destroy ]
 
   # GET /inventory_groups or /inventory_groups.json

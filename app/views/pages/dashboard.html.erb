@@ -10,7 +10,60 @@
   </div>
 
   <div class="mt-10">
-    <p class="mb-4">Welcome, <%= Current.user.email_address %>!</p>
-    <%= button_to "Logout", session_path, method: :delete %>
+    <p class="mb-4">Welcome, <%= Current.user.name %> (<%= Current.user.email_address %>)!</p>
+    
+    <% if Current.user.accounts.any? %>
+      <div class="mt-10">
+        <h2 class="text-xl font-bold mb-4">Your Stores</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <% Current.user.accounts.each do |account| %>
+            <div class="p-4 border rounded-lg flex justify-between items-center <%= Current.account == account ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-200' %>">
+              <div>
+                <h3 class="font-bold text-gray-900 dark:text-white"><%= account.name %></h3>
+                <p class="text-sm text-gray-500">
+                  Role: <%= Current.user.account_users.find_by(account: account).user_role.humanize %>
+                </p>
+                <% if Current.account == account %>
+                  <span class="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700 mt-1">Active</span>
+                <% end %>
+              </div>
+              <div>
+                <% if Current.account != account %>
+                  <%= button_to "Select", managed_account_path(account_id: account.id), method: :patch, class: secondary_button_class("text-xs") %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div class="mt-10 p-6 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/20 dark:border-yellow-900/50">
+        <p class="text-yellow-700 dark:text-yellow-400 font-medium">No stores joined yet.</p>
+        <p class="text-yellow-600 dark:text-yellow-500 mt-1 text-sm">Please select a store below to join, or use a sign-up link from a specific farm shop.</p>
+      </div>
+    <% end %>
+
+    <% 
+      available_accounts = Account.where.not(id: Current.user.account_ids)
+    %>
+
+    <% if available_accounts.any? %>
+      <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+        <h2 class="text-xl font-bold mb-4">Join a Store</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Associate your account with an available farm shop to start ordering.</p>
+        
+        <%= form_with url: store_memberships_path, method: :post, class: "flex gap-2 items-end max-w-md" do |f| %>
+          <div class="flex-grow">
+            <%= f.label :account_id, "Select Store", class: label_class %>
+            <%= f.collection_select :account_id, available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
+          </div>
+          <%= f.submit "Join Store", class: primary_button_class %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+      <%= button_to "Logout", session_path, method: :delete, class: danger_button_class %>
+    </div>
   </div>
 </div>

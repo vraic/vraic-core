@@ -2,9 +2,10 @@
 
 one:
   name: Customer One
-  email_address: one@example.com
+  email_address: customer@example.com
   phone: "1234567890"
   account: one
+  user: three
 
 two:
   name: Customer Two

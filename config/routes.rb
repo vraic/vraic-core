@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  resources :order_items
+  resources :orders do
+    member do
+      patch :awaiting_collection
+      patch :complete
+    end
+  end
   resources :tasks do
     member do
       patch :complete
@@ -35,6 +42,7 @@ Rails.application.routes.draw do
     end
   end
   resource :session
+  resources :store_memberships, only: [ :create ]
   resource :managed_account, only: [ :update, :destroy ]
   resources :passwords, param: :token
 

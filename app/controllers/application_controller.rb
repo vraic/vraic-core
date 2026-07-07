@@ -15,18 +15,36 @@ class ApplicationController < ActionController::Base
     Current.user if Current.user&.admin?
   end
 
+  def require_account!
+    return if Current.user&.admin? # Admins can have nil account (Global view)
+
+    if Current.account.nil?
+      redirect_to dashboard_path, alert: "Please select a store to continue."
+    end
+  end
+
   private
 
     def set_tenant
       return unless authenticated?
 
+      account_id = session[:managed_account_id]
+
       if Current.user.admin?
-        account = Account.find_by(id: session[:managed_account_id]) if session[:managed_account_id]
+        account = Account.find_by(id: account_id) if account_id
         set_current_tenant(account)
       else
-        # Use unscoped to avoid potential issues when AccountUser itself acts_as_tenant
-        account_user = AccountUser.unscoped.where(user: Current.user).first
-        set_current_tenant(account_user&.account)
+        # For non-admins, they must belong to the account
+        if account_id && AccountUser.unscoped.exists?(user: Current.user, account_id: account_id)
+          account = Account.find(account_id)
+          set_current_tenant(account)
+        elsif Current.user.accounts.count == 1
+          # Fallback only if they have exactly one account
+          set_current_tenant(Current.user.accounts.first)
+        else
+          # Multiple accounts or none - require selection
+          set_current_tenant(nil)
+        end
       end
 
       Current.account = ActsAsTenant.current_tenant
