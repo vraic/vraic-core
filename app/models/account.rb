@@ -6,6 +6,7 @@ class Account < ApplicationRecord
   has_many :sent_supplier_requests, class_name: "SupplierRequest", foreign_key: "sender_account_id", dependent: :destroy
   has_many :received_supplier_requests, class_name: "SupplierRequest", foreign_key: "receiver_account_id", dependent: :destroy
   has_many :users, through: :account_users
+  has_many :notes, dependent: :destroy
   has_one :owner, class_name: "AccountUser", foreign_key: "id"
 
   validates :name, presence: true
