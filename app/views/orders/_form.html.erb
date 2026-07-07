@@ -1,0 +1,56 @@
+<%= form_with(model: order, class: "contents") do |form| %>
+  <% if order.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(order.errors.count, "error") %> prohibited this order from being saved:</h2>
+      <ul class="list-disc ml-6">
+        <% order.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-5">
+    <% if staff? %>
+      <div>
+        <%= form.label :customer_id, class: label_class %>
+        <%= form.collection_select :customer_id, policy_scope(Customer).order(:name), :id, :name, { prompt: "Select Customer" }, class: input_class %>
+      </div>
+
+      <div>
+        <%= form.label :status, class: label_class %>
+        <%= form.select :status, Order.statuses.keys.map { |s| [s.titleize, s] }, {}, class: input_class %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :notes, class: label_class %>
+    <%= form.text_area :notes, rows: 3, class: input_class %>
+  </div>
+
+  <div class="my-10" data-controller="nested-form">
+    <template data-nested-form-target="template">
+      <%= form.fields_for :order_items, OrderItem.new, child_index: "NEW_RECORD" do |item_form| %>
+        <%= render "order_item_fields", f: item_form %>
+      <% end %>
+    </template>
+
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold">Order Items</h3>
+      <button type="button" data-action="nested-form#add" class="<%= secondary_button_class %>">
+        Add Item
+      </button>
+    </div>
+
+    <div data-nested-form-target="container">
+      <%= form.fields_for :order_items do |item_form| %>
+        <%= render "order_item_fields", f: item_form %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: primary_button_class %>
+  </div>
+<% end %>

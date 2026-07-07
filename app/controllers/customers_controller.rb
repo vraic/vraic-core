@@ -1,4 +1,5 @@
 class CustomersController < ApplicationController
+  before_action :require_account!
   before_action :set_customer, only: %i[ show edit update destroy really_destroy ]
 
   # GET /customers or /customers.json
@@ -82,7 +83,7 @@ class CustomersController < ApplicationController
     # Only allow a list of trusted parameters through.
     def customer_params
       attributes = [ :name, :email_address, :phone ]
-      attributes << :account_id if Current.user.admin?
+      attributes += [ :account_id ] if Current.user.admin?
       params.require(:customer).permit(attributes)
     end
 end

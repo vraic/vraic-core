@@ -1,4 +1,5 @@
 class TasksController < ApplicationController
+  before_action :require_account!
   before_action :set_task, only: %i[ show edit update destroy complete incomplete ]
 
   # GET /tasks or /tasks.json

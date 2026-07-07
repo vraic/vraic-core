@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_06_225602) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_07_075737) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -103,13 +103,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_225602) do
   create_table "customers", force: :cascade do |t|
     t.integer "account_id", null: false
     t.datetime "created_at", null: false
+    t.integer "customer_account_id"
     t.datetime "deleted_at"
     t.string "email_address"
     t.string "name"
     t.string "phone"
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["account_id"], name: "index_customers_on_account_id"
+    t.index ["customer_account_id"], name: "index_customers_on_customer_account_id"
     t.index ["deleted_at"], name: "index_customers_on_deleted_at"
+    t.index ["user_id"], name: "index_customers_on_user_id"
+  end
+
+  create_table "inventory_group_customers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "customer_id", null: false
+    t.integer "inventory_group_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_inventory_group_customers_on_customer_id"
+    t.index ["inventory_group_id"], name: "index_inventory_group_customers_on_inventory_group_id"
+  end
+
+  create_table "inventory_group_suppliers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "inventory_group_id", null: false
+    t.integer "supplier_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["inventory_group_id"], name: "index_inventory_group_suppliers_on_inventory_group_id"
+    t.index ["supplier_id"], name: "index_inventory_group_suppliers_on_supplier_id"
   end
 
   create_table "inventory_groups", force: :cascade do |t|
@@ -154,10 +176,40 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_225602) do
 
   create_table "locations", force: :cascade do |t|
     t.integer "account_id", null: false
+    t.boolean "collection_point", default: false, null: false
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_locations_on_account_id"
+  end
+
+  create_table "order_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "currency", default: "GBP", null: false
+    t.integer "inventory_item_id", null: false
+    t.integer "location_id"
+    t.integer "order_id", null: false
+    t.integer "price_cents", default: 0, null: false
+    t.integer "quantity", default: 1, null: false
+    t.datetime "updated_at", null: false
+    t.index ["inventory_item_id"], name: "index_order_items_on_inventory_item_id"
+    t.index ["location_id"], name: "index_order_items_on_location_id"
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "currency", default: "GBP", null: false
+    t.integer "customer_id", null: false
+    t.text "notes"
+    t.integer "status", default: 0, null: false
+    t.integer "total_amount_cents", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["account_id"], name: "index_orders_on_account_id"
+    t.index ["customer_id"], name: "index_orders_on_customer_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -167,6 +219,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_225602) do
     t.string "user_agent"
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "supplier_prices", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "currency"
+    t.integer "inventory_item_id", null: false
+    t.integer "price_cents"
+    t.integer "supplier_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["inventory_item_id"], name: "index_supplier_prices_on_inventory_item_id"
+    t.index ["supplier_id"], name: "index_supplier_prices_on_supplier_id"
+  end
+
+  create_table "supplier_requests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "receiver_account_id", null: false
+    t.integer "sender_account_id", null: false
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["receiver_account_id"], name: "index_supplier_requests_on_receiver_account_id"
+    t.index ["sender_account_id"], name: "index_supplier_requests_on_sender_account_id"
+  end
+
+  create_table "suppliers", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "email_address"
+    t.string "name"
+    t.string "phone"
+    t.integer "supplier_account_id"
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["account_id"], name: "index_suppliers_on_account_id"
+    t.index ["deleted_at"], name: "index_suppliers_on_deleted_at"
+    t.index ["supplier_account_id"], name: "index_suppliers_on_supplier_account_id"
+    t.index ["user_id"], name: "index_suppliers_on_user_id"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -199,6 +288,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_225602) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "customers", "accounts"
+  add_foreign_key "customers", "accounts", column: "customer_account_id"
+  add_foreign_key "customers", "users"
+  add_foreign_key "inventory_group_customers", "customers"
+  add_foreign_key "inventory_group_customers", "inventory_groups"
+  add_foreign_key "inventory_group_suppliers", "inventory_groups"
+  add_foreign_key "inventory_group_suppliers", "suppliers"
   add_foreign_key "inventory_groups", "accounts"
   add_foreign_key "inventory_items", "accounts"
   add_foreign_key "inventory_items", "inventory_groups"
@@ -207,7 +302,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_225602) do
   add_foreign_key "inventory_levels", "inventory_items"
   add_foreign_key "inventory_levels", "locations"
   add_foreign_key "locations", "accounts"
+  add_foreign_key "order_items", "inventory_items"
+  add_foreign_key "order_items", "locations"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "orders", "accounts"
+  add_foreign_key "orders", "customers"
+  add_foreign_key "orders", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "supplier_prices", "inventory_items"
+  add_foreign_key "supplier_prices", "suppliers"
+  add_foreign_key "supplier_requests", "accounts", column: "receiver_account_id"
+  add_foreign_key "supplier_requests", "accounts", column: "sender_account_id"
+  add_foreign_key "suppliers", "accounts"
+  add_foreign_key "suppliers", "accounts", column: "supplier_account_id"
+  add_foreign_key "suppliers", "users"
   add_foreign_key "tasks", "accounts"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "responsible_user_id"

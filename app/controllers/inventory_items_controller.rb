@@ -1,4 +1,5 @@
 class InventoryItemsController < ApplicationController
+  before_action :require_account!
   before_action :set_inventory_item, only: %i[ show edit update destroy really_destroy ]
 
   # GET /inventory_items or /inventory_items.json

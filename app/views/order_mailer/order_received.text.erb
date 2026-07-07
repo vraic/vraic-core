@@ -1,0 +1,9 @@
+Order Received - #<%= @order.prefix_id %>
+
+Hi <%= @customer.name %>,
+
+Thank you for your order. We have received it and are currently processing it.
+
+Total: <%= @order.total_amount.format %>
+
+We will notify you once it's ready for collection.

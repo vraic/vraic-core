@@ -1,4 +1,5 @@
 class LocationsController < ApplicationController
+  before_action :require_account!
   before_action :set_location, only: %i[ show edit update destroy ]
 
   # GET /locations or /locations.json
@@ -33,6 +34,7 @@ class LocationsController < ApplicationController
         format.html { redirect_to @location, notice: "Location was successfully created." }
         format.json { render :show, status: :created, location: @location }
       else
+        flash.now[:alert] = @location.errors.full_messages.to_sentence
         format.html { render :new, status: :unprocessable_content }
         format.json { render json: @location.errors, status: :unprocessable_content }
       end
@@ -47,6 +49,7 @@ class LocationsController < ApplicationController
         format.html { redirect_to @location, notice: "Location was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @location }
       else
+        flash.now[:alert] = @location.errors.full_messages.to_sentence
         format.html { render :edit, status: :unprocessable_content }
         format.json { render json: @location.errors, status: :unprocessable_content }
       end
@@ -72,6 +75,6 @@ class LocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def location_params
-      params.require(:location).permit(:name)
+      params.require(:location).permit(:name, :collection_point)
     end
 end

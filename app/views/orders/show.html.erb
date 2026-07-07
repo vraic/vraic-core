@@ -1,0 +1,124 @@
+<div class="w-full">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Order #<%= @order.prefix_id %></h1>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_order_path(@order), class: secondary_button_class if policy(@order).edit? %>
+      <%= link_to "Back", orders_path, class: secondary_button_class %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h2 class="text-xl font-bold mb-4">Order Items</h2>
+        <div class="<%= table_container_class %>">
+          <table class="<%= table_class %>">
+            <thead class="<%= thead_class %>">
+              <tr>
+                <th class="<%= th_class %>">Product</th>
+                <th class="<%= th_class %>">Location</th>
+                <th class="<%= th_class %> text-right">Qty</th>
+                <th class="<%= th_class %> text-right">Price</th>
+                <th class="<%= th_class %> text-right">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody class="<%= tbody_class %>">
+              <% @order.order_items.each do |item| %>
+                <tr class="<%= tr_class %>">
+                  <td class="<%= td_class %>">
+                    <%= item.inventory_item.display_name %>
+                  </td>
+                  <td class="<%= td_class %>">
+                    <%= item.location&.name || "Not assigned" %>
+                  </td>
+                  <td class="<%= td_class %> text-right">
+                    <%= item.quantity %>
+                  </td>
+                  <td class="<%= td_class %> text-right">
+                    <%= item.price.format %>
+                  </td>
+                  <td class="<%= td_class %> text-right font-medium">
+                    <%= (item.price * item.quantity).format %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr class="bg-gray-50 dark:bg-gray-900/50">
+                <td colspan="4" class="<%= td_class %> text-right font-bold">Total</td>
+                <td class="<%= td_class %> text-right font-bold text-lg text-indigo-600">
+                  <%= @order.total_amount.format %>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <% if @order.notes.present? %>
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <h2 class="text-xl font-bold mb-2">Notes</h2>
+          <p class="text-gray-600 dark:text-gray-400 whitespace-pre-wrap"><%= @order.notes %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <h2 class="text-xl font-bold mb-4">Details</h2>
+        <dl class="space-y-4">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Status</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+              <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <%= 
+                case @order.status
+                when 'ordered' then 'bg-yellow-50 text-yellow-800 ring-yellow-600/20'
+                when 'awaiting_collection' then 'bg-blue-50 text-blue-800 ring-blue-600/20'
+                when 'complete' then 'bg-green-50 text-green-800 ring-green-600/20'
+                end %>">
+                <%= @order.status.titleize %>
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Customer</dt>
+            <dd class="mt-1 text-sm text-indigo-600 font-semibold">
+              <%= link_to @order.customer.name, @order.customer %>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Created At</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+              <%= @order.created_at.strftime("%B %d, %Y %H:%M") %>
+            </dd>
+          </div>
+          <% if @order.user %>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Assigned To (Staff)</dt>
+              <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                <%= @order.user.name %>
+              </dd>
+            </div>
+          <% end %>
+        </dl>
+
+        <% if staff? && !@order.complete? %>
+          <div class="mt-6 space-y-3">
+            <% if @order.ordered? %>
+              <%= button_to "Mark as Awaiting Collection", awaiting_collection_order_path(@order), method: :patch, class: primary_button_class("w-full") %>
+            <% elsif @order.awaiting_collection? %>
+              <%= button_to "Mark as Complete", complete_order_path(@order), method: :patch, class: primary_button_class("w-full") %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <% if policy(@order).destroy? %>
+        <div class="bg-red-50 dark:bg-red-900/10 shadow-sm rounded-lg border border-red-200 dark:border-red-900/20 p-6">
+          <h2 class="text-xl font-bold text-red-700 dark:text-red-400 mb-4">Danger Zone</h2>
+          <%= button_to "Destroy Order", @order, method: :delete, class: danger_button_class("w-full"), data: { turbo_confirm: "Are you sure?" } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

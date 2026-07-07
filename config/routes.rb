@@ -1,4 +1,17 @@
 Rails.application.routes.draw do
+  resources :suppliers do
+    member do
+      get :inventory
+    end
+  end
+  resources :supplier_requests, only: [ :index, :new, :create, :update, :destroy ]
+  resources :order_items
+  resources :orders do
+    member do
+      patch :awaiting_collection
+      patch :complete
+    end
+  end
   resources :tasks do
     member do
       patch :complete
@@ -6,6 +19,7 @@ Rails.application.routes.draw do
     end
   end
   resources :inventory_items do
+    resources :supplier_prices, only: [ :create, :destroy ]
     member do
       delete :really_destroy
     end
@@ -35,6 +49,7 @@ Rails.application.routes.draw do
     end
   end
   resource :session
+  resources :store_memberships, only: [ :create ]
   resource :managed_account, only: [ :update, :destroy ]
   resources :passwords, param: :token
 

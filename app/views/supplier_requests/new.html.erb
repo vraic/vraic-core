@@ -1,0 +1,28 @@
+<% content_for :title, "Send Supplier Request" %>
+
+<div class="mx-auto md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl">Send Supplier Request</h1>
+
+  <%= form_with(model: @supplier_request, class: "contents") do |form| %>
+    <% if @supplier_request.errors.any? %>
+      <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+        <h2><%= pluralize(@supplier_request.errors.count, "error") %> prohibited this request from being saved:</h2>
+        <ul>
+          <% @supplier_request.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="my-5">
+      <%= form.label :receiver_account_id, "Target Account", class: label_class %>
+      <%= form.collection_select :receiver_account_id, Account.where.not(id: ActsAsTenant.current_tenant&.id), :id, :name, { prompt: "Select an account" }, class: input_class %>
+    </div>
+
+    <div class="inline">
+      <%= form.submit "Send Request", class: primary_button_class %>
+      <%= link_to "Cancel", supplier_requests_path, class: secondary_button_class %>
+    </div>
+  <% end %>
+</div>

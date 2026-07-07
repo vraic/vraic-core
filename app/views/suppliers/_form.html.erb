@@ -1,0 +1,38 @@
+<%= form_with(model: supplier, class: "contents") do |form| %>
+  <% if supplier.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(supplier.errors.count, "error") %> prohibited this supplier from being saved:</h2>
+      <ul class="list-disc ml-6">
+        <% supplier.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :name, class: label_class %>
+    <%= form.text_field :name, class: input_class(supplier.errors[:name].any?) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :email_address, class: label_class %>
+    <%= form.text_field :email_address, class: input_class(supplier.errors[:email_address].any?) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :phone, class: label_class %>
+    <%= form.text_field :phone, class: input_class(supplier.errors[:phone].any?) %>
+  </div>
+
+  <% if Current.user.admin? %>
+    <div class="my-5">
+      <%= form.label :account_id, class: label_class %>
+      <%= form.select(:account_id, Account.unscoped.all.order(:name).map{|ac| [ac.name.to_s, ac.id]}, { selected: form.object.persisted? ? supplier.account_id : params[:account_id], include_blank: false }, class: input_class(supplier.errors[:account_id].any?)) %>
+    </div>
+  <% end %>
+
+  <div class="inline">
+    <%= form.submit class: primary_button_class("w-full sm:w-auto") %>
+  </div>
+<% end %>

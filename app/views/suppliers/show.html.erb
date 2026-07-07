@@ -1,0 +1,20 @@
+<% content_for :title, "Showing supplier" %>
+
+<div class="md:w-2/3 w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl">Showing supplier</h1>
+
+  <%= render @supplier %>
+
+  <div class="flex flex-wrap gap-2 mt-4">
+    <%= link_to "Edit this supplier", edit_supplier_path(@supplier), class: secondary_button_class("w-full sm:w-auto text-center") %>
+    <%= link_to "Back to suppliers", suppliers_path, class: secondary_button_class("w-full sm:w-auto text-center") %>
+    <%= button_to "Destroy this supplier", @supplier, method: :delete, form_class: "w-full sm:w-auto", class: danger_button_class("w-full"), data: { turbo_confirm: "Are you sure?" } %>
+    <% if @supplier.supplier_account_id.present? %>
+      <%= link_to "View Inventory", inventory_supplier_path(@supplier), class: primary_button_class("w-full sm:w-auto text-center") %>
+    <% end %>
+  </div>
+</div>

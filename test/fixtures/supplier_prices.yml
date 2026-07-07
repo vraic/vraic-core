@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  inventory_item: one
+  supplier: one
+  price_cents: 1
+  currency: MyString
+
+two:
+  inventory_item: two
+  supplier: two
+  price_cents: 1
+  currency: MyString

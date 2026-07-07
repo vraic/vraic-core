@@ -8,6 +8,8 @@ class InventoryItem < ApplicationRecord
   has_many :variants, class_name: "InventoryItem", foreign_key: "parent_id", dependent: :destroy
   has_many :inventory_levels, dependent: :destroy
   has_many :locations, through: :inventory_levels
+  has_many :order_items, dependent: :delete_all
+  has_many :supplier_prices, dependent: :destroy
 
   monetize :price_cents, allow_nil: true
 
@@ -44,11 +46,30 @@ class InventoryItem < ApplicationRecord
     parent.price
   end
 
+  def price_for(supplier)
+    supplier_price = supplier_prices.find_by(supplier: supplier)
+    return supplier_price.price if supplier_price
+
+    price
+  end
+
   def total_quantity
     inventory_levels.sum(:quantity)
   end
 
   def stock_unit
     weight_unit.presence || "unit"
+  end
+
+  def stock_by_location
+    inventory_levels.pluck(:location_id, :quantity).to_h
+  end
+
+  def stock_data
+    {
+      price: price.to_f,
+      total: total_quantity,
+      locations: stock_by_location
+    }
   end
 end

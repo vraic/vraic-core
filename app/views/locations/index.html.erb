@@ -15,6 +15,7 @@
       <thead class="<%= thead_class %>">
         <tr>
           <th class="<%= th_class %>">Name</th>
+          <th class="<%= th_class %>">Collection Point</th>
         </tr>
       </thead>
       <tbody class="<%= tbody_class %>" id="locations">
@@ -23,6 +24,13 @@
             <tr class="<%= tr_class %>">
               <td class="<%= td_class %>">
                 <%= link_to location.name, location, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+              </td>
+              <td class="<%= td_class %>">
+                <% if location.collection_point? %>
+                  <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Yes</span>
+                <% else %>
+                  <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">No</span>
+                <% end %>
               </td>
             </tr>
           <% end %>

@@ -16,6 +16,26 @@
     <%= form.text_field :name, class: input_class(inventory_group.errors[:name].any?) %>
   </div>
 
+  <div class="my-5">
+    <%= form.label :supplier_ids, "Visible to Suppliers (leave empty for all)", class: label_class %>
+    <%= form.collection_check_boxes :supplier_ids, policy_scope(Supplier), :id, :name do |b| %>
+      <div class="flex items-center mt-1">
+        <%= b.check_box class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %>
+        <%= b.label class: "ml-2 block text-sm text-gray-900" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :customer_ids, "Visible to Customers (leave empty for all)", class: label_class %>
+    <%= form.collection_check_boxes :customer_ids, policy_scope(Customer), :id, :name do |b| %>
+      <div class="flex items-center mt-1">
+        <%= b.check_box class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %>
+        <%= b.label class: "ml-2 block text-sm text-gray-900" %>
+      </div>
+    <% end %>
+  </div>
+
   <div class="inline">
     <%= form.submit class: primary_button_class("w-full sm:w-auto") %>
   </div>

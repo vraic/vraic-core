@@ -42,6 +42,18 @@ class GlobalAdminTest < ActionDispatch::IntegrationTest
     # In global mode, it should show items from all accounts
   end
 
+  test "admin can see all navigation links" do
+    sign_in_as(@admin)
+    get dashboard_path
+    assert_select "nav" do
+      assert_select "a", text: /Tasks/
+      assert_select "a", text: /Customers/
+      assert_select "a", text: /Inventory/
+      assert_select "a", text: /Orders/
+      assert_select "a", text: /Settings/
+    end
+  end
+
   test "admin cannot create an inventory item without selecting an account" do
     sign_in_as(@admin)
 

@@ -13,10 +13,14 @@ module ApplicationHelper
       controller_name == "pages" && [ "home", "dashboard" ].include?(action_name)
     when :customers
       controller_name == "customers"
+    when :suppliers
+      controller_name == "suppliers" || controller_name == "supplier_requests"
     when :tasks
       controller_name == "tasks"
     when :inventory
       [ "inventory_items", "locations", "inventory_groups", "inventory_levels" ].include?(controller_name)
+    when :orders
+      controller_name == "orders"
     when :settings
       [ "accounts", "account_users", "users" ].include?(controller_name)
     else
@@ -72,6 +76,15 @@ module ApplicationHelper
     [ "rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer", extra_classes ].compact.join(" ")
   end
 
+  def staff?
+    return true if Current.user&.admin?
+    Current.user&.account_users&.exists?(account: Current.account, user_role: [ :admin, :standard ])
+  end
+
+  def customer?
+    Current.user&.account_users&.exists?(account: Current.account, user_role: :customer)
+  end
+
   def table_container_class(extra_classes = nil)
     [ "bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700", extra_classes ].compact.join(" ")
   end
@@ -98,5 +111,9 @@ module ApplicationHelper
 
   def td_class(extra_classes = nil)
     [ "px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white", extra_classes ].compact.join(" ")
+  end
+
+  def help_text_class(extra_classes = nil)
+    [ "mt-2 text-sm text-gray-500 dark:text-gray-400", extra_classes ].compact.join(" ")
   end
 end

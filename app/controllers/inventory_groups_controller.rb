@@ -1,4 +1,5 @@
 class InventoryGroupsController < ApplicationController
+  before_action :require_account!
   before_action :set_inventory_group, only: %i[ show edit update destroy ]
 
   # GET /inventory_groups or /inventory_groups.json
@@ -72,6 +73,6 @@ class InventoryGroupsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_group_params
-      params.require(:inventory_group).permit(:name)
+      params.require(:inventory_group).permit(:name, supplier_ids: [], customer_ids: [])
     end
 end

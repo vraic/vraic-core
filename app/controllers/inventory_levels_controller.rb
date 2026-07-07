@@ -1,4 +1,5 @@
 class InventoryLevelsController < ApplicationController
+  before_action :require_account!
   before_action :set_inventory_level, only: %i[ show edit update destroy ]
   before_action :set_inventory_item, only: %i[ create transfer ]
 

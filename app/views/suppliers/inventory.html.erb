@@ -1,0 +1,41 @@
+<% content_for :title, "#{@supplier.name} - Inventory" %>
+
+<div class="w-full">
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Inventory: <%= @supplier.name %></h1>
+    <%= link_to "Back to supplier", @supplier, class: secondary_button_class %>
+  </div>
+
+  <div class="mt-8 <%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">Item</th>
+          <th class="<%= th_class %>">Group</th>
+          <th class="<%= th_class %>">Price</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>">
+        <% if @inventory_items.any? %>
+          <% @inventory_items.each do |item| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %>">
+                <%= item.display_name %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= item.inventory_group&.name %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= humanized_money_with_symbol item.price %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="3" class="<%= td_class %> text-center py-10">No items visible from this supplier.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

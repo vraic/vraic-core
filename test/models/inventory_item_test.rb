@@ -71,4 +71,11 @@ class InventoryItemTest < ActiveSupport::TestCase
     variant = inventory_items(:two)
     assert_equal "g", variant.stock_unit
   end
+
+  test "stock_data returns price and stock levels" do
+    data = @item.stock_data
+    assert_equal @item.price.to_f, data[:price]
+    assert_equal 10, data[:total]
+    assert_equal({ locations(:one).id => 10 }, data[:locations])
+  end
 end

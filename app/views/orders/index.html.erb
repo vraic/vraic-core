@@ -1,0 +1,56 @@
+<% content_for :title, "Orders" %>
+
+<div class="w-full">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Orders</h1>
+    <%= link_to "New Order", new_order_path, class: primary_button_class %>
+  </div>
+
+  <div class="<%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">ID</th>
+          <th class="<%= th_class %>">Customer</th>
+          <th class="<%= th_class %>">Status</th>
+          <th class="<%= th_class %>">Total</th>
+          <th class="<%= th_class %>">Created</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>">
+        <% if @orders.any? %>
+          <% @orders.each do |order| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %> font-medium text-indigo-600">
+                <%= link_to "##{order.prefix_id}", order %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= order.customer.name %>
+              </td>
+              <td class="<%= td_class %>">
+                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <%= 
+                  case order.status
+                  when 'ordered' then 'bg-yellow-50 text-yellow-800 ring-yellow-600/20'
+                  when 'awaiting_collection' then 'bg-blue-50 text-blue-800 ring-blue-600/20'
+                  when 'complete' then 'bg-green-50 text-green-800 ring-green-600/20'
+                  end %>">
+                  <%= order.status.titleize %>
+                </span>
+              </td>
+              <td class="<%= td_class %>">
+                <%= order.total_amount.format %>
+              </td>
+              <td class="<%= td_class %> text-gray-500">
+                <%= order.created_at.strftime("%b %d, %Y") %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="<%= td_class %> text-center py-10 text-gray-500">No orders found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
