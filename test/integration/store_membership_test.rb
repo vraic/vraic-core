@@ -18,10 +18,8 @@ class StoreMembershipTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert_redirected_to root_path
-    follow_redirect!
     assert_redirected_to dashboard_path
-    follow_redirect! # To dashboard_path
+    follow_redirect!
     assert_equal @account.id, session[:managed_account_id]
     assert_match /You have successfully joined #{@account.name}/, response.body
 

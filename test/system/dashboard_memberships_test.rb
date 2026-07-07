@@ -18,13 +18,13 @@ class DashboardMembershipsTest < ApplicationSystemTestCase
     assert_selector "select#account_id option", text: "Account Two"
 
     # Join Account Two
-    select "Account Two", from: "Select Store"
+    select "Account Two", from: "Select Store to Join"
     click_on "Join Store"
 
     assert_text "You have successfully joined Account Two"
 
-    # Now check dashboard again (should be redirected there or to root which redirects to dashboard)
-    # The controller redirects to root_path.
+    # Now check dashboard again (should be redirected there)
+    # The controller redirects to dashboard_path.
 
     assert_match /\/dashboard|\//, current_path
     # dashboard is the root if authenticated

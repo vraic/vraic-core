@@ -92,7 +92,7 @@
         
         <%= form_with url: store_memberships_path, method: :post, class: "flex gap-2 items-end max-w-md" do |f| %>
           <div class="flex-grow">
-            <%= f.label :account_id, "Select Store", class: label_class %>
+            <%= f.label :account_id, "Select Store to Join", class: label_class %>
             <%= f.collection_select :account_id, available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
           </div>
           <%= f.submit "Join Store", class: primary_button_class %>
@@ -113,7 +113,7 @@
           
           <%= form_with model: SupplierRequest.new, class: "flex gap-2 items-end max-w-md" do |f| %>
             <div class="flex-grow">
-              <%= f.label :receiver_account_id, "Select Store", class: label_class %>
+              <%= f.label :receiver_account_id, "Select Store to Supply", class: label_class %>
               <%= f.collection_select :receiver_account_id, supply_available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
             </div>
             <%= f.submit "Request to Supply", class: primary_button_class %>

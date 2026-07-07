@@ -34,6 +34,7 @@ class StoreMembershipsController < ApplicationController
       session[:managed_account_id] = account.id
     end
 
-    redirect_to root_path, notice: "You have successfully joined #{account.name}."
+    Current.user.reload
+    redirect_to dashboard_path, notice: "You have successfully joined #{account.name}."
   end
 end

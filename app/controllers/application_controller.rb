@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
         set_current_tenant(account)
       else
         # For non-admins, they must belong to the account
-        if account_id && AccountUser.unscoped.exists?(user: Current.user, account_id: account_id)
+        if account_id && AccountUser.unscoped.where(user_id: Current.user.id, account_id: account_id).exists?
           account = Account.find(account_id)
           set_current_tenant(account)
         elsif Current.user.accounts.count == 1
