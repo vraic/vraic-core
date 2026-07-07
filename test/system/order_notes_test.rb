@@ -25,7 +25,7 @@ class OrderNotesTest < ApplicationSystemTestCase
 
   test "customers cannot see staff notes section" do
     @customer_user = users(:three)
-    
+
     login_as @customer_user
     # Customer only has one account, so no switcher
     visit order_url(@order)
