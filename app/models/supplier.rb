@@ -1,8 +1,14 @@
 class Supplier < ApplicationRecord
+  include SearchCop
   include Anony::Anonymisable
   acts_as_paranoid
   acts_as_tenant :account
   has_prefix_id :supp
+
+  search_scope :search do
+    attributes :name, :email_address, :phone
+    attributes supplier_account: "supplier_account.name"
+  end
 
   belongs_to :supplier_account, class_name: "Account", optional: true
   belongs_to :user, optional: true

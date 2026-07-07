@@ -1,8 +1,14 @@
 class Customer < ApplicationRecord
+  include SearchCop
   include Anony::Anonymisable
   acts_as_paranoid
   acts_as_tenant :account
   has_prefix_id :cust
+
+  search_scope :search do
+    attributes :name, :email_address, :phone
+    attributes customer_account: "customer_account.name"
+  end
 
   belongs_to :user, optional: true
   belongs_to :customer_account, class_name: "Account", optional: true
