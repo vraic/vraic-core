@@ -10,19 +10,19 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
   test "requesting to supply another store from the dashboard" do
     # 1. Select the account that wants to be a supplier
     select_account("Account One")
-    
+
     visit dashboard_path
-    
+
     assert_text "Supply a Store"
     assert_text "Request to become a supplier for another farm shop on the platform using Account One"
-    
+
     within "form[action='/supplier_requests']" do
       select "Account Two", from: "Select Store"
       click_on "Request to Supply"
     end
-    
+
     assert_text "Supplier request was successfully sent."
-    
+
     # Verify the request exists
     request = SupplierRequest.last
     assert_equal accounts(:one), request.sender_account
@@ -34,7 +34,7 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
     @user = users(:two) # Standard user in Account Two
     login_as @user
     # select_account is not needed because they only have one account, it's auto-selected
-    
+
     visit dashboard_path
     assert_no_text "Supply a Store"
   end
@@ -57,22 +57,18 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
     end
     assert_text "Supplier request was approved."
 
-    # 3. Check "They Supply" tab in Account Two (Account One should be there as a supplier)
+    # 3. Check Suppliers in Account Two (Account One should be there as a supplier)
     visit suppliers_path
-    click_on "They Supply"
     within "#suppliers" do
       assert_text "Account One"
     end
-    assert_no_selector "#customers_i_supply"
 
-    # 4. Check "I Supply" tab in Account One (Account Two should be there as a customer I supply)
+    # 4. Check Customers in Account One (Account Two should be there as a business customer)
     select_account("Account One")
-    visit suppliers_path
-    click_on "I Supply"
-    within "#customers_i_supply" do
+    visit customers_path
+    within "#customers" do
       assert_text "Account Two"
-      assert_text "Supplying"
+      assert_text "Business"
     end
-    assert_no_selector "#suppliers"
   end
 end

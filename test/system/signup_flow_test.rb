@@ -22,7 +22,7 @@ class SignupFlowTest < ApplicationSystemTestCase
     click_button "Create Account"
 
     assert_text "Account was successfully created"
-    
+
     # 3. Check Dashboard for Supplier Widget
     visit dashboard_path
     assert_text "My Shiny Store"
