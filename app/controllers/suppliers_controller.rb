@@ -3,7 +3,9 @@ class SuppliersController < ApplicationController
   before_action :set_supplier, only: %i[ show edit update destroy inventory ]
 
   def index
-    @pagy, @suppliers = pagy(policy_scope(Supplier))
+    suppliers = policy_scope(Supplier)
+    suppliers = suppliers.search(params[:query]) if params[:query].present?
+    @pagy, @suppliers = pagy(suppliers)
   end
 
   def show

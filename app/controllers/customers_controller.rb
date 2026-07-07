@@ -4,7 +4,9 @@ class CustomersController < ApplicationController
 
   # GET /customers or /customers.json
   def index
-    @pagy, @customers = pagy(policy_scope(Customer))
+    customers = policy_scope(Customer)
+    customers = customers.search(params[:query]) if params[:query].present?
+    @pagy, @customers = pagy(customers)
   end
 
   # GET /customers/1 or /customers/1.json

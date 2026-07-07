@@ -1,8 +1,14 @@
 class Customer < ApplicationRecord
+  include SearchCop
   include Anony::Anonymisable
   acts_as_paranoid
   acts_as_tenant :account
   has_prefix_id :cust
+
+  search_scope :search do
+    attributes :name, :email_address, :phone
+    attributes customer_account: "customer_account.name"
+  end
 
   belongs_to :user, optional: true
   belongs_to :customer_account, class_name: "Account", optional: true
@@ -50,7 +56,7 @@ class Customer < ApplicationRecord
   end
 
   def ensure_account_user
-    return unless user && account
+    return unless user_id && account_id
     # We use unscoped here to find/create AccountUser across any existing tenant context
     AccountUser.unscoped.where(account_id: account_id, user_id: user_id).first_or_create!(user_role: :customer)
   end

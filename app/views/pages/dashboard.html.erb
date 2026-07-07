@@ -10,16 +10,20 @@
   <div class="mt-10">
     <p class="mb-4">Welcome, <%= Current.user.name %> (<%= Current.user.email_address %>)!</p>
     
-    <% if Current.user.accounts.any? %>
-      <div class="mt-10">
+    <% 
+      user_accounts = ActsAsTenant.without_tenant { Current.user.accounts.to_a }
+    %>
+    
+    <% if user_accounts.any? %>
+      <div id="your-stores" class="mt-10">
         <h2 class="text-xl font-bold mb-4">Your Stores</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <% Current.user.accounts.each do |account| %>
+          <% user_accounts.each do |account| %>
             <div class="p-4 border rounded-lg flex justify-between items-center <%= Current.account == account ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-200' %>">
               <div>
                 <h3 class="font-bold text-gray-900 dark:text-white"><%= account.name %></h3>
                 <p class="text-sm text-gray-500">
-                  Role: <%= Current.user.account_users.find_by(account: account).user_role.titleize %>
+                  Role: <%= ActsAsTenant.without_tenant { Current.user.account_users.find_by(account: account).user_role.titleize } %>
                 </p>
                 <% if Current.account == account %>
                   <span class="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700 mt-1">Active</span>
@@ -42,7 +46,7 @@
     <% end %>
 
     <% if Current.account && staff? %>
-      <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+      <div id="business-stores" class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
         <h2 class="text-xl font-bold mb-4">Stores joined by <%= Current.account.name %></h2>
         <% 
           joined_customers = Customer.unscoped.where(customer_account_id: Current.account.id).includes(:account)
@@ -81,7 +85,8 @@
         joined_account_ids = Customer.unscoped.where(customer_account_id: Current.account.id).pluck(:account_id)
         available_accounts = Account.where.not(id: joined_account_ids).where.not(id: Current.account.id)
       else
-        available_accounts = Account.where.not(id: Current.user.account_ids)
+        joined_account_ids = ActsAsTenant.without_tenant { Current.user.account_ids }
+        available_accounts = Account.where.not(id: joined_account_ids)
       end
     %>
 
