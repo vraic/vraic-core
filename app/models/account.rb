@@ -7,7 +7,7 @@ class Account < ApplicationRecord
   has_many :received_supplier_requests, class_name: "SupplierRequest", foreign_key: "receiver_account_id", dependent: :destroy
   has_many :users, through: :account_users
   has_many :notes, dependent: :destroy
-  has_one :owner, class_name: "AccountUser", foreign_key: "id"
+  belongs_to :owner, class_name: "User", foreign_key: "owner_id"
 
   validates :name, presence: true
   validates :owner_id, presence: true

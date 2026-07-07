@@ -5,6 +5,7 @@ class TaskPolicyTest < ActiveSupport::TestCase
     @account = accounts(:one)
     @user = users(:one)
     @task = tasks(:one)
+    ActsAsTenant.current_tenant = @account
   end
 
   def test_scope

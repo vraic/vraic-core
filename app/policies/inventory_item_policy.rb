@@ -1,22 +1,22 @@
 class InventoryItemPolicy < ApplicationPolicy
   def index?
-    true
+    staff? || customer?
   end
 
   def show?
-    true
+    staff? || customer?
   end
 
   def create?
-    true
+    staff?
   end
 
   def update?
-    true
+    staff?
   end
 
   def destroy?
-    true
+    staff?
   end
 
   def really_destroy?
@@ -26,10 +26,7 @@ class InventoryItemPolicy < ApplicationPolicy
   private
 
   def account_admin?
-    tenant = ActsAsTenant.current_tenant
-    return false unless tenant
-
-    user.account_users.find_by(account: tenant)&.admin?
+    user.account_users.find_by(account: Current.account)&.store_manager?
   end
 
   class Scope < ApplicationPolicy::Scope

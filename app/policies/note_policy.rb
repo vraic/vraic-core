@@ -7,6 +7,6 @@ class NotePolicy < ApplicationPolicy
   private
 
   def staff?
-    user.admin? || user.account_users.exists?(account: Current.account, user_role: [ :admin, :standard ])
+    user.admin? || user.account_users.exists?(account: Current.account, user_role: [ :store_manager, :store_staff ])
   end
 end

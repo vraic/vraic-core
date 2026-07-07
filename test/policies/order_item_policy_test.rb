@@ -6,6 +6,7 @@ class OrderItemPolicyTest < ActiveSupport::TestCase
     @customer = users(:three)
     @order_item = order_items(:one)
     Current.account = accounts(:one)
+    ActsAsTenant.current_tenant = accounts(:one)
   end
 
   def test_scope

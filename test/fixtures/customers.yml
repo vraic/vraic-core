@@ -12,3 +12,9 @@ two:
   email_address: two@example.com
   phone: "0987654321"
   account: two
+
+b2b_customer:
+  name: Business Customer
+  email_address: b2b@example.com
+  account: four
+  customer_account: one

@@ -20,7 +20,7 @@ class AccountUsersTenantTest < ActionDispatch::IntegrationTest
   test "should automatically associate new account_user with current tenant" do
     @unassigned = users(:unassigned)
     assert_difference("AccountUser.count") do
-      post account_users_url, params: { account_user: { user_id: @unassigned.id, user_role: "standard" } }
+      post account_users_url, params: { account_user: { user_id: @unassigned.id, user_role: "store_staff" } }
     end
 
     new_account_user = AccountUser.last
@@ -45,7 +45,7 @@ class AccountUsersTenantTest < ActionDispatch::IntegrationTest
     sign_in_as(users(:administrator))
     @unassigned = users(:unassigned)
     assert_difference("AccountUser.count") do
-      post account_users_url, params: { account_user: { account_id: @other_account.id, user_id: @unassigned.id, user_role: "standard" } }
+      post account_users_url, params: { account_user: { account_id: @other_account.id, user_id: @unassigned.id, user_role: "store_staff" } }
     end
 
     assert_equal @other_account.id, AccountUser.last.account_id

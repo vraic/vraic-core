@@ -26,7 +26,7 @@ class SignupFlowTest < ApplicationSystemTestCase
     # 3. Check Dashboard for Supplier Widget
     visit dashboard_path
     assert_text "My Shiny Store"
-    assert_text "Role: Admin"
+    assert_text "Role: Store Manager"
     assert_text "Supply a Store"
   end
 end

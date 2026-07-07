@@ -3,12 +3,12 @@
 one:
   account: one
   user: one
-  user_role: admin
+  user_role: store_manager
 
 two:
   account: two
   user: two
-  user_role: standard
+  user_role: store_staff
 
 three:
   account: one

@@ -32,12 +32,12 @@ class AccountsController < ApplicationController
       if @account.save
         # Create AccountUser for the owner
         if @account.owner_id
-          AccountUser.unscoped.where(account_id: @account.id, user_id: @account.owner_id).first_or_create(user_role: :admin)
+          AccountUser.unscoped.where(account_id: @account.id, user_id: @account.owner_id).first_or_create(user_role: :store_manager)
         end
 
         # Also make the creator an admin if different from owner
         if Current.user&.id && Current.user.id != @account.owner_id.to_i
-          AccountUser.unscoped.where(account_id: @account.id, user_id: Current.user.id).first_or_create(user_role: :admin)
+          AccountUser.unscoped.where(account_id: @account.id, user_id: Current.user.id).first_or_create(user_role: :store_manager)
         end
 
         session[:managed_account_id] ||= @account.id
