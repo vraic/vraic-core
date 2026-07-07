@@ -8,8 +8,10 @@ class InventoryItemsController < ApplicationController
     @inventory_items = policy_scope(InventoryItem).where(parent_id: nil)
 
     if @query.present?
+      # SearchCop handles numeric searches better if numbers and units are separated by a space
+      search_query = @query.gsub(/(?<=\d)(?=[a-zA-Z])|(?<=[a-zA-Z])(?=\d)/, " ")
       # Search all items and find their parents or themselves if they are parents
-      matched_ids = policy_scope(InventoryItem).search(@query).pluck(:parent_id, :id).flatten.compact.uniq
+      matched_ids = policy_scope(InventoryItem).search(search_query).pluck(:parent_id, :id).flatten.compact.uniq
       @inventory_items = @inventory_items.where(id: matched_ids)
     end
 

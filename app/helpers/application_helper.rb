@@ -24,6 +24,8 @@ module ApplicationHelper
       [ "inventory_items", "locations", "inventory_groups", "inventory_levels" ].include?(controller_name)
     when :orders
       controller_name == "orders"
+    when :reports
+      controller_name == "reports"
     when :settings
       [ "accounts", "account_users", "users" ].include?(controller_name)
     else
