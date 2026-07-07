@@ -42,7 +42,7 @@ class UserPolicy < ApplicationPolicy
       else
         tenant = ActsAsTenant.current_tenant
         if tenant
-          scope.joins(:account_users).where(account_users: { account_id: tenant.id })
+          scope.joins(:account_users).where(account_users: { account_id: tenant.id }).distinct
         else
           scope.none
         end

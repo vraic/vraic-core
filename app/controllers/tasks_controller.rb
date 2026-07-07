@@ -40,13 +40,13 @@ class TasksController < ApplicationController
   def new
     @task = Task.new
     authorize @task
-    @users = policy_scope(User)
+    @users = policy_scope(User).order(:name)
   end
 
   # GET /tasks/1/edit
   def edit
     authorize @task
-    @users = policy_scope(User)
+    @users = policy_scope(User).order(:name)
   end
 
   # POST /tasks or /tasks.json
@@ -61,6 +61,7 @@ class TasksController < ApplicationController
         format.html { redirect_to tasks_path, notice: "Task was successfully created." }
         format.json { render :show, status: :created, location: @task }
       else
+        @users = policy_scope(User).order(:name)
         flash.now[:alert] = @task.errors.full_messages.to_sentence
         format.html { render :new, status: :unprocessable_content }
         format.json { render json: @task.errors, status: :unprocessable_content }
@@ -76,6 +77,7 @@ class TasksController < ApplicationController
         format.html { redirect_to tasks_path, notice: "Task was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @task }
       else
+        @users = policy_scope(User).order(:name)
         flash.now[:alert] = @task.errors.full_messages.to_sentence
         format.html { render :edit, status: :unprocessable_content }
         format.json { render json: @task.errors, status: :unprocessable_content }
