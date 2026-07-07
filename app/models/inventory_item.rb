@@ -1,7 +1,13 @@
 class InventoryItem < ApplicationRecord
+  include SearchCop
   acts_as_tenant :account
   acts_as_paranoid
   has_prefix_id :item
+
+  search_scope :search do
+    attributes :name, :description
+    attributes inventory_group: "inventory_group.name"
+  end
 
   belongs_to :inventory_group, optional: true
   belongs_to :parent, class_name: "InventoryItem", optional: true

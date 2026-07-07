@@ -6,15 +6,25 @@
     <%= link_to "New Order", new_order_path, class: primary_button_class %>
   </div>
 
+  <div class="mb-6">
+    <%= form_with url: orders_path, method: :get, class: "flex gap-2" do |f| %>
+      <div class="grow">
+        <%= f.text_field :query, value: params[:query], placeholder: "Search by ID, customer name or total...", class: input_class %>
+      </div>
+      <%= f.submit "Search", class: secondary_button_class %>
+      <%= link_to "Clear", orders_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" if params[:query].present? %>
+    <% end %>
+  </div>
+
   <div class="<%= table_container_class %>">
     <table class="<%= table_class %>">
       <thead class="<%= thead_class %>">
         <tr>
-          <th class="<%= th_class %>">ID</th>
-          <th class="<%= th_class %>">Customer</th>
-          <th class="<%= th_class %>">Status</th>
+          <th class="<%= th_class %>">Order Date</th>
+          <th class="<%= th_class %>">Order ID</th>
+          <th class="<%= th_class %>">Customer Name</th>
           <th class="<%= th_class %>">Total</th>
-          <th class="<%= th_class %>">Created</th>
+          <th class="<%= th_class %>">Status</th>
         </tr>
       </thead>
       <tbody class="<%= tbody_class %>">
@@ -22,10 +32,16 @@
           <% @orders.each do |order| %>
             <tr class="<%= tr_class %>">
               <td class="<%= td_class %> font-medium text-indigo-600">
-                <%= link_to "##{order.prefix_id}", order %>
+                <%= link_to order.created_at.strftime("%b %d, %Y %H:%M"), order %>
+              </td>
+              <td class="<%= td_class %> font-medium text-indigo-600">
+                <%= link_to order.number, order %>
               </td>
               <td class="<%= td_class %>">
                 <%= order.customer.name %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= order.total_amount.format %>
               </td>
               <td class="<%= td_class %>">
                 <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <%= 
@@ -36,12 +52,6 @@
                   end %>">
                   <%= order.status.titleize %>
                 </span>
-              </td>
-              <td class="<%= td_class %>">
-                <%= order.total_amount.format %>
-              </td>
-              <td class="<%= td_class %> text-gray-500">
-                <%= order.created_at.strftime("%b %d, %Y") %>
               </td>
             </tr>
           <% end %>
