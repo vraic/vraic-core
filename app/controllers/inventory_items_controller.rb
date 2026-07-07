@@ -4,7 +4,14 @@ class InventoryItemsController < ApplicationController
 
   # GET /inventory_items or /inventory_items.json
   def index
+    @query = params[:query]
     @inventory_items = policy_scope(InventoryItem).where(parent_id: nil)
+
+    if @query.present?
+      # Search all items and find their parents or themselves if they are parents
+      matched_ids = policy_scope(InventoryItem).search(@query).pluck(:parent_id, :id).flatten.compact.uniq
+      @inventory_items = @inventory_items.where(id: matched_ids)
+    end
 
     if params[:location_id].present?
       # Find items (or their variants) that are in the specified location
