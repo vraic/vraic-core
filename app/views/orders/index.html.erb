@@ -10,11 +10,11 @@
     <table class="<%= table_class %>">
       <thead class="<%= thead_class %>">
         <tr>
-          <th class="<%= th_class %>">ID</th>
-          <th class="<%= th_class %>">Customer</th>
-          <th class="<%= th_class %>">Status</th>
+          <th class="<%= th_class %>">Order Date</th>
+          <th class="<%= th_class %>">Order ID</th>
+          <th class="<%= th_class %>">Customer Name</th>
           <th class="<%= th_class %>">Total</th>
-          <th class="<%= th_class %>">Created</th>
+          <th class="<%= th_class %>">Status</th>
         </tr>
       </thead>
       <tbody class="<%= tbody_class %>">
@@ -22,10 +22,16 @@
           <% @orders.each do |order| %>
             <tr class="<%= tr_class %>">
               <td class="<%= td_class %> font-medium text-indigo-600">
+                <%= link_to order.created_at.strftime("%b %d, %Y %H:%M"), order %>
+              </td>
+              <td class="<%= td_class %> font-medium text-indigo-600">
                 <%= link_to "##{order.prefix_id}", order %>
               </td>
               <td class="<%= td_class %>">
                 <%= order.customer.name %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= order.total_amount.format %>
               </td>
               <td class="<%= td_class %>">
                 <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <%= 
@@ -36,12 +42,6 @@
                   end %>">
                   <%= order.status.titleize %>
                 </span>
-              </td>
-              <td class="<%= td_class %>">
-                <%= order.total_amount.format %>
-              </td>
-              <td class="<%= td_class %> text-gray-500">
-                <%= order.created_at.strftime("%b %d, %Y") %>
               </td>
             </tr>
           <% end %>
