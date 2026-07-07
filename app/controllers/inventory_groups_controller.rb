@@ -4,7 +4,7 @@ class InventoryGroupsController < ApplicationController
 
   # GET /inventory_groups or /inventory_groups.json
   def index
-    @inventory_groups = policy_scope(InventoryGroup)
+    @pagy, @inventory_groups = pagy(policy_scope(InventoryGroup))
   end
 
   # GET /inventory_groups/1 or /inventory_groups/1.json

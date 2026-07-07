@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
 
   # GET /orders or /orders.json
   def index
-    @orders = policy_scope(Order).order(created_at: :desc)
+    @pagy, @orders = pagy(policy_scope(Order).order(created_at: :desc))
   end
 
   def awaiting_collection

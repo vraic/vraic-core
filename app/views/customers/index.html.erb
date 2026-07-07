@@ -15,6 +15,7 @@
       <thead class="<%= thead_class %>">
         <tr>
           <th class="<%= th_class %>">Customer</th>
+          <th class="<%= th_class %>">Type</th>
           <th class="<%= th_class %>">Email</th>
           <th class="<%= th_class %>">Phone</th>
         </tr>
@@ -27,6 +28,13 @@
                 <%= link_to customer.name, customer, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
               </td>
               <td class="<%= td_class %>">
+                <% if customer.customer_account_id.present? %>
+                  <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">Business</span>
+                <% else %>
+                  <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Individual</span>
+                <% end %>
+              </td>
+              <td class="<%= td_class %>">
                 <%= customer.email_address %>
               </td>
               <td class="<%= td_class %>">
@@ -36,10 +44,14 @@
           <% end %>
         <% else %>
           <tr>
-            <td colspan="3" class="<%= td_class %> text-center py-10">No customers found.</td>
+            <td colspan="4" class="<%= td_class %> text-center py-10">No customers found.</td>
           </tr>
         <% end %>
       </tbody>
     </table>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <%== pagy_tailwind_nav(@pagy) %>
   </div>
 </div>

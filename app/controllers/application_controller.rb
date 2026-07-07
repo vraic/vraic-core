@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Authentication
   include Authorization
+  include Pagy::Method
 
   set_current_tenant_through_filter
   before_action :set_tenant

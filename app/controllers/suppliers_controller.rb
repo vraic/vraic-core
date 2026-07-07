@@ -3,7 +3,7 @@ class SuppliersController < ApplicationController
   before_action :set_supplier, only: %i[ show edit update destroy inventory ]
 
   def index
-    @suppliers = policy_scope(Supplier)
+    @pagy, @suppliers = pagy(policy_scope(Supplier))
   end
 
   def show

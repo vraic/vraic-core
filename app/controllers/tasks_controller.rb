@@ -5,11 +5,12 @@ class TasksController < ApplicationController
   # GET /tasks or /tasks.json
   def index
     @status = params[:status] == "completed" ? "completed" : "pending"
-    @tasks = if @status == "completed"
+    tasks = if @status == "completed"
                policy_scope(Task).completed.order(completed_at: :desc)
     else
                policy_scope(Task).incomplete.order(created_at: :desc)
     end
+    @pagy, @tasks = pagy(tasks)
   end
 
   def complete

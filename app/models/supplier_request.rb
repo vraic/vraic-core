@@ -12,15 +12,19 @@ class SupplierRequest < ApplicationRecord
 
   def create_relationships
     # Receiver account becomes a Customer of the Sender account
-    sender_account.customers.create!(
-      name: receiver_account.name,
-      customer_account: receiver_account
-    )
+    ActsAsTenant.with_tenant(sender_account) do
+      Customer.create!(
+        name: receiver_account.name,
+        customer_account: receiver_account
+      )
+    end
 
     # Sender account becomes a Supplier of the Receiver account
-    receiver_account.suppliers.create!(
-      name: sender_account.name,
-      supplier_account: sender_account
-    )
+    ActsAsTenant.with_tenant(receiver_account) do
+      Supplier.create!(
+        name: sender_account.name,
+        supplier_account: sender_account
+      )
+    end
   end
 end

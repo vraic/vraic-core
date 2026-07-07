@@ -45,10 +45,14 @@
           <% end %>
         <% else %>
           <tr>
-            <td colspan="5" class="<%= td_class %> text-center py-10">No suppliers found.</td>
+            <td colspan="4" class="<%= td_class %> text-center py-10">No suppliers found.</td>
           </tr>
         <% end %>
       </tbody>
     </table>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <%== pagy_tailwind_nav(@pagy) %>
   </div>
 </div>

@@ -39,7 +39,7 @@
                 </span>
               </td>
               <td class="<%= td_class %>">
-                <%= request.created_at.to_date %>
+                <%= l(request.created_at, format: :short) %>
               </td>
               <td class="<%= td_class %> space-x-2">
                 <% if request.pending? && request.receiver_account == ActsAsTenant.current_tenant %>
@@ -58,5 +58,9 @@
         <% end %>
       </tbody>
     </table>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <%== pagy_tailwind_nav(@pagy) %>
   </div>
 </div>

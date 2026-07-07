@@ -4,7 +4,8 @@ class SupplierRequestPolicy < ApplicationPolicy
   end
 
   def create?
-    true
+    # Must be global admin OR admin of the sender account
+    user.admin? || user.account_users.find_by(account: ActsAsTenant.current_tenant)&.admin?
   end
 
   def update?

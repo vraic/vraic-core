@@ -18,6 +18,8 @@ class InventoryItemsController < ApplicationController
       @inventory_items = @inventory_items.where(inventory_group_id: params[:inventory_group_id])
     end
 
+    @pagy, @inventory_items = pagy(@inventory_items)
+
     @locations = policy_scope(Location)
     @inventory_groups = policy_scope(InventoryGroup)
   end
