@@ -3,7 +3,7 @@
 one:
   name: Ribeye Steak
   description: Premium grass-fed ribeye steak
-  price_cents: 2500
+  price_cents: 1999
   price_currency: GBP
   account: one
   inventory_group: one
