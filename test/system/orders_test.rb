@@ -9,7 +9,7 @@ class OrdersTest < ApplicationSystemTestCase
 
   test "staff member sees auto-filled price and stock limit" do
     login_as @admin
-    
+
     # Select account
     visit dashboard_path
     within "form[action='#{managed_account_path}']" do
