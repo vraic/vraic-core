@@ -9,7 +9,19 @@ class OrdersTest < ApplicationSystemTestCase
 
   test "staff member sees auto-filled price and stock limit" do
     login_as @admin
+    
+    # Select account
+    visit dashboard_path
+    within "form[action='#{managed_account_path}']" do
+      select "Account One", from: "account_id"
+      click_on "Go"
+    end
+    assert_text "Now managing Account One"
+
     visit new_order_url
+
+    # Select customer
+    select "Customer One", from: "Customer"
 
     # Use the initial item row built by the controller
     assert_selector ".nested-form-wrapper", count: 1
