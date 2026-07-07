@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  inventory_group: one
+  customer: one
+
+two:
+  inventory_group: two
+  customer: two

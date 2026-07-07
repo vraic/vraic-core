@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: Supplier One
+  email_address: one@supplier.com
+  phone: 555-0001
+  account: one
+  supplier_account: one
+  deleted_at:
+
+two:
+  name: Supplier Two
+  email_address: two@supplier.com
+  phone: 555-0002
+  account: two
+  supplier_account: two
+  deleted_at:

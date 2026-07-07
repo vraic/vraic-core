@@ -73,6 +73,6 @@ class InventoryGroupsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_group_params
-      params.require(:inventory_group).permit(:name)
+      params.require(:inventory_group).permit(:name, supplier_ids: [], customer_ids: [])
     end
 end

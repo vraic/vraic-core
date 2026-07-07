@@ -1,0 +1,62 @@
+<% content_for :title, "Supplier Requests" %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Supplier Requests</h1>
+    <%= link_to "Send Request", new_supplier_request_path, class: primary_button_class %>
+  </div>
+
+  <div class="mt-8 <%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">Sender</th>
+          <th class="<%= th_class %>">Receiver</th>
+          <th class="<%= th_class %>">Status</th>
+          <th class="<%= th_class %>">Date</th>
+          <th class="<%= th_class %>">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>">
+        <% if @supplier_requests.any? %>
+          <% @supplier_requests.each do |request| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %>">
+                <%= request.sender_account.name %>
+                <%= "(You)" if request.sender_account == ActsAsTenant.current_tenant %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= request.receiver_account.name %>
+                <%= "(You)" if request.receiver_account == ActsAsTenant.current_tenant %>
+              </td>
+              <td class="<%= td_class %>">
+                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium <%= request.pending? ? 'bg-yellow-50 text-yellow-800' : (request.approved? ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700') %>">
+                  <%= request.status.capitalize %>
+                </span>
+              </td>
+              <td class="<%= td_class %>">
+                <%= request.created_at.to_date %>
+              </td>
+              <td class="<%= td_class %> space-x-2">
+                <% if request.pending? && request.receiver_account == ActsAsTenant.current_tenant %>
+                  <%= button_to "Approve", supplier_request_path(request, status: :approved), method: :patch, class: "text-green-600 hover:text-green-900 inline" %>
+                  <%= button_to "Reject", supplier_request_path(request, status: :rejected), method: :patch, class: "text-red-600 hover:text-red-900 inline" %>
+                <% elsif request.pending? && request.sender_account == ActsAsTenant.current_tenant %>
+                  <%= button_to "Cancel", supplier_request_path(request), method: :delete, class: "text-gray-600 hover:text-gray-900 inline", data: { confirm: "Are you sure?" } %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="<%= td_class %> text-center py-10">No supplier requests found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

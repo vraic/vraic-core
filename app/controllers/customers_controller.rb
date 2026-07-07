@@ -83,7 +83,7 @@ class CustomersController < ApplicationController
     # Only allow a list of trusted parameters through.
     def customer_params
       attributes = [ :name, :email_address, :phone ]
-      attributes << :account_id if Current.user.admin?
+      attributes += [ :account_id ] if Current.user.admin?
       params.require(:customer).permit(attributes)
     end
 end

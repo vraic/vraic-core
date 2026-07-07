@@ -2,6 +2,9 @@ class Account < ApplicationRecord
   has_prefix_id :acct
   has_many :account_users
   has_many :customers
+  has_many :suppliers
+  has_many :sent_supplier_requests, class_name: "SupplierRequest", foreign_key: "sender_account_id", dependent: :destroy
+  has_many :received_supplier_requests, class_name: "SupplierRequest", foreign_key: "receiver_account_id", dependent: :destroy
   has_many :users, through: :account_users
   has_one :owner, class_name: "AccountUser", foreign_key: "id"
 

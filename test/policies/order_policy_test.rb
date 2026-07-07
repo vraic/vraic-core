@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class OrderPolicyTest < ActiveSupport::TestCase
   setup do

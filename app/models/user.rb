@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :account_users, dependent: :destroy
   has_many :accounts, through: :account_users
   has_many :customers, dependent: :destroy
+  has_many :suppliers, dependent: :destroy
   has_many :tasks, foreign_key: :responsible_user_id, dependent: :destroy
   has_many :assigned_tasks, class_name: "Task", foreign_key: :assigned_by_id, dependent: :destroy
   has_many :orders, dependent: :nullify
@@ -34,11 +35,15 @@ class User < ApplicationRecord
 
   def sync_email_to_customers
     customers.update_all(email_address: email_address)
+    suppliers.update_all(email_address: email_address)
   end
 
   def link_existing_customers
     Customer.unscoped.where(email_address: email_address, user_id: nil).each do |customer|
       customer.update(user: self)
+    end
+    Supplier.unscoped.where(email_address: email_address, user_id: nil).each do |supplier|
+      supplier.update(user: self)
     end
   end
 

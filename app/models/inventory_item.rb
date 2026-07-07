@@ -9,6 +9,7 @@ class InventoryItem < ApplicationRecord
   has_many :inventory_levels, dependent: :destroy
   has_many :locations, through: :inventory_levels
   has_many :order_items, dependent: :delete_all
+  has_many :supplier_prices, dependent: :destroy
 
   monetize :price_cents, allow_nil: true
 
@@ -43,6 +44,13 @@ class InventoryItem < ApplicationRecord
     return inherited_price if inherited_price.present? || parent.nil?
 
     parent.price
+  end
+
+  def price_for(supplier)
+    supplier_price = supplier_prices.find_by(supplier: supplier)
+    return supplier_price.price if supplier_price
+
+    price
   end
 
   def total_quantity

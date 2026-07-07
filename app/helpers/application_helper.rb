@@ -13,6 +13,8 @@ module ApplicationHelper
       controller_name == "pages" && [ "home", "dashboard" ].include?(action_name)
     when :customers
       controller_name == "customers"
+    when :suppliers
+      controller_name == "suppliers" || controller_name == "supplier_requests"
     when :tasks
       controller_name == "tasks"
     when :inventory
@@ -109,5 +111,9 @@ module ApplicationHelper
 
   def td_class(extra_classes = nil)
     [ "px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white", extra_classes ].compact.join(" ")
+  end
+
+  def help_text_class(extra_classes = nil)
+    [ "mt-2 text-sm text-gray-500 dark:text-gray-400", extra_classes ].compact.join(" ")
   end
 end

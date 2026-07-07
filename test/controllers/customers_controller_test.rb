@@ -15,6 +15,12 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
   test "should get new" do
     get new_customer_url
     assert_response :success
+    assert_select "select[name='customer[customer_account_id]']", 0
+
+    sign_in_as(users(:administrator))
+    get new_customer_url
+    assert_response :success
+    assert_select "select[name='customer[customer_account_id]']", 0
   end
 
   test "should create customer" do
