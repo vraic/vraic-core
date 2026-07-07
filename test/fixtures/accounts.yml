@@ -9,3 +9,8 @@ two:
   name: Account Two
   address: 2 King Street
   owner_id: <%= ActiveRecord::FixtureSet.identify(:user, :two) %>
+
+three:
+  name: Account Three
+  address: 3 King Street
+  owner_id: <%= ActiveRecord::FixtureSet.identify(:user, :three) %>

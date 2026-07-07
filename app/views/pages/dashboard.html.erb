@@ -41,8 +41,34 @@
       </div>
     <% end %>
 
+    <% if Current.account && Current.user.admin? %>
+      <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+        <h2 class="text-xl font-bold mb-4">Stores joined by <%= Current.account.name %></h2>
+        <% 
+          joined_customers = Customer.unscoped.where(customer_account_id: Current.account.id).includes(:account)
+        %>
+        <% if joined_customers.any? %>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% joined_customers.each do |customer| %>
+              <div class="p-4 border rounded-lg bg-white border-gray-200">
+                <h3 class="font-bold text-gray-900 dark:text-white"><%= customer.account.name %></h3>
+                <p class="text-sm text-gray-500">Membership type: Business</p>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-500 italic">No stores joined yet.</p>
+        <% end %>
+      </div>
+    <% end %>
+
     <% 
-      available_accounts = Account.where.not(id: Current.user.account_ids)
+      if Current.user.admin? && Current.account
+        joined_account_ids = Customer.unscoped.where(customer_account_id: Current.account.id).pluck(:account_id)
+        available_accounts = Account.where.not(id: joined_account_ids).where.not(id: Current.account.id)
+      else
+        available_accounts = Account.where.not(id: Current.user.account_ids)
+      end
     %>
 
     <% if available_accounts.any? %>
