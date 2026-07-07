@@ -15,7 +15,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test "should filter orders by today" do
     account = @order.account
     customer = @order.customer
-    
+
     # Create an order from today
     today_order = Order.create!(
       account: account,
@@ -24,7 +24,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
       status: :ordered,
       created_at: Time.current
     )
-    
+
     # Create an order from yesterday
     yesterday_order = Order.create!(
       account: account,
