@@ -19,7 +19,7 @@ class GlobalAdminSupportTest < ApplicationSystemTestCase
     # 1. Store manager requests support
     login_as(@store_manager)
     visit support_requests_path
-    click_on "Request Support"
+    click_on "New Support Request"
     fill_in "How can we help?", with: "We need help with inventory management."
     click_on "Submit Request"
     assert_text "Support request was successfully created."
@@ -73,7 +73,7 @@ class GlobalAdminSupportTest < ApplicationSystemTestCase
     # 1. Admin initiates request
     login_as(@admin)
     visit support_requests_path
-    click_on "Request Support"
+    click_on "New Support Request"
     select "Account One", from: "Select Account"
     fill_in "How can we help?", with: "Admin needs access for maintenance."
     click_on "Submit Request"

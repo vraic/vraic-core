@@ -4,6 +4,7 @@ class SupportRequest < ApplicationRecord
 
   belongs_to :account
   belongs_to :requester, class_name: "User"
+  has_many :comments, class_name: "SupportRequestComment", dependent: :destroy
 
   enum :status, { pending: 0, accepted: 1, rejected: 2, closed: 3, extension_requested: 4 }, default: :pending
 

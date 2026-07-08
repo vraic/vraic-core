@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_08_090106) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_08_175900) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -295,6 +295,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_08_090106) do
     t.index ["user_id"], name: "index_suppliers_on_user_id"
   end
 
+  create_table "support_request_comments", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.integer "support_request_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["account_id"], name: "index_support_request_comments_on_account_id"
+    t.index ["support_request_id"], name: "index_support_request_comments_on_support_request_id"
+    t.index ["user_id"], name: "index_support_request_comments_on_user_id"
+  end
+
   create_table "support_requests", force: :cascade do |t|
     t.integer "account_id", null: false
     t.datetime "created_at", null: false
@@ -371,6 +383,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_08_090106) do
   add_foreign_key "suppliers", "accounts"
   add_foreign_key "suppliers", "accounts", column: "supplier_account_id"
   add_foreign_key "suppliers", "users"
+  add_foreign_key "support_request_comments", "accounts"
+  add_foreign_key "support_request_comments", "support_requests"
+  add_foreign_key "support_request_comments", "users"
   add_foreign_key "support_requests", "accounts"
   add_foreign_key "support_requests", "users", column: "requester_id"
   add_foreign_key "tasks", "accounts"

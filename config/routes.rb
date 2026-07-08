@@ -51,6 +51,7 @@ Rails.application.routes.draw do
     member do
       post :extend
     end
+    resources :comments, controller: "support_request_comments", only: %i[ create update ]
   end
   # Auditing
   mount Audits1984::Engine => "/console"
