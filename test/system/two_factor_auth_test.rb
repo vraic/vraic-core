@@ -65,15 +65,18 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     # Use a robust way to get the token
     token = nil
-    50.times do
-      token = User.uncached { @user.reload.email_otp_token }
+    10.times do
+      token = User.uncached { User.find(@user.id).email_otp_token }
       break if token.present?
       sleep 0.2
     end
 
-    fill_in "Verification Code", with: token
+    assert token.present?, "Expected email OTP token to be generated"
+
+    fill_in "Verification Code", with: token.to_s.strip.upcase
     click_button "Verify"
 
-    assert_text "Dashboard"
+    assert_text "Dashboard", wait: 10
+    assert_current_path dashboard_path
   end
 end
