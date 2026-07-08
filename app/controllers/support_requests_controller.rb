@@ -81,6 +81,8 @@ class SupportRequestsController < ApplicationController
   end
 
   def support_request_params
-    params.require(:support_request).permit(:message, :status, :account_id)
+    permitted = [ :message, :status ]
+    permitted << :account_id if Current.user.admin?
+    params.require(:support_request).permit(permitted)
   end
 end
