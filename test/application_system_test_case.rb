@@ -12,6 +12,17 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     fill_in "Email", with: user.email_address
     fill_in "Password", with: "password"
     click_button "Sign in"
+
+    if page.has_text?("Two-Factor Verification")
+      code = if user.otp_enabled?
+        ROTP::TOTP.new(user.otp_secret).now
+      else
+        user.reload.email_otp_token
+      end
+      fill_in "Verification Code", with: code
+      click_button "Verify"
+    end
+
     assert_text "Dashboard"
     assert_current_path dashboard_path
   end

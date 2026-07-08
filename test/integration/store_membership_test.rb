@@ -4,7 +4,7 @@ class StoreMembershipTest < ActionDispatch::IntegrationTest
   setup do
     @user = User.create!(name: "New Customer", email_address: "new@example.com", password: "password")
     @account = accounts(:one)
-    post session_url, params: { email_address: "new@example.com", password: "password" }
+    sign_in_as(@user)
   end
 
   test "user can join a store from the dashboard" do

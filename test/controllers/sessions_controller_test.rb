@@ -8,11 +8,12 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "create with valid credentials" do
+  test "create with valid credentials redirects to 2FA" do
     post session_path, params: { email_address: @user.email_address, password: "password" }
 
-    assert_redirected_to root_path
-    assert cookies[:session_id]
+    assert_redirected_to new_two_factor_verification_path
+    assert_equal @user.id, session[:otp_user_id]
+    assert_nil cookies[:session_id]
   end
 
   test "create with invalid credentials" do

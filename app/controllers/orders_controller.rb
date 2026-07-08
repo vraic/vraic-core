@@ -14,6 +14,9 @@ class OrdersController < ApplicationController
     if @query.present?
       clean_query = @query.delete("#").strip
 
+      # Since name and email are encrypted, search_cop (LIKE) won't work. We handle exact match here.
+      customer_ids = Customer.unscoped.where(name: @query.strip).or(Customer.unscoped.where(email_address: @query.strip)).pluck(:id)
+
       begin
         decoded_id = Order.decode_prefix_id(clean_query)
       rescue StandardError
@@ -24,6 +27,8 @@ class OrdersController < ApplicationController
         scope = scope.where(id: decoded_id)
       elsif clean_query.match?(/^\d{3}[A-Z]{3}$/)
         scope = scope.where(number: clean_query)
+      elsif customer_ids.any?
+        scope = scope.where(customer_id: customer_ids)
       else
         if @query.match?(/^\d+(\.\d{2})?$/)
           cents = (@query.to_f * 100).to_i

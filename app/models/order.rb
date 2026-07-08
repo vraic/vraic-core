@@ -5,6 +5,7 @@ class Order < ApplicationRecord
 
   search_scope :search do
     attributes :id, :total_amount_cents, :number
+    # Use exact match for encrypted fields as deterministic encryption does not support LIKE
     attributes customer: "customer.name"
   end
 
