@@ -23,35 +23,30 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     code = if user.otp_enabled?
       ROTP::TOTP.new(user.otp_secret).now
     else
-      # Email token is generated on the 'new' action of TwoFactorVerificationsController
-      # We reload until it's present to avoid race conditions
+      # Wait for token with explicit reload and retry
       token = nil
       50.times do
-        token = User.find(user.id).email_otp_token
+        # Use uncached find to get the absolute latest from the DB
+        u = User.uncached { User.find(user.id) }
+        token = u.email_otp_token
         break if token.present?
-        sleep 0.1
+        sleep 0.2
       end
-      
-      if token.blank?
-        # If it failed to generate, try refreshing the page once
-        visit current_url
-        assert_selector "h2", text: "Two-Factor Verification", wait: 10
-        50.times do
-          token = User.find(user.id).email_otp_token
-          break if token.present?
-          sleep 0.1
-        end
-      end
-
       raise "Email OTP token not found for user #{user.email_address}" if token.blank?
       token
     end
 
     fill_in "Verification Code", with: code
-    click_button "Verify"
+    # Ensure the code was actually filled
+    assert_field "Verification Code", with: code
+    
+    # Small delay before clicking to avoid race conditions with Turbo/JS
+    sleep 0.2
+    click_on "Verify"
 
-    # Wait for dashboard to load. If it fails, Capybara will show the page content.
-    assert_text "Dashboard", wait: 15
+    # Wait for the transition to complete
+    assert_no_text "Two-Factor Verification", wait: 15
+    assert_text "Dashboard", wait: 5
     assert_current_path dashboard_path
   end
 
