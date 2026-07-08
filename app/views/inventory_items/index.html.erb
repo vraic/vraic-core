@@ -42,6 +42,9 @@
     <table class="<%= table_class %>">
       <thead class="<%= thead_class %>">
         <tr>
+          <% if Current.account.nil? && Current.user&.admin? %>
+            <th class="<%= th_class %>">Account</th>
+          <% end %>
           <th class="<%= th_class %>">Item</th>
           <th class="<%= th_class %>">Group</th>
           <th class="<%= th_class %> text-right">Price</th>
@@ -52,6 +55,11 @@
         <% if @inventory_items.any? %>
           <% @inventory_items.each do |inventory_item| %>
             <tr class="<%= tr_class %>">
+              <% if Current.account.nil? && Current.user&.admin? %>
+                <td class="<%= td_class %> font-semibold">
+                  <%= inventory_item.account.name %>
+                </td>
+              <% end %>
               <td class="<%= td_class %>">
                 <%= link_to inventory_item.display_name, inventory_item, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
                 <% if inventory_item.description.present? %>

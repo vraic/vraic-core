@@ -40,7 +40,18 @@ Rails.application.routes.draw do
     end
   end
   resources :account_users
-  resources :accounts
+  resources :accounts do
+    member do
+      post :join
+      post :leave
+      get :audits
+    end
+  end
+  resources :support_requests do
+    member do
+      post :extend
+    end
+  end
   # Auditing
   mount Audits1984::Engine => "/console"
 

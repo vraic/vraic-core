@@ -1,0 +1,85 @@
+<% content_for :title, "Audit Log: #{@account.name}" %>
+
+<div class="w-full">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="font-bold text-4xl">Audit Log</h1>
+      <p class="text-gray-500 dark:text-gray-400 mt-2">Historical changes for <%= @account.name %></p>
+    </div>
+    <%= link_to "Back to Account", @account, class: secondary_button_class %>
+  </div>
+
+  <div class="<%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">Date</th>
+          <th class="<%= th_class %>">User</th>
+          <th class="<%= th_class %>">Action</th>
+          <th class="<%= th_class %>">Record</th>
+          <th class="<%= th_class %>">Changes</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>" id="audits">
+        <% if @audits.any? %>
+          <% @audits.each do |audit| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %> whitespace-nowrap">
+                <%= audit.created_at.to_fs(:short) %>
+              </td>
+              <td class="<%= td_class %>">
+                <% if audit.user %>
+                  <div class="flex flex-col">
+                    <span class="font-medium text-gray-900 dark:text-white"><%= audit.user.name %></span>
+                    <% if audit.user.admin? %>
+                      <span class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold uppercase">Platform Admin</span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <span class="text-gray-400 italic">System</span>
+                <% end %>
+              </td>
+              <td class="<%= td_class %> uppercase tracking-wider text-xs font-bold">
+                <span class="<%= audit.action == 'destroy' ? 'text-red-600' : (audit.action == 'create' ? 'text-green-600' : 'text-blue-600') %>">
+                  <%= audit.action %>
+                </span>
+              </td>
+              <td class="<%= td_class %>">
+                <div class="flex flex-col">
+                  <span class="font-medium"><%= audit.auditable_type %></span>
+                  <span class="text-xs text-gray-500"><%= audit.auditable_id %></span>
+                </div>
+              </td>
+              <td class="<%= td_class %> max-w-md overflow-hidden text-ellipsis">
+                <div class="text-xs space-y-1">
+                  <% if audit.action == 'update' %>
+                    <% audit.audited_changes.each do |field, values| %>
+                      <div>
+                        <span class="font-semibold"><%= field.titleize %>:</span>
+                        <span class="text-red-500 line-through"><%= values[0].to_s.truncate(30) %></span>
+                        <span class="text-gray-400">→</span>
+                        <span class="text-green-500"><%= values[1].to_s.truncate(30) %></span>
+                      </div>
+                    <% end %>
+                  <% else %>
+                    <pre class="whitespace-pre-wrap"><%= audit.audited_changes.inspect.truncate(100) %></pre>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="<%= td_class %> text-center py-10 text-gray-500 italic">
+              No audit records found for the last 30 days.
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <%== pagy_tailwind_nav(@pagy) %>
+  </div>
+</div>

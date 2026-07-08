@@ -5,6 +5,7 @@ class OrderSearchTest < ApplicationSystemTestCase
     @admin = users(:administrator)
     @order_one = orders(:one)
     @order_two = orders(:two)
+    grant_support_access(accounts(:one))
   end
 
   test "searching by customer name" do

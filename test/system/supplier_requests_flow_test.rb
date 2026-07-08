@@ -3,7 +3,8 @@ require "application_system_test_case"
 class SupplierRequestsFlowTest < ApplicationSystemTestCase
   setup do
     @admin = users(:administrator)
-    @other_account = accounts(:two)
+    grant_support_access(accounts(:one))
+    grant_support_access(accounts(:two))
     login_as @admin
   end
 
@@ -17,7 +18,7 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
     assert_text "Request to become a supplier for another farm shop on the platform using Account One"
 
     within "form[action='/supplier_requests']" do
-      select "Account Two", from: "Select Store"
+      select "Account Two", from: "Select Store to Supply"
       click_on "Request to Supply"
     end
 
@@ -44,7 +45,7 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
     select_account("Account One")
     visit dashboard_path
     within "form[action='/supplier_requests']" do
-      select "Account Two", from: "Select Store"
+      select "Account Two", from: "Select Store to Supply"
       click_on "Request to Supply"
     end
     assert_text "Supplier request was successfully sent."
@@ -52,8 +53,11 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
     # 2. Account Two approves the request
     select_account("Account Two")
     visit supplier_requests_path
-    within "tr", text: "Account One" do
-      click_on "Approve"
+    # Find the row in the supplier requests table, not the sidebar/banner
+    within "#supplier_requests" do
+      within find("tr", text: "Account One") do
+        click_on "Approve"
+      end
     end
     assert_text "Supplier request was approved."
 

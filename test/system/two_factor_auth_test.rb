@@ -25,7 +25,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     # Now test login with OTP
     visit dashboard_path
-    click_on "Logout"
+    logout
 
     visit new_session_path
     fill_in "Email", with: @user.email_address
@@ -51,7 +51,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     # But let's verify the email part
 
     visit dashboard_path
-    click_on "Logout"
+    logout
 
     visit new_session_path
     fill_in "Email", with: @user.email_address

@@ -47,8 +47,7 @@
                 <%= image_tag "icon.svg", alt: "Vraic", class: "h-8 w-auto dark:hidden" %>
                 <%= image_tag "icon.svg", alt: "Vraic", class: "h-8 w-auto not-dark:hidden" %>
               </div>
-              <%= render "layouts/managed_account_switcher" %>
-              <nav class="relative flex flex-1 flex-col">
+              <nav id="mobile-sidebar-main-nav" class="relative flex flex-1 flex-col">
                 <ul role="list" class="flex flex-1 flex-col gap-y-7">
                   <li>
                     <ul role="list" class="-mx-2 space-y-1">
@@ -115,12 +114,11 @@
                       <% end %>
                     </ul>
                   </li>
-                    <% if staff? %>
-                      <li>
-                        <div class="text-xs/6 font-semibold text-gray-400">Quick links</div>
+                  <% if staff? %>
+                    <li>
+                      <div class="text-xs/6 font-semibold text-gray-400">Quick links</div>
                         <ul role="list" class="-mx-2 mt-2 space-y-1">
                           <li>
-                            <!-- Current: "bg-gray-50 dark:bg-white/5 text-indigo-600 dark:text-white", Default: "text-gray-700 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5" -->
                             <%= link_to orders_path(filter: "today"), class: "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white" do %>
                               <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">1</span>
                               <span class="truncate">Today's Orders</span>
@@ -138,15 +136,44 @@
                 </ul>
               </nav>
               <% if authenticated? %>
-                <div class="mt-auto pb-4">
-                  <%= link_to settings_path, class: nav_link_classes(:settings) do %>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:settings) %>">
-                      <path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" stroke-linecap="round" stroke-linejoin="round" />
-                      <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    Settings
+                <ul role="list" class="-mx-2 space-y-1 mt-auto">
+                  <% if Current.user&.admin? %>
+                    <li>
+                      <%= link_to accounts_path, class: nav_link_classes(:accounts) do %>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:accounts) %>">
+                          <path d="M10.34 15.84c-.68-.34-1.16-.94-1.34-1.63L8.75 13l-1.47-.49c-.69-.23-1.22-.73-1.46-1.4l-.12-.34c-.2-.55-.16-1.16.12-1.68l.38-.52c.38-.52.95-.84 1.58-.9l1.47-.13.34-1.36c.17-.69.64-1.25 1.28-1.52l.34-.12c.55-.2 1.16-.16 1.68.12l.52.38c.52.38.84.95.9 1.58l.13 1.47 1.36.34c.69.17 1.25.64 1.52 1.28l.12.34c.2.55.16 1.16-.12 1.68l-.38.52c-.38.52-.95.84-1.58.9l-1.47.13-.34 1.36c-.17.69-.64 1.25-1.28 1.52l-.34.12c-.55.2-1.16.16-1.68-.12l-.52-.38c-.52-.38-.84-.95-.9-1.58l-.13-1.47-1.36-.34Z" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Administration
+                      <% end %>
+                    </li>
                   <% end %>
-                </div>
+                  <li>
+                    <%= link_to settings_path, class: nav_link_classes(:settings) do %>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:settings) %>">
+                        <path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      Settings
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to support_requests_path, class: nav_link_classes(:support_requests) do %>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:support_requests) %>">
+                        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0V15m0-12V9m9 3H15m-12 0H9m1.5-3.5L15 13.5m-4.5.5L6 9" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      Support
+                    <% end %>
+                  </li>
+                  <li class="mb-4">
+                    <%= button_to session_path, method: :delete, class: "w-full group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:text-red-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-white/5 cursor-pointer" do %>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 shrink-0 text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400">
+                        <path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      Logout
+                    <% end %>
+                  </li>
+                </ul>
               <% end %>
             </div>
           </el-dialog-panel>
@@ -162,8 +189,7 @@
           <%= image_tag "icon.svg", alt: "Vraic", class: "h-8 w-auto dark:hidden" %>
           <%= image_tag "icon.svg", alt: "Vraic", class: "h-8 w-auto not-dark:hidden" %>
         </div>
-        <%= render "layouts/managed_account_switcher" %>
-        <nav class="flex flex-1 flex-col">
+        <nav id="desktop-sidebar-main-nav" class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -254,14 +280,46 @@
                     <% end %>
               </ul>
             </li>
+          </ul>
+        </nav>
+
+        <nav>
+          <ul role="list" class="-mx-2 space-y-1">
             <% if authenticated? %>
-              <li class="mt-auto mb-4">
-                <%= link_to settings_path, class: nav_link_classes(:settings, "-mx-2") do %>
+              <% if Current.user&.admin? %>
+                <li>
+                  <%= link_to accounts_path, class: nav_link_classes(:accounts) do %>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:accounts) %>">
+                      <path d="M10.34 15.84c-.68-.34-1.16-.94-1.34-1.63L8.75 13l-1.47-.49c-.69-.23-1.22-.73-1.46-1.4l-.12-.34c-.2-.55-.16-1.16.12-1.68l.38-.52c.38-.52.95-.84 1.58-.9l1.47-.13.34-1.36c.17-.69.64-1.25 1.28-1.52l.34-.12c.55-.2 1.16-.16 1.68.12l.52.38c.52.38.84.95.9 1.58l.13 1.47 1.36.34c.69.17 1.25.64 1.52 1.28l.12.34c.2.55.16 1.16-.12 1.68l-.38.52c-.38.52-.95.84-1.58.9l-1.47.13-.34 1.36c-.17.69-.64 1.25-1.28 1.52l-.34.12c-.55.2-1.16.16-1.68-.12l-.52-.38c-.52-.38-.84-.95-.9-1.58l-.13-1.47-1.36-.34Z" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Administration
+                  <% end %>
+                </li>
+              <% end %>
+              <li class="mt-auto">
+                <%= link_to settings_path, class: nav_link_classes(:settings) do %>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:settings) %>">
                     <path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" stroke-linecap="round" stroke-linejoin="round" />
                     <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                   Settings
+                <% end %>
+              </li>
+              <li>
+                <%= link_to support_requests_path, class: nav_link_classes(:support_requests) do %>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:support_requests) %>">
+                    <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0V15m0-12V9m9 3H15m-12 0H9m1.5-3.5L15 13.5m-4.5.5L6 9" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  Support
+                <% end %>
+              </li>
+              <li class="mb-4">
+                <%= button_to session_path, method: :delete, class: "w-full group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:text-red-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-white/5 cursor-pointer" do %>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 shrink-0 text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400">
+                    <path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  Logout
                 <% end %>
               </li>
             <% end %>
@@ -278,14 +336,16 @@
         </svg>
       </button>
       <div class="flex-1 text-sm/6 font-semibold text-gray-900 dark:text-white"><%= content_for?(:title) ? yield(:title) : "Dashboard" %></div>
-      <a href="#">
-        <span class="sr-only">Your profile</span>
-        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-8 rounded-full bg-gray-50 outline -outline-offset-1 outline-black/5 dark:bg-gray-800 dark:outline-white/10" />
-      </a>
     </div>
 
     <main class="py-10 lg:pl-72">
       <div class="px-4 sm:px-6 lg:px-8">
+        <% if Current.user&.admin? && Current.account %>
+          <div class="mb-8 bg-indigo-600 px-4 py-2 rounded-lg text-white text-center text-sm font-medium shadow-sm flex items-center justify-center gap-4">
+            <span>Managing Account: <span class="font-bold"><%= Current.account.name %></span></span>
+            <%= button_to "Leave Account", leave_account_path(Current.account), method: :post, class: "underline hover:text-indigo-100" %>
+          </div>
+        <% end %>
         <%= render "layouts/flash" if flash.any? %>
 
         <%= yield %>

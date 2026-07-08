@@ -25,7 +25,9 @@ class SupplierPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if staff?
+      if user.admin?
+        authorized_scope
+      elsif staff?
         scope.all
       else
         scope.none

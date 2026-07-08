@@ -5,6 +5,7 @@ class InventorySearchTest < ApplicationSystemTestCase
     @admin = users(:administrator)
     @item_one = inventory_items(:one)
     @item_apple = inventory_items(:apple)
+    grant_support_access(accounts(:one))
   end
 
   test "searching by name" do

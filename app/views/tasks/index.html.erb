@@ -19,6 +19,9 @@
     <table class="<%= table_class %>">
       <thead class="<%= thead_class %>">
         <tr>
+          <% if Current.account.nil? && Current.user&.admin? %>
+            <th scope="col" class="<%= th_class %>">Account</th>
+          <% end %>
           <th scope="col" class="<%= th_class %>">Title</th>
           <th scope="col" class="<%= th_class %>">Responsible</th>
           <th scope="col" class="<%= th_class %>">Assigned By</th>

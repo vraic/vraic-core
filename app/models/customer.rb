@@ -1,4 +1,5 @@
 class Customer < ApplicationRecord
+  audited associated_with: :account
   include SearchCop
   include Anony::Anonymisable
   acts_as_paranoid

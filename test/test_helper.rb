@@ -25,5 +25,15 @@ module ActiveSupport
     end
 
     # Add more helper methods to be used by all tests here...
+    def grant_support_access(account, user = nil)
+      user ||= users(:administrator)
+      SupportRequest.create!(
+        account: account,
+        requester: user,
+        status: :accepted,
+        expires_at: 72.hours.from_now,
+        message: "Test authorization"
+      )
+    end
   end
 end

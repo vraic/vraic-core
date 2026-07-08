@@ -19,6 +19,14 @@ class AccountPolicy < ApplicationPolicy
     user.admin?
   end
 
+  def join?
+    user.admin?
+  end
+
+  def leave?
+    user.admin?
+  end
+
   private
 
   def account_admin?

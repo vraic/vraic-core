@@ -39,11 +39,66 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def select_account(name)
-    visit dashboard_path
-    within "form[action='#{managed_account_path}']" do
-      select name, from: "account_id"
-      click_on "Go"
+    # Use the Accounts page for admins to Join
+    if page.has_link?("Administration")
+      visit accounts_path
+      row = find("tr", text: name)
+      if row.has_button?("Join Account")
+        within row do
+          click_on "Join Account"
+        end
+        # Joining redirects to dashboard
+      elsif row.has_button?("Leave Account")
+        # Already joined
+        visit dashboard_path
+      end
+    else
+      visit dashboard_path
+      # Find the account section and click Select
+      # Use a more specific selector to avoid ambiguous matches
+      # Search in both your-stores and business-stores
+      selected = false
+      [ "#your-stores", "#business-stores" ].each do |section|
+        next unless page.has_css?(section)
+        within section do
+          if page.has_text?(name)
+            within find("h3", text: name).find(:xpath, "../..") do
+              if page.has_text?("Active")
+                selected = true
+                break
+              elsif page.has_button?("Select")
+                click_on "Select"
+                selected = true
+                break
+              end
+            end
+          end
+        end
+        break if selected
+      end
     end
-    assert_text "Now managing #{name}"
+
+    assert_text name
+    # Verify banner if it's an admin
+    if page.has_link?("Administration")
+      assert_selector "div", text: "Managing Account: #{name}"
+    end
+  end
+
+  def logout
+    # There are multiple Logout buttons (mobile and desktop)
+    # Use first to avoid ambiguous match
+    first(:button, "Logout").click
+  end
+
+  def grant_support_access(account, user = nil)
+    user ||= users(:administrator)
+    SupportRequest.create!(
+      account: account,
+      requester: user,
+      status: :accepted,
+      expires_at: 72.hours.from_now,
+      message: "Test authorization"
+    )
   end
 end

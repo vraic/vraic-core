@@ -18,7 +18,7 @@
           <th class="<%= th_class %>">Actions</th>
         </tr>
       </thead>
-      <tbody class="<%= tbody_class %>">
+      <tbody class="<%= tbody_class %>" id="supplier_requests">
         <% if @supplier_requests.any? %>
           <% @supplier_requests.each do |request| %>
             <tr class="<%= tr_class %>">

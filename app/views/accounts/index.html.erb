@@ -1,9 +1,9 @@
-<% content_for :title, "Accounts" %>
+<% content_for :title, "Administration" %>
 
 <div class="w-full">
   
   <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Accounts</h1>
+    <h1 class="font-bold text-4xl">Administration</h1>
     <%= link_to "New account", new_account_path, class: primary_button_class %>
   </div>
 
@@ -12,6 +12,8 @@
       <thead class="<%= thead_class %>">
         <tr>
           <th class="<%= th_class %>">Name</th>
+          <th class="<%= th_class %>">Users</th>
+          <th class="<%= th_class %>">Actions</th>
         </tr>
       </thead>
       <tbody class="<%= tbody_class %>" id="accounts">
@@ -20,6 +22,18 @@
             <tr class="<%= tr_class %>">
               <td class="<%= td_class %>">
                 <%= link_to account.name, account, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
+              </td>
+              <td class="<%= td_class %> text-gray-500 text-sm">
+                <%= account.account_users.count %> users
+              </td>
+              <td class="<%= td_class %>">
+                <% if session[:managed_account_id] == account.id %>
+                  <%= button_to "Leave Account", leave_account_path(account), method: :post, class: "text-red-600 hover:text-red-900 text-sm font-medium" %>
+                <% elsif SupportRequest.unscoped.where(account: account).active.exists? %>
+                  <%= button_to "Join Account", join_account_path(account), method: :post, class: "text-indigo-600 hover:text-indigo-900 text-sm font-medium" %>
+                <% else %>
+                  <%= link_to "Request Access", new_support_request_path(account_id: account.id), class: "text-gray-600 hover:text-gray-900 text-sm font-medium" %>
+                <% end %>
               </td>
             </tr>
           <% end %>

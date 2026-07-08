@@ -1,4 +1,9 @@
 <tr id="<%= dom_id task %>" class="<%= tr_class %>">
+  <% if Current.account.nil? && Current.user&.admin? %>
+    <td class="<%= td_class %> font-semibold">
+      <%= task.account.name %>
+    </td>
+  <% end %>
   <td class="<%= td_class %>">
     <%= link_to task.title, task, class: "text-indigo-600 hover:text-indigo-900 font-semibold dark:text-indigo-400 dark:hover:text-indigo-300" %>
     <% if task.description.present? %>

@@ -31,7 +31,13 @@ class InventoryItemPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.all
+      if user.admin?
+        authorized_scope
+      elsif staff?
+        scope.all
+      else
+        scope.none
+      end
     end
   end
 end

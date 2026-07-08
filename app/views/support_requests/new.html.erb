@@ -1,0 +1,63 @@
+<% content_for :title, "Request Support" %>
+
+<div class="max-w-2xl mx-auto">
+  <div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="flex-1 min-w-0">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
+        Request Support
+      </h2>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Submit a request to the platform administrators for assistance with your account.
+      </p>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg border border-gray-200 dark:border-gray-700">
+    <div class="px-4 py-5 sm:p-6">
+      <%= form_with(model: @support_request, class: "space-y-6") do |f| %>
+        <%= f.hidden_field :account_id if @support_request.account_id %>
+
+        <% if @support_request.errors.any? %>
+          <div id="error_explanation" class="bg-red-50 dark:bg-red-900/30 p-4 rounded-md mb-6">
+            <h2 class="text-red-800 dark:text-red-200 text-sm font-medium"><%= pluralize(@support_request.errors.count, "error") %> prohibited this request from being saved:</h2>
+            <ul class="list-disc list-inside text-red-700 dark:text-red-300 text-sm mt-2">
+              <% @support_request.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <% if Current.user.admin? && !@support_request.account_id %>
+          <div>
+            <%= f.label :account_id, "Select Account", class: label_class %>
+            <div class="mt-2">
+              <%= f.collection_select :account_id, Account.all, :id, :name, { prompt: "Choose an account..." }, { class: input_class(@support_request.errors[:account_id].any?) } %>
+            </div>
+            <p class="<%= help_text_class %>">Select the account you wish to initiate a support session with.</p>
+          </div>
+        <% elsif @support_request.account_id %>
+          <div>
+            <span class="<%= label_class %>">Account</span>
+            <div class="mt-2 text-sm text-gray-900 dark:text-white font-medium">
+              <%= Account.find(@support_request.account_id).name %>
+            </div>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :message, "How can we help?", class: label_class %>
+          <div class="mt-2">
+            <%= f.text_area :message, rows: 4, class: input_class(@support_request.errors[:message].any?), placeholder: "Please describe the issue or assistance you need..." %>
+          </div>
+          <p class="<%= help_text_class %>">Be as descriptive as possible so our support team can assist you effectively.</p>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <%= link_to "Cancel", support_requests_path, class: secondary_button_class %>
+          <%= f.submit "Submit Request", class: primary_button_class %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

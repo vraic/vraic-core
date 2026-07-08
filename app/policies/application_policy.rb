@@ -72,6 +72,20 @@ class ApplicationPolicy
       user.account_users.exists?(account: tenant, user_role: :customer)
     end
 
+    def authorized_scope
+      if user.admin?
+        if ActsAsTenant.current_tenant
+          scope.all
+        else
+          # Global view: only show data from accounts with active support requests
+          authorized_account_ids = SupportRequest.active.pluck(:account_id)
+          scope.where(account_id: authorized_account_ids)
+        end
+      else
+        scope.where(account_id: user.account_users.pluck(:account_id))
+      end
+    end
+
     private
 
     attr_reader :user, :scope

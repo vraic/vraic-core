@@ -7,6 +7,7 @@
   <%= render @account %>
 
   <div class="flex flex-wrap gap-2 mt-4">
+    <%= link_to "Audit Log", audits_account_path(@account), class: secondary_button_class("w-full sm:w-auto text-center") %>
     <%= link_to "Edit this account", edit_account_path(@account), class: secondary_button_class("w-full sm:w-auto text-center") %>
     <%= link_to "Back to accounts", accounts_path, class: secondary_button_class("w-full sm:w-auto text-center") %>
     <%= button_to "Destroy this account", @account, method: :delete, form_class: "w-full sm:w-auto", class: danger_button_class("w-full"), data: { turbo_confirm: "Are you sure?" } %>

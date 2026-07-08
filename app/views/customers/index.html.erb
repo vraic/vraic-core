@@ -21,6 +21,9 @@
     <table class="<%= table_class %>">
       <thead class="<%= thead_class %>">
         <tr>
+          <% if Current.account.nil? && Current.user&.admin? %>
+            <th class="<%= th_class %>">Account</th>
+          <% end %>
           <th class="<%= th_class %>">Customer</th>
           <th class="<%= th_class %>">Type</th>
           <th class="<%= th_class %>">Email</th>
@@ -31,6 +34,11 @@
         <% if @customers.any? %>
           <% @customers.each do |customer| %>
             <tr class="<%= tr_class %>">
+              <% if Current.account.nil? && Current.user&.admin? %>
+                <td class="<%= td_class %> font-semibold">
+                  <%= customer.account.name %>
+                </td>
+              <% end %>
               <td class="<%= td_class %>">
                 <%= link_to customer.name, customer, class: "text-indigo-600 hover:text-indigo-900 font-semibold" %>
               </td>

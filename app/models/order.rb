@@ -1,4 +1,5 @@
 class Order < ApplicationRecord
+  audited associated_with: :account
   include SearchCop
   acts_as_tenant :account
   has_prefix_id :order

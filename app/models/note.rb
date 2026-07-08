@@ -1,4 +1,5 @@
 class Note < ApplicationRecord
+  audited associated_with: :account
   acts_as_tenant :account
 
   belongs_to :user

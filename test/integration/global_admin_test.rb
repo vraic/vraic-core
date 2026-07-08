@@ -7,6 +7,7 @@ class GlobalAdminTest < ActionDispatch::IntegrationTest
   end
 
   test "admin can select an account and create an inventory item" do
+    grant_support_access(@account)
     sign_in_as(@admin)
 
     # Select an account
@@ -31,7 +32,8 @@ class GlobalAdminTest < ActionDispatch::IntegrationTest
     assert_redirected_to inventory_item_path(item)
   end
 
-  test "admin without selected account sees all items" do
+  test "admin without selected account sees only authorized items" do
+    grant_support_access(@account)
     sign_in_as(@admin)
 
     # Ensure no managed account
@@ -39,7 +41,10 @@ class GlobalAdminTest < ActionDispatch::IntegrationTest
 
     get inventory_items_path
     assert_response :success
-    # In global mode, it should show items from all accounts
+    # In global mode, it should only show items from accounts with active support requests
+    assert_match /Ribeye Steak/, response.body
+    # Should NOT show items from other accounts without authorization
+    assert_no_match /Account Two/, response.body
   end
 
   test "admin can see all navigation links" do
