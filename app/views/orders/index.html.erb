@@ -20,6 +20,9 @@
     <table class="<%= table_class %>">
       <thead class="<%= thead_class %>">
         <tr>
+          <% if Current.account.nil? && Current.user&.admin? %>
+            <th class="<%= th_class %>">Account</th>
+          <% end %>
           <th class="<%= th_class %>">Order Date</th>
           <th class="<%= th_class %>">Order ID</th>
           <th class="<%= th_class %>">Customer Name</th>
@@ -31,6 +34,11 @@
         <% if @orders.any? %>
           <% @orders.each do |order| %>
             <tr class="<%= tr_class %>">
+              <% if Current.account.nil? && Current.user&.admin? %>
+                <td class="<%= td_class %> font-semibold">
+                  <%= order.account.name %>
+                </td>
+              <% end %>
               <td class="<%= td_class %> font-medium text-indigo-600">
                 <%= link_to order.created_at.strftime("%b %d, %Y %H:%M"), order %>
               </td>

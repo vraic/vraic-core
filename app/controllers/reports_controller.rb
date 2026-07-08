@@ -8,28 +8,37 @@ class ReportsController < ApplicationController
   private
 
   def calculate_stats
+    tenant = ActsAsTenant.current_tenant
     end_date = Time.current.end_of_day
     start_date = 30.days.ago.beginning_of_day
     prev_start_date = 60.days.ago.beginning_of_day
     prev_end_date = 31.days.ago.end_of_day
 
+    # Define base orders scoped to authorized accounts if no tenant
+    base_scope = if tenant
+      tenant.orders
+    elsif Current.user.admin?
+      authorized_account_ids = SupportRequest.unscoped.active.pluck(:account_id)
+      Order.unscoped.where(account_id: authorized_account_ids)
+    else
+      Order.none
+    end
+
     # Current period
-    current_orders = Order.where(created_at: start_date..end_date)
+    current_orders = base_scope.where(created_at: start_date..end_date)
     current_order_count = current_orders.count
     current_customer_count = current_orders.distinct.count(:customer_id)
     current_total_value = Money.new(current_orders.sum(:total_amount_cents))
 
     # Previous period
-    prev_orders = Order.where(created_at: prev_start_date..prev_end_date)
+    prev_orders = base_scope.where(created_at: prev_start_date..prev_end_date)
     prev_order_count = prev_orders.count
     prev_customer_count = prev_orders.distinct.count(:customer_id)
     prev_total_value = Money.new(prev_orders.sum(:total_amount_cents))
 
     # Breakdown by Inventory Group
-    # This is a bit more complex as we need to join order_items and inventory_items
-    breakdown = OrderItem.joins(inventory_item: :inventory_group)
-                         .joins(:order)
-                         .where(orders: { created_at: start_date..end_date })
+    breakdown = base_scope.joins(order_items: { inventory_item: :inventory_group })
+                         .where(created_at: start_date..end_date)
                          .group("inventory_groups.name")
                          .sum(Arel.sql("order_items.price_cents * order_items.quantity"))
 
@@ -40,7 +49,7 @@ class ReportsController < ApplicationController
     end.to_h
 
     # Graph data: Orders over time (daily)
-    daily_data = Order.where(created_at: start_date..end_date)
+    daily_data = base_scope.where(created_at: start_date..end_date)
                       .group(Arel.sql("DATE(created_at)"))
                       .order(Arel.sql("DATE(created_at)"))
                       .pluck(Arel.sql("DATE(created_at)"), Arel.sql("COUNT(*)"), Arel.sql("SUM(total_amount_cents)"))

@@ -5,6 +5,8 @@ class CustomerSearchTest < ApplicationSystemTestCase
     @admin = users(:administrator)
     @customer_one = customers(:one)
     @customer_two = customers(:two)
+    grant_support_access(accounts(:one))
+    grant_support_access(accounts(:four))
   end
 
   test "searching by customer name" do

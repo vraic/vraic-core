@@ -30,6 +30,9 @@ gem "tailwindcss-rails", "~> 4.6"
 gem "audits1984"
 gem "console1984"
 
+# Model auditing
+gem "audited", "~> 5.6"
+
 # Authorisation
 gem "pundit", "~> 2.5"
 

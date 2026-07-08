@@ -1,4 +1,5 @@
 class InventoryItem < ApplicationRecord
+  audited associated_with: :account
   include SearchCop
   acts_as_tenant :account
   acts_as_paranoid

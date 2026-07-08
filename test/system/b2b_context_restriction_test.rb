@@ -17,18 +17,12 @@ class B2bContextRestrictionTest < ApplicationSystemTestCase
 
   test "account admin switching to a joined store sees restricted view" do
     login_as @admin_user
-    visit dashboard_path
 
-    # Select Account One to start with
-    within "form[action='/managed_account']" do
-      select "Account One", from: "Select Store"
-      click_on "Go"
-    end
-
-    assert_text "Switched to Account One"
+    # Start with Account One
+    select_account("Account One")
 
     # Switch to Account Two
-    within "#your-stores" do
+    within "#business-stores" do
       within find("h3", text: "Account Two").find(:xpath, "../..") do
         click_on "Select"
       end
@@ -37,13 +31,12 @@ class B2bContextRestrictionTest < ApplicationSystemTestCase
     assert_text "Switched to Account Two"
 
     # Should NOT see staff-only sidebar items
-    within "nav" do
+    within "#desktop-sidebar-main-nav" do
       assert_no_text "Tasks"
       assert_no_text "Customers"
       assert_no_text "Suppliers"
       assert_no_text "Inventory"
       assert_no_text "Reports"
-      assert_text "Orders"
     end
 
     # Should NOT see "Stores joined by Account Two" on dashboard

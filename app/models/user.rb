@@ -18,6 +18,7 @@ class User < ApplicationRecord
   has_many :assigned_tasks, class_name: "Task", foreign_key: :assigned_by_id, dependent: :destroy
   has_many :orders, dependent: :nullify
   has_many :notes, dependent: :destroy
+  has_many :support_requests, foreign_key: "requester_id", dependent: :destroy
 
   anonymise do
     overwrite do
@@ -58,7 +59,7 @@ class User < ApplicationRecord
   def validate_otp(code)
     return false if otp_secret.blank?
     totp = ROTP::TOTP.new(otp_secret)
-    totp.verify(code, drift_behind: 30)
+    totp.verify(code, drift_behind: 30, drift_ahead: 10)
   end
 
   def generate_email_otp!

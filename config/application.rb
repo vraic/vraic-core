@@ -25,5 +25,7 @@ module VraicNet
     # config.eager_load_paths << Rails.root.join("extras")
     config.console1984.protected_environments = %i[ production staging ]
     config.console1984.ask_for_username_if_empty = true
+
+    config.active_record.yaml_column_permitted_classes = [ Symbol, Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, BigDecimal ]
   end
 end

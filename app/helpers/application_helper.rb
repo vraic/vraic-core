@@ -26,8 +26,12 @@ module ApplicationHelper
       controller_name == "orders"
     when :reports
       controller_name == "reports"
+    when :accounts
+      controller_name == "accounts"
+    when :support_requests
+      controller_name == "support_requests"
     when :settings
-      [ "accounts", "account_users", "users", "settings" ].include?(controller_name)
+      [ "account_users", "users", "settings" ].include?(controller_name)
     else
       false
     end
@@ -60,7 +64,7 @@ module ApplicationHelper
   end
 
   def input_class(has_error = false, extra_classes = nil)
-    base = "block w-full rounded-md border-0 py-1.5 px-3 h-9 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white"
+    base = "block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-white"
     color_classes = if has_error
       "ring-red-300 focus:ring-red-600 dark:ring-red-500"
     else
@@ -111,5 +115,21 @@ module ApplicationHelper
 
   def help_text_class(extra_classes = nil)
     [ "mt-2 text-sm text-gray-500 dark:text-gray-400", extra_classes ].compact.join(" ")
+  end
+  def status_badge_class(status)
+    case status.to_sym
+    when :pending
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+    when :accepted
+      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+    when :rejected
+      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+    when :extension_requested
+      "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300"
+    when :closed
+      "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+    else
+      "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+    end
   end
 end

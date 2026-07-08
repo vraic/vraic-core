@@ -86,6 +86,9 @@ GEM
       activerecord (>= 7.0, < 9)
       activesupport (>= 7.0, < 9)
     ast (2.4.3)
+    audited (5.8.0)
+      activerecord (>= 5.2, < 8.2)
+      activesupport (>= 5.2, < 8.2)
     audits1984 (0.1.7)
       console1984
       rinku
@@ -414,7 +417,7 @@ GEM
       bindex (>= 0.4.0)
       railties (>= 8.0.0)
     websocket (1.2.11)
-    websocket-driver (0.8.0)
+    websocket-driver (0.8.2)
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -437,6 +440,7 @@ DEPENDENCIES
   acts_as_paranoid
   acts_as_tenant
   anony
+  audited (~> 5.6)
   audits1984
   bcrypt (~> 3.1.7)
   bootsnap
@@ -491,6 +495,7 @@ CHECKSUMS
   addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
   anony (1.7.1) sha256=c29f43699b7b54da8c91e5d94da5ee18d08289eee5ddd97f145da9fab600167f
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
+  audited (5.8.0) sha256=35cd63f9ee1eb2a1f773e7abf5915bb4e870b6338173e27c31e0e604e353f371
   audits1984 (0.1.7) sha256=095e0a0a2135f310ef6be5234e4aecd1ab5fb3670e15d4083b604cb425449cc2
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bcrypt (3.1.22) sha256=1f0072e88c2d705d94aff7f2c5cb02eb3f1ec4b8368671e19112527489f29032
@@ -633,7 +638,7 @@ CHECKSUMS
   useragent (0.16.11) sha256=700e6413ad4bb954bb63547fa098dddf7b0ebe75b40cc6f93b8d54255b173844
   web-console (4.3.0) sha256=e13b71301cdfc2093f155b5aa3a622db80b4672d1f2f713119cc7ec7ac6a6da4
   websocket (1.2.11) sha256=b7e7a74e2410b5e85c25858b26b3322f29161e300935f70a0e0d3c35e0462737
-  websocket-driver (0.8.0) sha256=ed0dba4b943c22f17f9a734817e808bc84cdce6a7e22045f5315aa57676d4962
+  websocket-driver (0.8.2) sha256=97c556b019bf3410b4961002ac501621e9322d3f8a7bc02161a09301cc4c4146
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
   xpath (3.2.0) sha256=6dfda79d91bb3b949b947ecc5919f042ef2f399b904013eb3ef6d20dd3a4082e
   yaml (0.4.0) sha256=240e69d1e6ce3584d6085978719a0faa6218ae426e034d8f9b02fb54d3471942

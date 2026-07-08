@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_08_001929) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_08_175900) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -53,6 +53,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_08_001929) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "audits", force: :cascade do |t|
+    t.string "action"
+    t.integer "associated_id"
+    t.string "associated_type"
+    t.integer "auditable_id"
+    t.string "auditable_type"
+    t.text "audited_changes"
+    t.string "comment"
+    t.datetime "created_at"
+    t.string "remote_address"
+    t.string "request_uuid"
+    t.integer "user_id"
+    t.string "user_type"
+    t.string "username"
+    t.integer "version", default: 0
+    t.index ["associated_type", "associated_id"], name: "associated_index"
+    t.index ["auditable_type", "auditable_id", "version"], name: "auditable_index"
+    t.index ["created_at"], name: "index_audits_on_created_at"
+    t.index ["request_uuid"], name: "index_audits_on_request_uuid"
+    t.index ["user_id", "user_type"], name: "user_index"
   end
 
   create_table "audits1984_audits", force: :cascade do |t|
@@ -273,6 +295,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_08_001929) do
     t.index ["user_id"], name: "index_suppliers_on_user_id"
   end
 
+  create_table "support_request_comments", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.integer "support_request_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["account_id"], name: "index_support_request_comments_on_account_id"
+    t.index ["support_request_id"], name: "index_support_request_comments_on_support_request_id"
+    t.index ["user_id"], name: "index_support_request_comments_on_user_id"
+  end
+
+  create_table "support_requests", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.text "message"
+    t.integer "requester_id", null: false
+    t.integer "status"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_support_requests_on_account_id"
+    t.index ["requester_id"], name: "index_support_requests_on_requester_id"
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.integer "account_id", null: false
     t.integer "assigned_by_id", null: false
@@ -337,6 +383,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_08_001929) do
   add_foreign_key "suppliers", "accounts"
   add_foreign_key "suppliers", "accounts", column: "supplier_account_id"
   add_foreign_key "suppliers", "users"
+  add_foreign_key "support_request_comments", "accounts"
+  add_foreign_key "support_request_comments", "support_requests"
+  add_foreign_key "support_request_comments", "users"
+  add_foreign_key "support_requests", "accounts"
+  add_foreign_key "support_requests", "users", column: "requester_id"
   add_foreign_key "tasks", "accounts"
   add_foreign_key "tasks", "users", column: "assigned_by_id"
   add_foreign_key "tasks", "users", column: "responsible_user_id"

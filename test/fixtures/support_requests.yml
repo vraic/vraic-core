@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  requester: one
+  status: pending
+  message: We need help.
+
+two:
+  account: two
+  requester: two
+  status: pending
+  message: Another request.

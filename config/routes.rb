@@ -40,7 +40,19 @@ Rails.application.routes.draw do
     end
   end
   resources :account_users
-  resources :accounts
+  resources :accounts do
+    member do
+      post :join
+      post :leave
+      get :audits
+    end
+  end
+  resources :support_requests do
+    member do
+      post :extend
+    end
+    resources :comments, controller: "support_request_comments", only: %i[ create update ]
+  end
   # Auditing
   mount Audits1984::Engine => "/console"
 
@@ -74,4 +86,8 @@ Rails.application.routes.draw do
 
   get "dashboard" => "pages#dashboard"
   root "pages#home"
+
+  if Rails.env.test?
+    get "test/login/:user_id" => "sessions#test_login", as: :test_login
+  end
 end

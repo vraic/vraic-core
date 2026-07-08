@@ -13,7 +13,11 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   def find_current_auditor
-    Current.user if Current.user&.admin?
+    Current.user
+  end
+
+  def current_user
+    Current.user
   end
 
   def require_account!
@@ -34,7 +38,19 @@ class ApplicationController < ActionController::Base
 
       if user.admin?
         account = Account.find_by(id: account_id) if account_id
+
+        if account
+          active_request = SupportRequest.unscoped.where(account: account).active.first
+          if active_request.nil?
+            logger.warn "SECURITY: Admin #{user.id} attempted to access account #{account.id} without active support request"
+            account = nil
+            session.delete(:managed_account_id)
+            flash[:alert] = "Access denied. No active support authorization for this account."
+          end
+        end
+
         set_current_tenant(account)
+        ActsAsTenant.current_tenant = account # Explicitly set for models
       else
         # For non-admins, they must belong to the account
         if account_id && AccountUser.unscoped.where(user_id: user.id, account_id: account_id).exists?

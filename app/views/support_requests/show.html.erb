@@ -1,0 +1,88 @@
+<% content_for :title, "Support Request ##{@support_request.id}" %>
+
+<div class="max-w-4xl mx-auto pb-12">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="font-bold text-4xl">Support Request</h1>
+      <p class="text-gray-500 dark:text-gray-400 mt-2">
+        From <%= @support_request.requester.name %> (<%= @support_request.account.name %>)
+      </p>
+    </div>
+    <%= link_to "Back to Requests", support_requests_path, class: secondary_button_class %>
+  </div>
+
+  <div class="space-y-8">
+    <!-- Main Request -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <span class="font-semibold text-gray-900 dark:text-white"><%= @support_request.requester.name %></span>
+          <span class="text-xs text-gray-500"><%= @support_request.created_at.to_fs(:short) %></span>
+        </div>
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_badge_class(@support_request.status) %>">
+          <%= @support_request.status.titleize %>
+        </span>
+      </div>
+      <div class="p-6 text-gray-900 dark:text-white whitespace-pre-wrap"><%= @support_request.message %></div>
+    </div>
+
+    <!-- Actions for Admins/Managers -->
+    <% if policy(@support_request).update? %>
+      <div class="flex flex-wrap gap-2 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+        <% if @support_request.pending? %>
+          <%= button_to "Accept Request", support_request_path(@support_request, support_request: { status: :accepted }), method: :patch, class: primary_button_class("bg-green-600 hover:bg-green-700") %>
+          <%= button_to "Reject Request", support_request_path(@support_request, support_request: { status: :rejected }), method: :patch, class: danger_button_class %>
+        <% end %>
+
+        <% if @support_request.accepted? %>
+          <%= button_to "Close Ticket", support_request_path(@support_request, support_request: { status: :closed }), method: :patch, class: secondary_button_class %>
+        <% end %>
+
+        <% if @support_request.active? && Current.user.admin? %>
+          <%= button_to "Join Account", join_account_path(@support_request.account), method: :post, class: primary_button_class %>
+          <% unless @support_request.extension_requested? %>
+            <%= button_to "Request Extension", support_request_path(@support_request, support_request: { status: :extension_requested }), method: :patch, class: primary_button_class("bg-amber-600 hover:bg-amber-700") %>
+          <% end %>
+        <% end %>
+
+        <% if @support_request.extension_requested? && !Current.user.admin? %>
+          <div class="flex items-center space-x-2">
+            <span class="text-sm font-medium">Grant Extension:</span>
+            <%= button_to "+24h", extend_support_request_path(@support_request, duration: 24, unit: 'hours'), method: :post, class: secondary_button_class("text-xs") %>
+            <%= button_to "+72h", extend_support_request_path(@support_request, duration: 72, unit: 'hours'), method: :post, class: secondary_button_class("text-xs") %>
+            <%= button_to "+1w", extend_support_request_path(@support_request, duration: 1, unit: 'weeks'), method: :post, class: secondary_button_class("text-xs") %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Thread -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">Conversation</h2>
+      <div id="comments" class="space-y-6">
+        <% if @support_request.comments.any? %>
+          <%= render partial: "support_request_comments/support_request_comment", collection: @support_request.comments.order(created_at: :asc), as: :comment %>
+        <% else %>
+          <p class="text-sm text-gray-500 italic">No messages yet.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- New Comment -->
+    <% if @support_request.pending? || @support_request.accepted? || @support_request.extension_requested? %>
+      <div class="mt-12 bg-gray-50 dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">Add a message</h3>
+        <%= form_with(model: [@support_request, SupportRequestComment.new], url: support_request_comments_path(@support_request), local: true) do |f| %>
+          <div class="space-y-4">
+            <div>
+              <%= f.text_area :body, rows: 4, class: input_class, placeholder: "Type your message here..." %>
+            </div>
+            <div class="flex justify-end">
+              <%= f.submit "Send Message", class: primary_button_class %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

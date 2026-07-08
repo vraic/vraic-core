@@ -1,0 +1,91 @@
+<% content_for :title, "Support Requests" %>
+
+<div class="w-full">
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Support Requests</h1>
+    <%= link_to "New Support Request", new_support_request_path, class: primary_button_class %>
+  </div>
+
+  <div class="mt-8 <%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <% if Current.user.admin? %>
+            <th class="<%= th_class %>">Account</th>
+          <% end %>
+          <th class="<%= th_class %>">Requester</th>
+          <th class="<%= th_class %>">Message</th>
+          <th class="<%= th_class %>">Status</th>
+          <th class="<%= th_class %>">Requested At</th>
+          <th class="<%= th_class %>">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>" id="support_requests">
+        <% if @support_requests.any? %>
+          <% @support_requests.each do |request| %>
+            <tr class="<%= tr_class %>" id="<%= dom_id request %>">
+              <% if Current.user.admin? %>
+                <td class="<%= td_class %>"><%= request.account.name %></td>
+              <% end %>
+              <td class="<%= td_class %>"><%= request.requester.name %></td>
+              <td class="<%= td_class %> max-w-xs truncate">
+                <%= link_to request.message, request, class: "text-indigo-600 hover:text-indigo-900 font-medium" %>
+              </td>
+              <td class="<%= td_class %>">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_badge_class(request.status) %>">
+                  <%= request.status.titleize %>
+                </span>
+              </td>
+              <td class="<%= td_class %> text-gray-500 text-sm">
+                <%= request.created_at.to_fs(:short) %>
+                <% if request.expires_at.present? %>
+                  <div class="mt-1 text-xs <%= request.expires_at > Time.current ? 'text-green-600' : 'text-red-600' %> font-medium">
+                    Expires: <%= request.expires_at.to_fs(:short) %>
+                  </div>
+                <% end %>
+              </td>
+              <td class="<%= td_class %> space-x-2">
+                <% if policy(request).update? %>
+                  <% if request.pending? %>
+                    <%= button_to "Accept", support_request_path(request, support_request: { status: :accepted }), method: :patch, class: "text-green-600 hover:text-green-900 text-sm font-medium inline" %>
+                    <%= button_to "Reject", support_request_path(request, support_request: { status: :rejected }), method: :patch, class: "text-red-600 hover:text-red-900 text-sm font-medium inline" %>
+                  <% end %>
+                  
+                  <% if request.extension_requested? && !Current.user.admin? %>
+                    <div class="inline-block group relative">
+                      <button type="button" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Grant Extension</button>
+                      <div class="hidden group-hover:block absolute z-10 bg-white border border-gray-200 rounded shadow p-2 space-y-1">
+                        <%= button_to "+24h", extend_support_request_path(request, duration: 24, unit: 'hours'), method: :post, class: "block w-full text-left px-2 py-1 text-xs hover:bg-gray-100" %>
+                        <%= button_to "+72h", extend_support_request_path(request, duration: 72, unit: 'hours'), method: :post, class: "block w-full text-left px-2 py-1 text-xs hover:bg-gray-100" %>
+                        <%= button_to "+1w", extend_support_request_path(request, duration: 1, unit: 'weeks'), method: :post, class: "block w-full text-left px-2 py-1 text-xs hover:bg-gray-100" %>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+
+                <% if request.active? && Current.user.admin? %>
+                  <%= button_to "Join Account", join_account_path(request.account), method: :post, class: "text-indigo-600 hover:text-indigo-900 text-sm font-medium inline" %>
+                  <% unless request.extension_requested? %>
+                    <%= button_to "Request Extension", support_request_path(request, support_request: { status: :extension_requested }), method: :patch, class: "text-amber-600 hover:text-amber-900 text-sm font-medium inline" %>
+                  <% end %>
+                <% end %>
+
+                <% if request.accepted? %>
+                  <%= button_to "Close", support_request_path(request, support_request: { status: :closed }), method: :patch, class: "text-gray-600 hover:text-gray-900 text-sm font-medium inline" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="<%= Current.user.admin? ? 6 : 5 %>" class="<%= td_class %> text-center py-10">No support requests found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <%== pagy_tailwind_nav(@pagy) %>
+  </div>
+</div>

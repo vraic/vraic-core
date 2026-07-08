@@ -8,6 +8,7 @@ class ReportsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index as admin" do
+    grant_support_access(@account)
     sign_in_as @admin
     select_account(@account)
     get reports_url

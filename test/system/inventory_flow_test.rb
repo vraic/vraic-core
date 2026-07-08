@@ -3,6 +3,7 @@ require "application_system_test_case"
 class InventoryFlowTest < ApplicationSystemTestCase
   setup do
     @admin = users(:administrator)
+    grant_support_access(accounts(:one))
     login_as @admin
   end
 

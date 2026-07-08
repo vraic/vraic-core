@@ -21,7 +21,9 @@ class OrderPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if staff?
+      if user.admin?
+        authorized_scope
+      elsif staff?
         scope.all
       else
         user_account_ids = AccountUser.unscoped.where(user: user).pluck(:account_id)

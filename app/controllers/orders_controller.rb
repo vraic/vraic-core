@@ -15,7 +15,12 @@ class OrdersController < ApplicationController
       clean_query = @query.delete("#").strip
 
       # Since name and email are encrypted, search_cop (LIKE) won't work. We handle exact match here.
-      customer_ids = Customer.unscoped.where(name: @query.strip).or(Customer.unscoped.where(email_address: @query.strip)).pluck(:id)
+      # We search in the current scope's tenant if possible, or unscoped if admin
+      customer_ids = if Current.account
+        Current.account.customers.where(name: clean_query).or(Current.account.customers.where(email_address: clean_query)).pluck(:id)
+      else
+        Customer.unscoped.where(name: clean_query).or(Customer.unscoped.where(email_address: clean_query)).pluck(:id)
+      end
 
       begin
         decoded_id = Order.decode_prefix_id(clean_query)

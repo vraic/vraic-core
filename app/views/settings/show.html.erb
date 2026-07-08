@@ -67,7 +67,7 @@
               <p class="text-sm font-medium text-gray-900 dark:text-white">2FA is currently enabled via Authenticator App.</p>
             </div>
             <div class="mt-4">
-              <%= button_to "Disable 2FA", two_factor_auth_path, method: :delete, class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:ring-white/5 dark:hover:bg-white/20" %>
+              <%= button_to "Disable 2FA", two_factor_auth_path, method: :delete, class: secondary_button_class %>
             </div>
           <% else %>
             <div class="flex items-center gap-x-4 text-gray-500 dark:text-gray-400">

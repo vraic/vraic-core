@@ -5,6 +5,7 @@ class OrdersTest < ApplicationSystemTestCase
     @admin = users(:administrator)
     @item = inventory_items(:one) # Ribeye Steak, 19.99, 10 units in Storage Room
     @location = locations(:one) # Storage Room
+    grant_support_access(accounts(:one))
   end
 
   test "staff member sees auto-filled price and stock limit" do

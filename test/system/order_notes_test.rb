@@ -4,6 +4,7 @@ class OrderNotesTest < ApplicationSystemTestCase
   setup do
     @admin = users(:administrator)
     @order = orders(:one)
+    grant_support_access(accounts(:one))
   end
 
   test "staff can add a note to an order" do

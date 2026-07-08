@@ -20,6 +20,11 @@ class SupplierRequestPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
+      # Show all requests for admins in global view
+      if user.admin? && ActsAsTenant.current_tenant.nil?
+        return scope.all
+      end
+
       # Show requests sent or received by the current account
       tenant = ActsAsTenant.current_tenant
       scope.where(sender_account: tenant).or(scope.where(receiver_account: tenant))

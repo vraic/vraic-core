@@ -6,17 +6,14 @@ class AdminManagedMembershipTest < ApplicationSystemTestCase
     @managed_account = accounts(:one)
     @store_two = accounts(:two)
     @store_three = accounts(:three)
+    grant_support_access(@managed_account)
   end
 
   test "global admin managing an account can join multiple stores for that account" do
     login_as @admin
-    visit dashboard_path
 
-    # Start managing Account One
-    select "Account One", from: "Managing Account", match: :first
-    click_on "Go", match: :first
-
-    assert_text "Now managing Account One"
+    # Start managing Account One by Joining it
+    select_account("Account One")
 
     # Join Account Two
     within find("h2", text: "Join a Store").find(:xpath, "..") do

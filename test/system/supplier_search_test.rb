@@ -5,6 +5,7 @@ class SupplierSearchTest < ApplicationSystemTestCase
     @admin = users(:administrator)
     @supplier_one = suppliers(:one)
     @supplier_two = suppliers(:two)
+    grant_support_access(accounts(:one))
   end
 
   test "searching by supplier name" do
