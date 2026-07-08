@@ -27,6 +27,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     visit dashboard_path
     logout
 
+    # We expect 2FA after signing in if enabled
     visit new_session_path
     fill_in "Email", with: @user.email_address
     fill_in "Password", with: "password"
@@ -38,7 +39,8 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     fill_in "Verification Code", with: totp.now
     click_button "Verify"
 
-    assert_text "Dashboard"
+    assert_text "Dashboard", wait: 10
+    assert_current_path dashboard_path
 
     # Disable 2FA
     visit settings_path

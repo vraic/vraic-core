@@ -59,7 +59,7 @@ class User < ApplicationRecord
   def validate_otp(code)
     return false if otp_secret.blank?
     totp = ROTP::TOTP.new(otp_secret)
-    totp.verify(code, drift_behind: 30)
+    totp.verify(code, drift_behind: 30, drift_ahead: 10)
   end
 
   def generate_email_otp!
