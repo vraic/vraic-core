@@ -61,8 +61,15 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     assert_text "Two-Factor Verification"
     assert_text "We've sent a verification code to your email address"
 
-    code = @user.reload.email_otp_token
-    fill_in "Verification Code", with: code
+    # Use a robust way to get the token
+    token = nil
+    50.times do
+      token = User.uncached { @user.reload.email_otp_token }
+      break if token.present?
+      sleep 0.2
+    end
+
+    fill_in "Verification Code", with: token
     click_button "Verify"
 
     assert_text "Dashboard"

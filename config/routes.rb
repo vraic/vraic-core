@@ -86,4 +86,8 @@ Rails.application.routes.draw do
 
   get "dashboard" => "pages#dashboard"
   root "pages#home"
+
+  if Rails.env.test?
+    get "test/login/:user_id" => "sessions#test_login", as: :test_login
+  end
 end

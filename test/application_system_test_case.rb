@@ -9,14 +9,33 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def login_as(user)
     Capybara.reset_sessions!
+    # Use the fast-path login for system tests to avoid flaky 2FA UI interactions
+    visit test_login_path(user_id: user.id)
+    assert_text "Dashboard", wait: 10
+    assert_current_path dashboard_path
+  end
+
+  def login_via_ui(user)
+    Capybara.reset_sessions!
     visit new_session_url
     fill_in "Email", with: user.email_address
     fill_in "Password", with: "password"
     click_button "Sign in"
 
-    # If we are on the 2FA page, provide the code
+    # We expect 2FA after signing in if enabled
     if page.has_css?("h2", text: "Two-Factor Verification", wait: 10)
-      code = user.otp_enabled? ? ROTP::TOTP.new(user.otp_secret).now : "12345678"
+      code = if user.otp_enabled?
+        ROTP::TOTP.new(user.otp_secret).now
+      else
+        # For email OTP, we need to fetch it from the database
+        token = nil
+        50.times do
+          token = User.uncached { User.find(user.id).email_otp_token }
+          break if token.present?
+          sleep 0.2
+        end
+        token
+      end
       fill_in "Verification Code", with: code
       click_on "Verify"
     end
