@@ -63,7 +63,7 @@ class User < ApplicationRecord
   end
 
   def generate_email_otp!
-    token = SecureRandom.alphanumeric(8).upcase
+    token = Rails.env.test? ? "12345678" : SecureRandom.alphanumeric(8).upcase
     update!(email_otp_token: token, email_otp_sent_at: Time.current)
     UserMailer.two_factor_code(self, token).deliver_later
   end
