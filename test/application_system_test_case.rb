@@ -14,24 +14,25 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     fill_in "Password", with: "password"
     click_button "Sign in"
 
-    # We expect 2FA after signing in. Wait for it to appear.
-    if page.has_text?("Two-Factor Verification", wait: 10)
-      code = if user.otp_enabled?
-        ROTP::TOTP.new(user.otp_secret).now
-      else
-        # Email token is generated on the 'new' action of TwoFactorVerificationsController
-        # We reload until it's present to avoid race conditions
-        token = nil
-        10.times do
-          token = user.reload.email_otp_token
-          break if token.present?
-          sleep 0.1
-        end
-        token
+    # We expect 2FA after signing in.
+    assert_selector "h2", text: "Two-Factor Verification", wait: 10
+
+    code = if user.otp_enabled?
+      ROTP::TOTP.new(user.otp_secret).now
+    else
+      # Email token is generated on the 'new' action of TwoFactorVerificationsController
+      # We reload until it's present to avoid race conditions
+      token = nil
+      50.times do
+        token = user.reload.email_otp_token
+        break if token.present?
+        sleep 0.1
       end
-      fill_in "Verification Code", with: code
-      click_button "Verify"
+      raise "Email OTP token not found for user #{user.email_address}" if token.blank?
+      token
     end
+    fill_in "Verification Code", with: code
+    click_button "Verify"
 
     assert_text "Dashboard"
     assert_current_path dashboard_path
