@@ -6,7 +6,7 @@ class SupportRequestCommentsController < ApplicationController
     @comment = @support_request.comments.new(comment_params)
     @comment.user = Current.user
     @comment.account = @support_request.account
-    
+
     authorize @comment
 
     if @comment.save
