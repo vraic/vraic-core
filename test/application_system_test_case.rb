@@ -39,7 +39,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     fill_in "Verification Code", with: code
     # Ensure the code was actually filled
     assert_field "Verification Code", with: code
-    
+
     # Small delay before clicking to avoid race conditions with Turbo/JS
     sleep 0.2
     click_on "Verify"
