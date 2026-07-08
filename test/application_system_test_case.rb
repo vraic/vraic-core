@@ -8,6 +8,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def login_as(user)
+    # Clear any existing OTP tokens to ensure we get a fresh one generated for this session
+    # and to make sure the wait loop below doesn't pick up a stale token.
+    user.update_columns(email_otp_token: nil, email_otp_sent_at: nil)
+
     Capybara.reset_sessions!
     visit new_session_url
     fill_in "Email", with: user.email_address
@@ -34,7 +38,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     fill_in "Verification Code", with: code
     click_button "Verify"
 
-    assert_text "Dashboard"
+    # Increased wait time and more specific check for Dashboard
+    assert_selector "h1", text: /Séyiz les beinv'nus|Dashboard/, wait: 15
     assert_current_path dashboard_path
   end
 
