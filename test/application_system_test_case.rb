@@ -8,6 +8,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def login_as(user)
+    Capybara.reset_sessions!
     visit new_session_url
     fill_in "Email", with: user.email_address
     fill_in "Password", with: "password"

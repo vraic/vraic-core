@@ -18,7 +18,7 @@ class TwoFactorVerificationsController < ApplicationController
       redirect_to after_authentication_url
     else
       flash.now[:alert] = "Invalid verification code."
-      render :show, status: :unprocessable_content
+      render :new, status: :unprocessable_content
     end
   end
 
