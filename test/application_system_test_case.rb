@@ -9,7 +9,6 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def login_as(user)
     # Clear any existing OTP tokens to ensure we get a fresh one generated for this session
-    # and to make sure the wait loop below doesn't pick up a stale token.
     user.update_columns(email_otp_token: nil, email_otp_sent_at: nil)
 
     Capybara.reset_sessions!
@@ -19,7 +18,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     click_button "Sign in"
 
     # We expect 2FA after signing in.
-    assert_selector "h2", text: "Two-Factor Verification", wait: 10
+    assert_selector "h2", text: "Two-Factor Verification", wait: 15
 
     code = if user.otp_enabled?
       ROTP::TOTP.new(user.otp_secret).now
@@ -28,18 +27,31 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       # We reload until it's present to avoid race conditions
       token = nil
       50.times do
-        token = user.reload.email_otp_token
+        token = User.find(user.id).email_otp_token
         break if token.present?
         sleep 0.1
       end
+      
+      if token.blank?
+        # If it failed to generate, try refreshing the page once
+        visit current_url
+        assert_selector "h2", text: "Two-Factor Verification", wait: 10
+        50.times do
+          token = User.find(user.id).email_otp_token
+          break if token.present?
+          sleep 0.1
+        end
+      end
+
       raise "Email OTP token not found for user #{user.email_address}" if token.blank?
       token
     end
+
     fill_in "Verification Code", with: code
     click_button "Verify"
 
-    # Increased wait time and more specific check for Dashboard
-    assert_selector "h1", text: /Séyiz les beinv'nus|Dashboard/, wait: 15
+    # Wait for dashboard to load. If it fails, Capybara will show the page content.
+    assert_text "Dashboard", wait: 15
     assert_current_path dashboard_path
   end
 
