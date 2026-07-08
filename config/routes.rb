@@ -63,6 +63,15 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  resource :settings, only: [ :show, :update, :destroy ] do
+    member do
+      patch :update_password
+      post :logout_sessions
+    end
+  end
+  resource :two_factor_auth, only: [ :show, :create, :destroy ]
+  resource :two_factor_verification, only: [ :new, :create ]
+
   get "dashboard" => "pages#dashboard"
   root "pages#home"
 end

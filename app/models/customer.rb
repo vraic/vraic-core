@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
   acts_as_paranoid
   acts_as_tenant :account
   has_prefix_id :cust
+  encrypts :name, :email_address, deterministic: true
 
   search_scope :search do
     attributes :name, :email_address, :phone

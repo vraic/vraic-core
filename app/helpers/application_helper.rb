@@ -27,7 +27,7 @@ module ApplicationHelper
     when :reports
       controller_name == "reports"
     when :settings
-      [ "accounts", "account_users", "users" ].include?(controller_name)
+      [ "accounts", "account_users", "users", "settings" ].include?(controller_name)
     else
       false
     end

@@ -41,8 +41,7 @@ class NavigationVisibilityTest < ActionDispatch::IntegrationTest
       assert_select "a", text: /Customers/, count: 0
       assert_select "a", text: /Inventory/, count: 0
       assert_select "a", text: /Reports/, count: 0
+      assert_select "a", text: /Settings/
     end
-    # Settings should also be hidden for customers
-    assert_select "nav a", text: /Settings/, count: 0
   end
 end

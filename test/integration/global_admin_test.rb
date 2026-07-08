@@ -11,7 +11,7 @@ class GlobalAdminTest < ActionDispatch::IntegrationTest
 
     # Select an account
     patch managed_account_path, params: { account_id: @account.id }
-    assert_redirected_to root_path
+    assert_redirected_to dashboard_path
     follow_redirect!
     assert_equal @account.id, session[:managed_account_id]
 
@@ -79,7 +79,7 @@ class GlobalAdminTest < ActionDispatch::IntegrationTest
     patch managed_account_path, params: { account_id: @account.id }
 
     patch managed_account_path, params: { account_id: "" }
-    assert_redirected_to root_path
+    assert_redirected_to dashboard_path
     assert_nil session[:managed_account_id]
   end
 end

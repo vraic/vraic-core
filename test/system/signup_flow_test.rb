@@ -10,7 +10,7 @@ class SignupFlowTest < ApplicationSystemTestCase
     click_button "Create User"
 
     assert_text "Dashboard"
-    assert_text "Welcome, new store owner"
+    assert_text "Welcome, New Store Owner"
     assert_text "No stores joined yet"
 
     # 2. Create a Store

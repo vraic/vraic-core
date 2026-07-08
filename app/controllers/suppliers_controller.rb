@@ -4,7 +4,18 @@ class SuppliersController < ApplicationController
 
   def index
     suppliers = policy_scope(Supplier)
-    suppliers = suppliers.search(params[:query]) if params[:query].present?
+
+    if params[:query].present?
+      # Try to find by exact name or email first since they are encrypted and search_cop (LIKE) won't work
+      matching_suppliers = suppliers.where(name: params[:query].strip).or(suppliers.where(email_address: params[:query].strip))
+
+      if matching_suppliers.any?
+        suppliers = matching_suppliers
+      else
+        suppliers = suppliers.search(params[:query])
+      end
+    end
+
     @pagy, @suppliers = pagy(suppliers)
   end
 

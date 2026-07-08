@@ -5,7 +5,19 @@ class CustomersController < ApplicationController
   # GET /customers or /customers.json
   def index
     customers = policy_scope(Customer)
-    customers = customers.search(params[:query]) if params[:query].present?
+    customers = customers.where("customers.created_at >= ?", 7.days.ago) if params[:filter] == "recent"
+
+    if params[:query].present?
+      # Try to find by exact name or email first since they are encrypted and search_cop (LIKE) won't work
+      matching_customers = customers.where(name: params[:query].strip).or(customers.where(email_address: params[:query].strip))
+
+      if matching_customers.any?
+        customers = matching_customers
+      else
+        customers = customers.search(params[:query])
+      end
+    end
+
     @pagy, @customers = pagy(customers)
   end
 

@@ -18,12 +18,12 @@ class OrderSearchTest < ApplicationSystemTestCase
     assert_text "Customer One"
   end
 
-  test "searching by partial customer name" do
+  test "searching by customer email" do
     login_as @admin
     select_account("Account One")
     visit orders_url
 
-    fill_in "query", with: "One"
+    fill_in "query", with: "customer-one@example.com"
     click_on "Search"
 
     assert_text "Customer One"

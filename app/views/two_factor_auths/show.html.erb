@@ -1,0 +1,37 @@
+<div class="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+  <div class="space-y-8">
+    <div>
+      <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">Setup Two-Factor Authentication</h3>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Scan the QR code below with your authenticator app (like Google Authenticator or Authy).
+      </p>
+    </div>
+
+    <div class="flex flex-col items-center space-y-4">
+      <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <%= sanitize(@qr_code.as_svg(module_size: 4, use_path: true), tags: %w(svg path), attributes: %w(version width height shape-rendering d fill transform)) %>
+      </div>
+
+      <div class="text-center">
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Manual Entry Token:</p>
+        <code class="mt-1 block p-2 bg-gray-100 dark:bg-gray-800 rounded text-lg font-mono tracking-widest text-indigo-600 dark:text-indigo-400">
+          <%= @user.otp_secret %>
+        </code>
+      </div>
+    </div>
+
+    <%= form_with url: two_factor_auth_path, method: :post, class: "space-y-6" do |f| %>
+      <div>
+        <%= f.label :otp_code, "Enter verification code from app", class: label_class %>
+        <div class="mt-2">
+          <%= f.text_field :otp_code, autocomplete: "one-time-code", inputmode: "numeric", pattern: "[0-9]*", placeholder: "123456", class: input_class, required: true %>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center pt-4">
+        <%= link_to "Cancel", settings_path, class: "text-sm font-medium text-gray-600 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300" %>
+        <%= f.submit "Verify and Enable 2FA", class: primary_button_class %>
+      </div>
+    <% end %>
+  </div>
+</div>
