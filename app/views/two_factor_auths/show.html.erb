@@ -22,15 +22,15 @@
 
     <%= form_with url: two_factor_auth_path, method: :post, class: "space-y-6" do |f| %>
       <div>
-        <%= f.label :otp_code, "Enter verification code from app", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
-        <div class="mt-1">
-          <%= f.text_field :otp_code, autocomplete: "one-time-code", inputmode: "numeric", pattern: "[0-9]*", placeholder: "123456", class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white", required: true %>
+        <%= f.label :otp_code, "Enter verification code from app", class: label_class %>
+        <div class="mt-2">
+          <%= f.text_field :otp_code, autocomplete: "one-time-code", inputmode: "numeric", pattern: "[0-9]*", placeholder: "123456", class: input_class, required: true %>
         </div>
       </div>
 
-      <div class="flex justify-between items-center">
+      <div class="flex justify-between items-center pt-4">
         <%= link_to "Cancel", settings_path, class: "text-sm font-medium text-gray-600 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300" %>
-        <%= f.submit "Verify and Enable 2FA", class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        <%= f.submit "Verify and Enable 2FA", class: primary_button_class %>
       </div>
     <% end %>
   </div>
