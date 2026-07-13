@@ -14,11 +14,11 @@ We're at **proof-of-concept stage** (pre-alpha). The codebase is live, the CI pi
 
 ### Core Principles
 
-- **Open source, MIT licensed.** No vendor lock-in. No proprietary black boxes. Every line of code is auditable.
-- **Privacy by design.** Farmers' data stays theirs. No data harvesting, no secondary markets, no surveillance-as-a-business-model.
+- **Open source, MIT license.** No vendor lock-in. No proprietary black boxes. Every line of code is auditable.
+- **Privacy by design.** Farmers data stays theirs.
 - **People-first technology.** Technology serves the people working the land and not the other way around.
 - **On-island deployment.** Built to run on Jersey-based servers, keeping data local and reducing dependence on offshore cloud infrastructure.
-- **Community-shaped.** Feature priorities come from direct engagement with local farmers and agricultural stakeholders, not from a product roadmap assumed in a boardroom.
+- **Community-shaped.** Feature priorities come from direct engagement with local farmers and agricultural stakeholders.
 - **Built to teach.** The project doubles as a teaching resource, creating opportunities for on-island skills development in modern software engineering. We already have expressions of interest from several local school leadership teams.
 
 ## Tech Stack
@@ -30,9 +30,8 @@ We're at **proof-of-concept stage** (pre-alpha). The codebase is live, the CI pi
 | Deployment | Docker / containers |
 | CI/CD | GitHub Actions |
 | Code Quality | RuboCop, integrated test suite |
-| Dev Environment | DevContainer |
 
-Built on [Rails](https://rubyonrails.org) following the [Rails Doctrine](https://rubyonrails.org/doctrine) where programmer happiness is front and centre. We're using convention over configuration to fuel sustainable development. We're also incorporating best practice from 25+ years of professional experience.
+Built on [Rails](https://rubyonrails.org) following the [Rails Doctrine](https://rubyonrails.org/doctrine) where programmer happiness is front and centre. We're using convention over configuration to fuel sustainable development.
 
 ## Current Status
 
