@@ -22,6 +22,6 @@ administrator:
   name: Test Administrator
 
 three:
-  email_address: three@example.com
+  email_address: customer@example.com
   password_digest: <%= password_digest %>
   name: Test User Three
