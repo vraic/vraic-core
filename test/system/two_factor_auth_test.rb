@@ -30,8 +30,9 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     # We expect 2FA after signing in if enabled
     visit new_session_path
     fill_in "Email", with: @user.email_address
+    click_button "Sign in with password"
     fill_in "Password", with: "password"
-    click_button "Sign in"
+    click_button "Continue"
 
     assert_text "Two-Factor Verification"
     assert_text "Please enter the code from your authenticator app"
@@ -57,8 +58,9 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     visit new_session_path
     fill_in "Email", with: @user.email_address
+    click_button "Sign in with password"
     fill_in "Password", with: "password"
-    click_button "Sign in"
+    click_button "Continue"
 
     assert_text "Two-Factor Verification"
     assert_text "We've sent a verification code to your email address"

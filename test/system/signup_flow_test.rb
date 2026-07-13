@@ -6,7 +6,7 @@ class SignupFlowTest < ApplicationSystemTestCase
     visit new_user_url
     fill_in "Name", with: "New Store Owner"
     fill_in "Email", with: "owner@example.com"
-    fill_in "Password", with: "password123"
+    fill_in "Password", with: "ComplexPassword123!"
     click_button "Create User"
 
     assert_text "Dashboard"

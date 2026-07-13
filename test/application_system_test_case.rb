@@ -19,8 +19,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     Capybara.reset_sessions!
     visit new_session_url
     fill_in "Email", with: user.email_address
+
+    click_button "Sign in with password"
     fill_in "Password", with: "password"
-    click_button "Sign in"
+    click_button "Continue"
 
     # We expect 2FA after signing in if enabled
     if page.has_css?("h2", text: "Two-Factor Verification", wait: 10)
