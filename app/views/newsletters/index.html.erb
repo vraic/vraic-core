@@ -37,8 +37,10 @@
               </td>
               <td class="<%= td_class %>">
                 <div class="flex gap-2">
-                  <%= link_to "Edit", edit_newsletter_path(newsletter), class: "text-indigo-600 hover:text-indigo-900" %>
-                  <%= button_to "Delete", newsletter, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900" %>
+                  <% unless newsletter.sent? %>
+                    <%= link_to "Edit", edit_newsletter_path(newsletter), class: "text-indigo-600 hover:text-indigo-900" %>
+                    <%= button_to "Delete", newsletter, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900" %>
+                  <% end %>
                 </div>
               </td>
             </tr>

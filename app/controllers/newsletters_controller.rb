@@ -1,5 +1,6 @@
 class NewslettersController < ApplicationController
   before_action :set_newsletter, only: %i[ show edit update destroy deliver ]
+  before_action :ensure_not_sent, only: %i[ edit update destroy deliver ]
 
   def index
     @newsletters = Newsletter.all
@@ -51,6 +52,12 @@ class NewslettersController < ApplicationController
 
   def set_newsletter
     @newsletter = Newsletter.find(params[:id])
+  end
+
+  def ensure_not_sent
+    if @newsletter.sent?
+      redirect_to @newsletter, alert: "This newsletter has already been sent and cannot be modified or re-delivered."
+    end
   end
 
   def newsletter_params
