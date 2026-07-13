@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_08_175900) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_13_090000) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -345,6 +345,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_08_175900) do
     t.boolean "otp_required_for_login", default: false, null: false
     t.string "otp_secret"
     t.string "password_digest", null: false
+    t.boolean "prefers_email_login", default: false, null: false
+    t.boolean "security_choice_made", default: false, null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true

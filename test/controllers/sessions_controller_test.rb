@@ -23,6 +23,32 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_nil cookies[:session_id]
   end
 
+  test "create without password sends one-time code for existing user" do
+    assert_enqueued_emails 1 do
+      post session_path, params: { email_address: @user.email_address }
+    end
+
+    assert_redirected_to new_two_factor_verification_path
+    assert_equal @user.id, session[:otp_user_id]
+    assert_equal @user.id, session[:security_setup_user_id]
+    assert User.find(@user.id).email_otp_token.present?
+  end
+
+  test "create without password signs up new user and sends code" do
+    assert_difference("User.count", 1) do
+      assert_enqueued_emails 1 do
+        post session_path, params: { email_address: "signup-only@example.com" }
+      end
+    end
+
+    user = User.find_by(email_address: "signup-only@example.com")
+    assert_not_nil user
+    assert user.prefers_email_login?
+    assert_redirected_to new_two_factor_verification_path
+    assert_equal user.id, session[:otp_user_id]
+    assert_equal user.id, session[:security_setup_user_id]
+  end
+
   test "destroy" do
     sign_in_as(User.take)
 

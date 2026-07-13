@@ -98,3 +98,4 @@ gem "ffaker", group: [ :development, :test ]
 gem "search_cop"
 gem "rotp"
 gem "rqrcode"
+gem "zxcvbn-ruby"
