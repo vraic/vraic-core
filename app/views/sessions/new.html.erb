@@ -6,7 +6,7 @@
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 border-1 border-gray-300 sm:rounded-lg sm:px-12 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
-      <%= form_with url: session_path, class: "space-y-4" do |form| %>
+      <%= form_with url: session_path, class: "space-y-4", data: { controller: "password-login" } do |form| %>
         <div>
           <%= form.label :email_address, "Email", class: label_class %>
           <div class="mt-2">
@@ -14,26 +14,42 @@
           </div>
         </div>
 
-        <div>
-          <%= form.label :password, class: label_class %>
+        <div class="hidden" data-password-login-target="passwordFields">
+          <%= form.label :password, "Password (optional)", class: label_class %>
           <div class="mt-2">
-            <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: input_class %>
+            <%= form.password_field :password, autocomplete: "current-password", placeholder: "Leave blank to sign in with a one-time email code", maxlength: 72, class: input_class %>
           </div>
         </div>
 
-        <div class="flex items-center justify-between">
+        <div class="hidden flex items-center justify-between" data-password-login-target="passwordFields">
           <div class="text-sm/6">
             <%= link_to "Forgot password?", new_password_path, class: "font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
           </div>
         </div>
 
         <div>
-          <%= form.submit "Sign in", class: primary_button_class("flex w-full justify-center") %>
+          <%= form.submit "Continue", class: primary_button_class("flex w-full justify-center") %>
+        </div>
+
+        <div data-password-login-target="toggleSection">
+          <div class="relative mt-6">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+              <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="bg-white px-2 text-gray-500 dark:bg-gray-800/50 dark:text-gray-400">OR</span>
+            </div>
+          </div>
+
+          <%= button_tag "Sign in with password",
+              type: "button",
+              class: secondary_button_class("mt-6 flex w-full justify-center"),
+              data: { action: "click->password-login#showPassword" } %>
         </div>
       <% end %>
 
       <p class="mt-6 text-center text-sm/6 text-gray-500 dark:text-gray-400">
-        Don't have an account? <%= link_to "Signup", new_user_path, class: "font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+        New here? Enter your email to sign up instantly with a one-time code.
       </p>
     </div>
 

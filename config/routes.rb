@@ -83,6 +83,13 @@ Rails.application.routes.draw do
   end
   resource :two_factor_auth, only: [ :show, :create, :destroy ]
   resource :two_factor_verification, only: [ :new, :create ]
+  resource :security_setup, only: [ :show, :create ] do
+    member do
+      get :password
+      patch :update_password
+      get :two_factor
+    end
+  end
 
   get "dashboard" => "pages#dashboard"
   root "pages#home"

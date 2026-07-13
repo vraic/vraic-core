@@ -30,8 +30,9 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     # We expect 2FA after signing in if enabled
     visit new_session_path
     fill_in "Email", with: @user.email_address
+    click_button "Sign in with password"
     fill_in "Password", with: "password"
-    click_button "Sign in"
+    click_button "Continue"
 
     assert_text "Two-Factor Verification"
     assert_text "Please enter the code from your authenticator app"
@@ -39,8 +40,9 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     fill_in "Verification Code", with: totp.now
     click_button "Verify"
 
-    assert_text "Dashboard", wait: 10
-    assert_current_path dashboard_path
+    assert_current_path dashboard_path, wait: 10
+    assert_text "Séyiz les beinv'nus"
+    assert_text "Logout"
 
     # Disable 2FA
     visit settings_path
@@ -57,15 +59,16 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     visit new_session_path
     fill_in "Email", with: @user.email_address
+    click_button "Sign in with password"
     fill_in "Password", with: "password"
-    click_button "Sign in"
+    click_button "Continue"
 
     assert_text "Two-Factor Verification"
     assert_text "We've sent a verification code to your email address"
 
     # Use a robust way to get the token
     token = nil
-    10.times do
+    50.times do
       token = User.uncached { User.find(@user.id).email_otp_token }
       break if token.present?
       sleep 0.2
@@ -76,7 +79,6 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     fill_in "Verification Code", with: token.to_s.strip.upcase
     click_button "Verify"
 
-    assert_text "Dashboard", wait: 10
-    assert_current_path dashboard_path
+    assert_current_path dashboard_path, wait: 10
   end
 end

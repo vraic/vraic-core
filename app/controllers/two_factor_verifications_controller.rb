@@ -15,7 +15,11 @@ class TwoFactorVerificationsController < ApplicationController
       @user.clear_email_otp!
       start_new_session_for @user
       session.delete(:otp_user_id)
-      redirect_to after_authentication_url
+      if session.delete(:security_setup_user_id) == @user.id && !@user.security_choice_made?
+        redirect_to security_setup_path
+      else
+        redirect_to after_authentication_url
+      end
     else
       flash.now[:alert] = "Invalid verification code."
       render :new, status: :unprocessable_content

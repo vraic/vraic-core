@@ -425,6 +425,7 @@ GEM
       nokogiri (~> 1.8)
     yaml (0.4.0)
     zeitwerk (2.8.2)
+    zxcvbn-ruby (2.0.1)
 
 PLATFORMS
   aarch64-linux
@@ -476,6 +477,7 @@ DEPENDENCIES
   turbo-rails
   tzinfo-data
   web-console
+  zxcvbn-ruby
 
 CHECKSUMS
   action_text-trix (2.1.19) sha256=7012f59421009cf284aa651294896414d653a61a2417c9b8714c8476d2f74009
@@ -643,6 +645,7 @@ CHECKSUMS
   xpath (3.2.0) sha256=6dfda79d91bb3b949b947ecc5919f042ef2f399b904013eb3ef6d20dd3a4082e
   yaml (0.4.0) sha256=240e69d1e6ce3584d6085978719a0faa6218ae426e034d8f9b02fb54d3471942
   zeitwerk (2.8.2) sha256=7212a61311083c604184b1ea2574b9aa05cd14f855a0841c06985cabe9181d12
+  zxcvbn-ruby (2.0.1) sha256=9115bf22adb42a779ddb0fb9b3ceb5b69b634c0bfaa582166e43de332982c7fc
 
 BUNDLED WITH
   4.0.12

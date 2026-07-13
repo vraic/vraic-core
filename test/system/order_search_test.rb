@@ -24,7 +24,7 @@ class OrderSearchTest < ApplicationSystemTestCase
     select_account("Account One")
     visit orders_url
 
-    fill_in "query", with: "customer-one@example.com"
+    fill_in "query", with: "customer@example.com"
     click_on "Search"
 
     assert_text "Customer One"

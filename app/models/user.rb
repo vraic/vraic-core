@@ -26,13 +26,14 @@ class User < ApplicationRecord
       email :email_address
       hex :name
       with_strategy("ANONYMISED", :password_digest)
-      ignore :otp_secret, :email_otp_token, :email_otp_sent_at, :otp_required_for_login
+      ignore :otp_secret, :email_otp_token, :email_otp_sent_at, :otp_required_for_login, :prefers_email_login, :security_choice_made
     end
   end
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   normalizes :name, with: ->(n) { n.strip }
   validates :name, presence: true
+  validate :password_strength, if: -> { password.present? }
 
   before_destroy :check_admin_flag
 
@@ -77,7 +78,18 @@ class User < ApplicationRecord
     update!(email_otp_token: nil, email_otp_sent_at: nil)
   end
 
+  def email_login_only?
+    prefers_email_login?
+  end
+
   private
+
+  def password_strength
+    score = Zxcvbn.test(password, [ email_address, name ].compact).score
+    return if score >= 3
+
+    errors.add(:password, "is too weak. Please use a longer password with mixed characters.")
+  end
 
   def sync_email_to_customers
     customers.update_all(email_address: email_address)

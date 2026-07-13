@@ -2,7 +2,7 @@ require "test_helper"
 
 class StoreMembershipTest < ActionDispatch::IntegrationTest
   setup do
-    @user = User.create!(name: "New Customer", email_address: "new@example.com", password: "password")
+    @user = User.create!(name: "New Customer", email_address: "new@example.com", password: "ComplexPassword123!")
     @account = accounts(:one)
     sign_in_as(@user)
   end

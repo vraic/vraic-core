@@ -19,4 +19,11 @@ class UserTest < ActiveSupport::TestCase
     user.destroy_fully!
     assert_nil User.with_deleted.find_by(id: user.id)
   end
+
+  test "requires strong password" do
+    user = users(:one)
+
+    assert_not user.update(password: "password", password_confirmation: "password")
+    assert_includes user.errors[:password], "is too weak. Please use a longer password with mixed characters."
+  end
 end

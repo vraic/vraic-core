@@ -18,16 +18,38 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate_by(params.permit(:email_address, :password))
+    email_address = params[:email_address].to_s.strip.downcase
+    user = User.find_by(email_address: email_address)
+
+    if user&.authenticate(params[:password])
       session[:otp_user_id] = user.id
+      session.delete(:security_setup_user_id)
       redirect_to new_two_factor_verification_path
-    else
+    elsif params[:password].present?
       redirect_to new_session_path, alert: "Try another email address or password."
+    else
+      user = find_or_create_email_login_user(email_address)
+      session[:otp_user_id] = user.id
+      session[:security_setup_user_id] = user.id unless user.security_choice_made?
+      user.generate_email_otp!
+      redirect_to new_two_factor_verification_path, notice: "We emailed you a one-time code."
     end
   end
 
   def destroy
     terminate_session
     redirect_to new_session_path, status: :see_other
+  end
+
+  private
+
+  def find_or_create_email_login_user(email_address)
+    User.find_or_create_by!(email_address: email_address) do |user|
+      user.name = email_address.split("@").first.to_s.humanize
+      generated_password = SecureRandom.alphanumeric(32)
+      user.password = generated_password
+      user.password_confirmation = generated_password
+      user.prefers_email_login = true
+    end
   end
 end

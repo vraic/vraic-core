@@ -26,13 +26,13 @@ class SettingsTest < ApplicationSystemTestCase
 
     within "form[action='#{update_password_settings_path}']" do
       fill_in "Current password", with: "password"
-      fill_in "New password", with: "newpassword123"
-      fill_in "Confirm password", with: "newpassword123"
+      fill_in "New password", with: "ComplexPassword123!"
+      fill_in "Confirm password", with: "ComplexPassword123!"
       click_on "Save"
     end
 
     assert_text "Password updated successfully"
-    assert @user.reload.authenticate("newpassword123")
+    assert @user.reload.authenticate("ComplexPassword123!")
   end
 
   test "can logout other sessions" do
