@@ -24,6 +24,7 @@ class SessionsController < ApplicationController
     if user&.authenticate(params[:password])
       session[:otp_user_id] = user.id
       session.delete(:security_setup_user_id)
+      user.generate_email_otp! unless user.otp_enabled?
       redirect_to new_two_factor_verification_path
     elsif params[:password].present?
       redirect_to new_session_path, alert: "Try another email address or password."
