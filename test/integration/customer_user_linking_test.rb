@@ -7,7 +7,7 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
   end
 
   test "creating a customer links to existing user" do
-    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "password")
+    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "ComplexPassword123!")
 
     customer = nil
     ActsAsTenant.with_tenant(@account_a) do
@@ -36,7 +36,7 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
     assert_nil customer_a.user_id
     assert_nil customer_b.user_id
 
-    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "password")
+    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "ComplexPassword123!")
 
     assert_equal user.id, customer_a.reload.user_id
     assert_equal user.id, customer_b.reload.user_id
@@ -51,7 +51,7 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
   end
 
   test "syncing email from user to customers" do
-    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "password")
+    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "ComplexPassword123!")
     customer_a = nil
     ActsAsTenant.with_tenant(@account_a) do
       customer_a = Customer.create!(name: "Bob A", email_address: "bob@example.com")
@@ -63,7 +63,7 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
   end
 
   test "syncing email from customer to user and other customers" do
-    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "password")
+    user = User.create!(name: "Bob", email_address: "bob@example.com", password: "ComplexPassword123!")
     customer_a = nil
     ActsAsTenant.with_tenant(@account_a) do
       customer_a = Customer.create!(name: "Bob A", email_address: "bob@example.com")
@@ -81,7 +81,7 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
 
   test "public signup creates user and logs in" do
     assert_difference "User.count", 1 do
-      post users_path, params: { user: { name: "Alice", email_address: "alice@example.com", password: "password" } }
+      post users_path, params: { user: { name: "Alice", email_address: "alice@example.com", password: "ComplexPassword123!" } }
     end
 
     assert_redirected_to root_path
@@ -97,7 +97,7 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
       assert_difference "Customer.count", 1 do
         assert_difference "AccountUser.count", 1 do
           post users_path, params: {
-            user: { name: "Alice", email_address: "alice@example.com", password: "password" },
+            user: { name: "Alice", email_address: "alice@example.com", password: "ComplexPassword123!" },
             account_id: @account_a.id
           }
         end
