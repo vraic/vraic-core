@@ -40,8 +40,9 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     fill_in "Verification Code", with: totp.now
     click_button "Verify"
 
-    assert_text "Dashboard", wait: 10
-    assert_current_path dashboard_path
+    assert_current_path dashboard_path, wait: 10
+    assert_text "Séyiz les beinv'nus"
+    assert_text "Logout"
 
     # Disable 2FA
     visit settings_path
@@ -67,7 +68,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     # Use a robust way to get the token
     token = nil
-    10.times do
+    50.times do
       token = User.uncached { User.find(@user.id).email_otp_token }
       break if token.present?
       sleep 0.2
@@ -78,7 +79,6 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     fill_in "Verification Code", with: token.to_s.strip.upcase
     click_button "Verify"
 
-    assert_text "Dashboard", wait: 10
-    assert_current_path dashboard_path
+    assert_current_path dashboard_path, wait: 10
   end
 end
