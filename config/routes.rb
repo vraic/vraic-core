@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   resources :newsletters do
+    collection do
+      get :report
+    end
     member do
       post :deliver
     end

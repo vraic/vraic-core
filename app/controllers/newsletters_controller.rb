@@ -9,7 +9,16 @@ class NewslettersController < ApplicationController
     end
   end
 
+  def report
+    @sent_newsletters = Newsletter.where.not(sent_at: nil).order(sent_at: :desc)
+    @total_sent = Ahoy::Message.where(newsletter_id: @sent_newsletters.select(:id)).count
+    @total_opened = Ahoy::Message.where(newsletter_id: @sent_newsletters.select(:id)).where.not(opened_at: nil).count
+    @total_clicked = Ahoy::Message.where(newsletter_id: @sent_newsletters.select(:id)).where.not(clicked_at: nil).count
+  end
+
   def show
+    @messages = @newsletter.messages.includes(:user).order(sent_at: :desc)
+    @pagy, @messages = pagy(@messages) if defined?(Pagy)
   end
 
   def new

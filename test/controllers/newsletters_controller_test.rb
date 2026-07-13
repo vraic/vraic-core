@@ -53,6 +53,11 @@ class NewslettersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to newsletters_url
   end
 
+  test "should get report" do
+    get report_newsletters_url
+    assert_response :success
+  end
+
   test "should deliver newsletter" do
     assert_enqueued_with(job: NewsletterDeliveryJob, args: [ @newsletter ]) do
       post deliver_newsletter_url(@newsletter)

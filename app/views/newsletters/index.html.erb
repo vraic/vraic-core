@@ -3,7 +3,10 @@
 <div class="w-full">
   <div class="flex justify-between items-center mb-6">
     <h1 class="font-bold text-4xl">Newsletters</h1>
-    <%= link_to "New Newsletter", new_newsletter_path, class: primary_button_class %>
+    <div class="flex gap-2">
+      <%= link_to "View Report", report_newsletters_path, class: secondary_button_class %>
+      <%= link_to "New Newsletter", new_newsletter_path, class: primary_button_class %>
+    </div>
   </div>
 
   <div class="mb-6 flex gap-4">

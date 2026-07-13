@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_13_104940) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -77,8 +77,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_104940) do
   end
 
   create_table "ahoy_messages", force: :cascade do |t|
+    t.datetime "clicked_at"
     t.string "mailer"
     t.integer "newsletter_id", null: false
+    t.datetime "opened_at"
     t.datetime "sent_at"
     t.text "subject"
     t.string "to"
