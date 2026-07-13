@@ -24,7 +24,7 @@ class Customer < ApplicationRecord
 
   anonymise do
     overwrite do
-      ignore :account_id, :user_id, :customer_account_id
+      ignore :account_id, :user_id, :customer_account_id, :subscribed_to_newsletter
       hex :name
       email :email_address
       hex :phone

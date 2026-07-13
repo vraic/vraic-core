@@ -81,7 +81,7 @@ class SuppliersController < ApplicationController
   end
 
   def supplier_params
-    attributes = [ :name, :email_address, :phone ]
+    attributes = [ :name, :email_address, :phone, :subscribed_to_newsletter ]
     attributes += [ :account_id ] if Current.user.admin?
     params.require(:supplier).permit(attributes)
   end

@@ -1,0 +1,59 @@
+<% content_for :title, "Newsletters" %>
+
+<div class="w-full">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-bold text-4xl">Newsletters</h1>
+    <div class="flex gap-2">
+      <%= link_to "View Report", report_newsletters_path, class: secondary_button_class %>
+      <%= link_to "New Newsletter", new_newsletter_path, class: primary_button_class %>
+    </div>
+  </div>
+
+  <div class="mb-6 flex gap-4">
+    <%= link_to "All", newsletters_path, class: "text-sm font-semibold #{params[:target].blank? ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" %>
+    <%= link_to "Customers", newsletters_path(target: :customers), class: "text-sm font-semibold #{params[:target] == 'customers' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" %>
+    <%= link_to "Suppliers", newsletters_path(target: :suppliers), class: "text-sm font-semibold #{params[:target] == 'suppliers' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" %>
+  </div>
+
+  <div class="<%= table_container_class %>">
+    <table class="<%= table_class %>">
+      <thead class="<%= thead_class %>">
+        <tr>
+          <th class="<%= th_class %>">Subject</th>
+          <th class="<%= th_class %>">Target</th>
+          <th class="<%= th_class %>">Sent At</th>
+          <th class="<%= th_class %>">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="<%= tbody_class %>">
+        <% if @newsletters.any? %>
+          <% @newsletters.each do |newsletter| %>
+            <tr class="<%= tr_class %>">
+              <td class="<%= td_class %> font-medium text-indigo-600">
+                <%= link_to newsletter.subject, newsletter %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= newsletter.target.titleize %>
+              </td>
+              <td class="<%= td_class %>">
+                <%= newsletter.sent_at&.strftime("%b %d, %Y %H:%M") || "Not sent yet" %>
+              </td>
+              <td class="<%= td_class %>">
+                <div class="flex gap-2">
+                  <% unless newsletter.sent? %>
+                    <%= link_to "Edit", edit_newsletter_path(newsletter), class: "text-indigo-600 hover:text-indigo-900" %>
+                    <%= button_to "Delete", newsletter, method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="4" class="<%= td_class %> text-center py-10 text-gray-500">No newsletters found.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

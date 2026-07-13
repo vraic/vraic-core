@@ -14,11 +14,11 @@ We're at **proof-of-concept stage** (pre-alpha). The codebase is live, the CI pi
 
 ### Core Principles
 
-- **Open source, MIT licensed.** No vendor lock-in. No proprietary black boxes. Every line of code is auditable.
-- **Privacy by design.** Farmers' data stays theirs. No data harvesting, no secondary markets, no surveillance-as-a-business-model.
+- **Open source, MIT license.** No vendor lock-in. No proprietary black boxes. Every line of code is auditable.
+- **Privacy by design.** Farmers data stays theirs.
 - **People-first technology.** Technology serves the people working the land and not the other way around.
 - **On-island deployment.** Built to run on Jersey-based servers, keeping data local and reducing dependence on offshore cloud infrastructure.
-- **Community-shaped.** Feature priorities come from direct engagement with local farmers and agricultural stakeholders, not from a product roadmap assumed in a boardroom.
+- **Community-shaped.** Feature priorities come from direct engagement with local farmers and agricultural stakeholders.
 - **Built to teach.** The project doubles as a teaching resource, creating opportunities for on-island skills development in modern software engineering. We already have expressions of interest from several local school leadership teams.
 
 ## Tech Stack
@@ -30,9 +30,8 @@ We're at **proof-of-concept stage** (pre-alpha). The codebase is live, the CI pi
 | Deployment | Docker / containers |
 | CI/CD | GitHub Actions |
 | Code Quality | RuboCop, integrated test suite |
-| Dev Environment | DevContainer |
 
-Built on [Rails](https://rubyonrails.org) following the [Rails Doctrine](https://rubyonrails.org/doctrine) where programmer happiness is front and centre. We're using convention over configuration to fuel sustainable development. We're also incorporating best practice from 25+ years of professional experience.
+Built on [Rails](https://rubyonrails.org) following the [Rails Doctrine](https://rubyonrails.org/doctrine) where programmer happiness is front and centre. We're using convention over configuration to fuel sustainable development.
 
 ## Current Status
 
@@ -72,16 +71,6 @@ We're seeking funds to move Vraic from proof-of-concept to production-ready depl
 We propose an **unrestricted grant model**, not because we're resistant to accountability, but because open source projects don't fit neatly into equity, IP assignment or revenue-share frameworks. The MIT licence already guarantees the output remains a public good. The code is public: every commit and decision is visible to the world on GitHub. There is no more transparent accountability mechanism than an open repository.
 
 That said, we're pragmatic. If a funder's process requires lightweight reporting or milestone check-ins, we're happy to accommodate. What matters is that the administrative overhead doesn't consume the time that should go to building the product with farmers.
-
-### Proposed Use of Funds
-
-| Area | Purpose |
-|---|---|
-| Development |  6 months focused development: pre-alpha → production |
-| Infrastructure |  On-island server hosting (12 months), domain, SSL, backups |
-| Community engagement  | Farmer workshops, on-site visits, usability sessions |
-| Documentation & training  | User guides, developer docs, on-island skills materials |
-| Contingency | Buffer for unforeseen costs |
 
 ## Contributing and Getting Started
 

@@ -25,6 +25,11 @@
     <%= form.text_field :phone, class: input_class(supplier.errors[:phone].any?) %>
   </div>
 
+  <div class="my-5 flex items-center gap-2">
+    <%= form.check_box :subscribed_to_newsletter, class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %>
+    <%= form.label :subscribed_to_newsletter, "Subscribed to newsletter", class: "text-sm font-medium text-gray-900 dark:text-white" %>
+  </div>
+
   <% if Current.user.admin? %>
     <div class="my-5">
       <%= form.label :account_id, class: label_class %>
