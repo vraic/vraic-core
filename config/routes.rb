@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :newsletters do
+    member do
+      post :deliver
+    end
+  end
   resources :suppliers do
     member do
       get :inventory

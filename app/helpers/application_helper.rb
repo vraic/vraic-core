@@ -26,6 +26,8 @@ module ApplicationHelper
       controller_name == "orders"
     when :reports
       controller_name == "reports"
+    when :newsletters
+      controller_name == "newsletters"
     when :accounts
       controller_name == "accounts"
     when :support_requests

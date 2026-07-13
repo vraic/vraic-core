@@ -8,3 +8,5 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 pin "chart.js" # @4.5.1
 pin "chart.js/auto", to: "chart.js--auto.js" # @4.5.1
 pin "@kurkle/color", to: "@kurkle--color.js" # @0.3.4
+pin "lexxy"
+pin "@rails/actiontext", to: "actiontext.esm.js"

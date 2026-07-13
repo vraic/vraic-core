@@ -23,7 +23,7 @@ class Supplier < ApplicationRecord
 
   anonymise do
     overwrite do
-      ignore :account_id, :supplier_account_id, :user_id
+      ignore :account_id, :supplier_account_id, :user_id, :subscribed_to_newsletter
       hex :name
       email :email_address
       hex :phone
