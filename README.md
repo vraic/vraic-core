@@ -72,16 +72,6 @@ We propose an **unrestricted grant model**, not because we're resistant to accou
 
 That said, we're pragmatic. If a funder's process requires lightweight reporting or milestone check-ins, we're happy to accommodate. What matters is that the administrative overhead doesn't consume the time that should go to building the product with farmers.
 
-### Proposed Use of Funds
-
-| Area | Purpose |
-|---|---|
-| Development |  6 months focused development: pre-alpha → production |
-| Infrastructure |  On-island server hosting (12 months), domain, SSL, backups |
-| Community engagement  | Farmer workshops, on-site visits, usability sessions |
-| Documentation & training  | User guides, developer docs, on-island skills materials |
-| Contingency | Buffer for unforeseen costs |
-
 ## Contributing and Getting Started
 
 1. Clone the repo
