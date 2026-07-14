@@ -1,134 +1,123 @@
-<% content_for :title, "Users" %>
+<% content_for :title, "Dashboard" %>
 
 <div class="w-full">
-  
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Séyiz les beinv'nus</h1>
-    <%= link_to "Create a Store", new_account_path, class: primary_button_class %>
   </div>
 
   <div class="mt-10">
     <p class="mb-4">Welcome, <%= Current.user.name %> (<%= Current.user.email_address %>)!</p>
     
-    <% 
-      user_accounts = ActsAsTenant.without_tenant { Current.user.accounts.to_a }
-    %>
-    
-    <% if user_accounts.any? %>
-      <div id="your-stores" class="mt-10">
-        <h2 class="text-xl font-bold mb-4">Your Stores</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <% user_accounts.each do |account| %>
-            <div class="p-4 border rounded-lg flex justify-between items-center <%= Current.account == account ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-200' %>">
-              <div>
-                <h3 class="font-bold text-gray-900 dark:text-white"><%= account.name %></h3>
-                <p class="text-sm text-gray-500">
-                  Role: <%= ActsAsTenant.without_tenant { Current.user.account_users.find_by(account: account).user_role.titleize } %>
-                </p>
-                <% if Current.account == account %>
-                  <span class="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700 mt-1">Active</span>
-                <% end %>
-              </div>
-              <div>
-                <% if Current.account != account %>
-                  <%= button_to "Select", managed_account_path(account_id: account.id), method: :patch, class: secondary_button_class("text-xs") %>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
+    <% if Current.account && (staff? || manager?) %>
+      <div id="account-stats" class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 dark:bg-gray-800 dark:ring-1 dark:ring-white/10">
+          <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">Open Orders</dt>
+          <dd class="mt-1 text-3xl font-semibold tracking-tight text-indigo-600 dark:text-indigo-400"><%= @open_orders_count %></dd>
+          <%= link_to "View orders", orders_path, class: "mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+        </div>
+
+        <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 dark:bg-gray-800 dark:ring-1 dark:ring-white/10">
+          <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">Supplier Requests</dt>
+          <dd class="mt-1 text-3xl font-semibold tracking-tight text-indigo-600 dark:text-indigo-400"><%= @pending_supplier_requests_count %></dd>
+          <%= link_to "View requests", supplier_requests_path, class: "mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+        </div>
+
+        <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 dark:bg-gray-800 dark:ring-1 dark:ring-white/10">
+          <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">Open Tasks</dt>
+          <dd class="mt-1 text-3xl font-semibold tracking-tight text-indigo-600 dark:text-indigo-400"><%= @incomplete_tasks_count %></dd>
+          <%= link_to "View tasks", tasks_path, class: "mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+        </div>
+
+        <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 dark:bg-gray-800 dark:ring-1 dark:ring-white/10">
+          <dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">Low Stock Items</dt>
+          <dd class="mt-1 text-3xl font-semibold tracking-tight <%= @low_stock_items_count > 0 ? 'text-red-600 dark:text-red-400' : 'text-indigo-600 dark:text-indigo-400' %>"><%= @low_stock_items_count %></dd>
+          <%= link_to "View inventory", inventory_items_path, class: "mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" %>
         </div>
       </div>
-    <% else %>
-      <div class="mt-10 p-6 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/20 dark:border-yellow-900/50">
-        <p class="text-yellow-700 dark:text-yellow-400 font-medium">No stores joined yet.</p>
-        <p class="text-yellow-600 dark:text-yellow-500 mt-1 text-sm">Please select a store below to join, or use a sign-up link from a specific farm shop.</p>
-      </div>
-    <% end %>
 
-    <% if Current.account && staff? %>
-      <div id="business-stores" class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h2 class="text-xl font-bold mb-4">Stores joined by <%= Current.account.name %></h2>
-        <% 
-          joined_customers = Customer.unscoped.where(customer_account_id: Current.account.id).includes(:account)
-        %>
-        <% if joined_customers.any? %>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Business memberships represent a wholesale relationship for your entire account. 
-            Any member of your team can access these stores to place orders and manage the relationship on behalf of <%= Current.account.name %>.
-          </p>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <% joined_customers.each do |customer| %>
-              <div class="p-4 border rounded-lg flex justify-between items-center <%= Current.account == customer.account ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-200' %>">
-                <div>
-                  <h3 class="font-bold text-gray-900 dark:text-white"><%= customer.account.name %></h3>
-                  <p class="text-sm text-gray-500">Membership type: Business</p>
-                  <% if Current.account == customer.account %>
-                    <span class="inline-flex items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-700 mt-1">Active</span>
-                  <% end %>
-                </div>
-                <div>
-                  <% if Current.account != customer.account %>
-                    <%= button_to "Select", managed_account_path(account_id: customer.account.id), method: :patch, class: secondary_button_class("text-xs") %>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
+      <div id="suppliers-table" class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold">Suppliers</h2>
+        </div>
+        <% if @suppliers.any? %>
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-6">Name</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Email</th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <span class="sr-only">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white dark:bg-gray-900 dark:divide-gray-800">
+                <% @suppliers.each do |supplier| %>
+                  <tr>
+                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-6"><%= supplier.name %></td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400"><%= supplier.email_address %></td>
+                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <% if supplier.supplier_account %>
+                        <%= button_to "Visit Shop & Order", managed_account_path(account_id: supplier.supplier_account_id, return_to: new_order_path), method: :patch, class: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+                      <% else %>
+                        <span class="text-gray-400 italic">No account linked</span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
           </div>
         <% else %>
-          <p class="text-sm text-gray-500 italic">No stores joined yet.</p>
+          <p class="text-gray-500 dark:text-gray-400">No suppliers found for this store.</p>
         <% end %>
       </div>
-    <% end %>
-
-    <% 
-      if Current.user.admin? && Current.account
-        joined_account_ids = Customer.unscoped.where(customer_account_id: Current.account.id).pluck(:account_id)
-        available_accounts = Account.where.not(id: joined_account_ids).where.not(id: Current.account.id)
-      else
-        joined_account_ids = ActsAsTenant.without_tenant { Current.user.account_ids }
-        available_accounts = Account.where.not(id: joined_account_ids)
-      end
-    %>
-
-    <% if available_accounts.any? && (!customer? || AccountUser.unscoped.where(user_id: Current.user.id).count <= 1) %>
-      <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h2 class="text-xl font-bold mb-4">Join a Store</h2>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Associate your account with an available farm shop to start ordering.</p>
-        
-        <%= form_with url: store_memberships_path, method: :post, class: "flex gap-2 items-end max-w-md" do |f| %>
-          <div class="flex-grow">
-            <%= f.label :account_id, "Select Store to Join", class: label_class %>
-            <%= f.collection_select :account_id, available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
+      
+      <% if Current.user.admin? %>
+        <%= render "pages/stores_grid" %>
+      <% end %>
+    <% else %>
+      <% if @customer_orders.any? %>
+        <div id="customer-orders" class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+          <h2 class="text-xl font-bold mb-4">My Orders</h2>
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-6">Store</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Order #</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Date</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Total</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Status</th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <span class="sr-only">View</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white dark:bg-gray-900 dark:divide-gray-800">
+                <% @customer_orders.each do |order| %>
+                  <tr>
+                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-6"><%= order.account.name %></td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400"><%= order.number %></td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400"><%= order.created_at.strftime("%b %d, %Y") %></td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400"><%= humanized_money_with_symbol order.total_amount %></td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <%= order.ordered? ? 'bg-blue-50 text-blue-700 ring-blue-700/10' : order.awaiting_collection? ? 'bg-yellow-50 text-yellow-700 ring-yellow-700/10' : 'bg-green-50 text-green-700 ring-green-700/10' %>">
+                        <%= order.status.titleize %>
+                      </span>
+                    </td>
+                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <%= link_to "View", order_path(order), class: "text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
           </div>
-          <%= f.submit "Join Store", class: primary_button_class %>
-        <% end %>
-      </div>
-    <% end %>
-
-    <% if Current.account && (Current.user.admin? || Current.user.account_users.find_by(account: Current.account)&.store_manager?) %>
-      <% 
-        supply_available_accounts = Account.where.not(id: Current.account.id)
-          .where.not(id: Current.account.customers.pluck(:customer_account_id).compact)
-          .where.not(id: SupplierRequest.where(sender_account: Current.account).pluck(:receiver_account_id))
-      %>
-      <% if supply_available_accounts.any? %>
-        <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
-          <h2 class="text-xl font-bold mb-4">Supply a Store</h2>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Request to become a supplier for another farm shop on the platform using <strong><%= Current.account.name %></strong>.</p>
-          
-          <%= form_with model: SupplierRequest.new, class: "flex gap-2 items-end max-w-md" do |f| %>
-            <div class="flex-grow">
-              <%= f.label :receiver_account_id, "Select Store to Supply", class: label_class %>
-              <%= f.collection_select :receiver_account_id, supply_available_accounts, :id, :name, { prompt: "Choose a store..." }, class: input_class %>
-            </div>
-            <%= f.submit "Request to Supply", class: primary_button_class %>
-          <% end %>
         </div>
       <% end %>
-    <% end %>
 
-    <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
-      <%= button_to "Logout", session_path, method: :delete, class: danger_button_class %>
-    </div>
+      <%= render "pages/stores_grid" %>
+    <% end %>
   </div>
 </div>

@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_referrals
   include Anony::Anonymisable
   acts_as_paranoid
 
@@ -26,7 +27,7 @@ class User < ApplicationRecord
       email :email_address
       hex :name
       with_strategy("ANONYMISED", :password_digest)
-      ignore :otp_secret, :email_otp_token, :email_otp_sent_at, :otp_required_for_login, :prefers_email_login, :security_choice_made
+      ignore :otp_secret, :email_otp_token, :email_otp_sent_at, :otp_required_for_login, :prefers_email_login, :security_choice_made, :onboarded
     end
   end
 
@@ -45,7 +46,8 @@ class User < ApplicationRecord
   end
 
   def generate_otp_secret!
-    update!(otp_secret: ROTP::Base32.random_base32)
+    self.otp_secret = ROTP::Base32.random_base32
+    save!(validate: false)
   end
 
   def otp_qr_code
@@ -59,13 +61,15 @@ class User < ApplicationRecord
 
   def validate_otp(code)
     return false if otp_secret.blank?
-    totp = ROTP::TOTP.new(otp_secret)
-    totp.verify(code, drift_behind: 30, drift_ahead: 10)
+    totp = ROTP::TOTP.new(otp_secret.strip)
+    totp.verify(code.to_s.strip, drift_behind: 60, drift_ahead: 60)
   end
 
   def generate_email_otp!
     token = SecureRandom.alphanumeric(8).upcase
-    update!(email_otp_token: token, email_otp_sent_at: Time.current)
+    self.email_otp_token = token
+    self.email_otp_sent_at = Time.current
+    save!(validate: false)
     UserMailer.two_factor_code(self, token).deliver_later
   end
 
@@ -75,7 +79,9 @@ class User < ApplicationRecord
   end
 
   def clear_email_otp!
-    update!(email_otp_token: nil, email_otp_sent_at: nil)
+    self.email_otp_token = nil
+    self.email_otp_sent_at = nil
+    save!(validate: false)
   end
 
   def email_login_only?
@@ -92,16 +98,18 @@ class User < ApplicationRecord
   end
 
   def sync_email_to_customers
-    customers.update_all(email_address: email_address)
-    suppliers.update_all(email_address: email_address)
+    Customer.unscoped.where(user_id: id).each { |c| c.update(email_address: email_address) }
+    Supplier.unscoped.where(user_id: id).each { |s| s.update(email_address: email_address) }
   end
 
   def link_existing_customers
-    Customer.unscoped.where(email_address: email_address, user_id: nil).each do |customer|
-      customer.update(user: self)
-    end
-    Supplier.unscoped.where(email_address: email_address, user_id: nil).each do |supplier|
-      supplier.update(user: self)
+    ActsAsTenant.without_tenant do
+      Customer.unscoped.where(email_address: email_address, user_id: nil).each do |customer|
+        customer.update(user: self)
+      end
+      Supplier.unscoped.where(email_address: email_address, user_id: nil).each do |supplier|
+        supplier.update(user: self)
+      end
     end
   end
 

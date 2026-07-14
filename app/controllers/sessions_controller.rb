@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create test_login ]
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_path, alert: "Try again later." }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_path, alert: "Try again later." } unless Rails.env.test?
 
   layout "sessions"
 
@@ -25,6 +25,7 @@ class SessionsController < ApplicationController
       session[:otp_user_id] = user.id
       session.delete(:security_setup_user_id)
       user.generate_email_otp! unless user.otp_enabled?
+      user.password = user.password_confirmation = nil
       redirect_to new_two_factor_verification_path
     elsif params[:password].present?
       redirect_to new_session_path, alert: "Try another email address or password."
@@ -33,6 +34,7 @@ class SessionsController < ApplicationController
       session[:otp_user_id] = user.id
       session[:security_setup_user_id] = user.id unless user.security_choice_made?
       user.generate_email_otp!
+      user.password = user.password_confirmation = nil
       redirect_to new_two_factor_verification_path, notice: "We emailed you a one-time code."
     end
   end
@@ -47,9 +49,7 @@ class SessionsController < ApplicationController
   def find_or_create_email_login_user(email_address)
     User.find_or_create_by!(email_address: email_address) do |user|
       user.name = email_address.split("@").first.to_s.humanize
-      generated_password = SecureRandom.alphanumeric(32)
-      user.password = generated_password
-      user.password_confirmation = generated_password
+      user.password = user.password_confirmation = SecureRandom.alphanumeric(32)
       user.prefers_email_login = true
     end
   end

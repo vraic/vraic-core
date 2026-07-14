@@ -26,7 +26,7 @@ class OrderPolicy < ApplicationPolicy
       elsif staff?
         scope.all
       else
-        user_account_ids = AccountUser.unscoped.where(user: user).pluck(:account_id)
+        user_account_ids = AccountUser.unscoped.where(user: user, user_role: [ :store_manager, :store_staff ]).pluck(:account_id)
         customer_ids = Customer.unscoped.where(account: Current.account)
                               .where("user_id = ? OR customer_account_id IN (?)", user.id, user_account_ids)
                               .pluck(:id)
@@ -56,7 +56,7 @@ class OrderPolicy < ApplicationPolicy
     return true if customer_record && record.customer_id == customer_record.id
 
     # B2B customer record
-    user_account_ids = AccountUser.unscoped.where(user: user).pluck(:account_id)
+    user_account_ids = AccountUser.unscoped.where(user: user, user_role: [ :store_manager, :store_staff ]).pluck(:account_id)
     b2b_customer_ids = Customer.unscoped.where(account: Current.account, customer_account_id: user_account_ids).pluck(:id)
     b2b_customer_ids.include?(record.customer_id)
   end

@@ -1,4 +1,4 @@
-<%= form_with(model: account_user, class: "contents") do |form| %>
+<%= form_with(model: account_user.new_record? ? [@account, account_user] : account_user, class: "contents") do |form| %>
   <% if account_user.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(account_user.errors.count, "error") %> prohibited this account_user from being saved:</h2>
@@ -11,21 +11,26 @@
     </div>
   <% end %>
 
-  <% if Current.user.admin? %>
+  <% if account_user.new_record? %>
     <div class="my-5">
-      <%= form.label :account_id, class: label_class %>
-      <%= form.select(:account_id, Account.unscoped.all.order(:name).map{|ac| [ac.name.to_s, ac.id]}, { selected: form.object.persisted? ? @account_user&.account_id : params[:account_id], include_blank: false }, class: input_class(account_user.errors[:account_id].any?)) %>
+      <%= label_tag :email_address, "Email address", class: label_class %>
+      <%= email_field_tag :email_address, params[:email_address], class: input_class(false), required: true %>
+      <p class="<%= help_text_class %>">
+        If the user doesn't have an account, they will be invited.
+      </p>
+    </div>
+  <% else %>
+    <div class="my-5">
+      <span class="<%= label_class %>">User</span>
+      <p class="text-gray-900 dark:text-gray-100">
+        <%= account_user.user.name %> (<%= account_user.user.email_address %>)
+      </p>
     </div>
   <% end %>
 
   <div class="my-5">
-    <%= form.label :user_id, class: label_class %>
-    <%= form.select(:user_id, User.all.order(:name).map{|usr| [usr.name.to_s, usr.id]}, { selected: form.object.persisted? ? @account_user&.user_id : params[:user_id], include_blank: false }, class: input_class(account_user.errors[:user_id].any?)) %>
-  </div>
-
-  <div class="my-5">
     <%= form.label :user_role, class: label_class %>
-    <%= form.select(:user_role, enum_options_for_select(@account_user, :user_role), { selected: form.object.persisted? ? @account_user&.user_role : params[:user_role], include_blank: false }, class: input_class(account_user.errors[:user_role].any?)) %>
+    <%= form.select(:user_role, enum_options_for_select(account_user, :user_role), { selected: account_user.user_role, include_blank: false }, class: input_class(account_user.errors[:user_role].any?)) %>
   </div>
 
   <div class="inline">

@@ -22,7 +22,7 @@ class ManagedAccountsController < ApplicationController
         user_account_ids = AccountUser.unscoped.where(user_id: Current.user.id).pluck(:account_id)
         if Customer.unscoped.where(account_id: account.id, customer_account_id: user_account_ids).exists?
           # Ensure they have an AccountUser in the target account so set_tenant works
-          ActsAsTenant.with_tenant(account) do
+          ActsAsTenant.without_tenant do
             AccountUser.unscoped.where(user_id: Current.user.id, account_id: account.id).first_or_create!(user_role: :customer)
           end
           Current.user.reload
@@ -40,7 +40,7 @@ class ManagedAccountsController < ApplicationController
       flash[:alert] = "Please select an account."
     end
 
-    redirect_to dashboard_path, status: :see_other
+    redirect_to params[:return_to] || dashboard_path, status: :see_other
   end
 
   def destroy

@@ -17,7 +17,7 @@ module ApplicationHelper
     when :customers
       controller_name == "customers"
     when :suppliers
-      controller_name == "suppliers" || controller_name == "supplier_requests"
+      controller_name == "suppliers"
     when :tasks
       controller_name == "tasks"
     when :inventory
@@ -27,9 +27,11 @@ module ApplicationHelper
     when :reports
       controller_name == "reports"
     when :newsletters
-      controller_name == "newsletters"
+      controller_path == "newsletters"
+    when :customer_newsletters
+      controller_path == "customer/newsletters"
     when :accounts
-      controller_name == "accounts"
+      controller_name == "accounts" || controller_name == "supplier_requests"
     when :support_requests
       controller_name == "support_requests"
     when :settings
@@ -132,6 +134,39 @@ module ApplicationHelper
       "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
     else
       "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+    end
+  end
+
+  def current_user_role
+    role = if Current.user&.admin?
+      "Admin"
+    elsif Current.account
+      Current.user.account_users.find_by(account: Current.account)&.user_role&.titleize
+    end
+
+    return nil unless role
+    Current.account ? "#{Current.account.name} (#{role})" : role
+  end
+
+  def switchable_accounts
+    return [] unless Current.user
+    ActsAsTenant.without_tenant do
+      # direct memberships
+      accounts = AccountUser.unscoped.where(user_id: Current.user.id).includes(:account).map do |au|
+        { id: au.account.id, name: au.account.name, role: au.user_role.titleize, role_key: au.user_role.to_sym }
+      end
+
+      # B2B memberships - only for accounts where the user is staff or manager
+      manageable_account_ids = accounts.select { |a| [ :store_manager, :store_staff ].include?(a[:role_key]) }.map { |a| a[:id] }
+
+      b2b_accounts = []
+      if manageable_account_ids.any?
+        b2b_accounts = Customer.unscoped.where(customer_account_id: manageable_account_ids).where.not(account_id: manageable_account_ids).includes(:account).map do |c|
+           { id: c.account.id, name: c.account.name, role: "Customer (via Store)" }
+        end
+      end
+
+      (accounts + b2b_accounts).uniq { |a| a[:id] }
     end
   end
 end

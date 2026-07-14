@@ -42,7 +42,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     assert_current_path dashboard_path, wait: 10
     assert_text "Séyiz les beinv'nus"
-    assert_text "Logout"
+    assert_text @user.name
 
     # Disable 2FA
     visit settings_path

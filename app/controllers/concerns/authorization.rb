@@ -9,7 +9,7 @@ module Authorization
     # after_action :verify_authorized
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    helper_method :staff?, :customer?
+    helper_method :staff?, :customer?, :manager?
   end
 
   def pundit_user
@@ -18,6 +18,11 @@ module Authorization
 
   def staff?
     Current.user&.admin? || Current.user&.account_users&.exists?(account: Current.account, user_role: [ :store_manager, :store_staff ])
+  end
+
+  def manager?
+    return false unless Current.account
+    Current.user&.admin? || Current.user&.account_users&.exists?(account: Current.account, user_role: :store_manager)
   end
 
   def customer?

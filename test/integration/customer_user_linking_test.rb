@@ -84,12 +84,7 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
       post users_path, params: { user: { name: "Alice", email_address: "alice@example.com", password: "ComplexPassword123!" } }
     end
 
-    assert_redirected_to root_path
-    follow_redirect!
-    assert_redirected_to dashboard_path
-    follow_redirect!
-    assert_match /Welcome, alice/i, response.body
-    assert_match /alice@example.com/i, response.body
+    assert_redirected_to security_setup_path
   end
 
   test "public signup with account_id creates customer and account_user" do
@@ -110,5 +105,6 @@ class CustomerUserLinkingTest < ActionDispatch::IntegrationTest
     assert_equal user, customer.user
     au = AccountUser.unscoped.find_by(account: @account_a, user: user)
     assert_equal "customer", au.user_role
+    assert_redirected_to security_setup_path
   end
 end

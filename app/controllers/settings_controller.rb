@@ -2,17 +2,10 @@ class SettingsController < ApplicationController
   before_action :set_user
 
   def show
-    @customer = Current.account.customers.find_by(user_id: @user.id)
-    @supplier = Current.account.suppliers.find_by(user_id: @user.id)
   end
 
   def update
-    @customer = Current.account.customers.find_by(user_id: @user.id)
-    @supplier = Current.account.suppliers.find_by(user_id: @user.id)
-
     if @user.update(user_params)
-      @customer&.update(subscribed_to_newsletter: params[:subscribed_to_newsletter_customer] == "1")
-      @supplier&.update(subscribed_to_newsletter: params[:subscribed_to_newsletter_supplier] == "1")
       redirect_to settings_path, notice: "Personal information updated."
     else
       render :show, status: :unprocessable_content
@@ -22,6 +15,7 @@ class SettingsController < ApplicationController
   def update_password
     if @user.authenticate(params[:current_password])
       if @user.update(password_params)
+        @user.password = @user.password_confirmation = nil
         redirect_to settings_path, notice: "Password updated successfully."
       else
         render :show, status: :unprocessable_content

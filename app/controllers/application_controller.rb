@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  set_referral_cookie
   include Authentication
   include Authorization
   include Pagy::Method
@@ -37,7 +38,7 @@ class ApplicationController < ActionController::Base
       user = Current.user
 
       if user.admin?
-        account = Account.find_by(id: account_id) if account_id
+        account = Account.find_by(id: account_id) if account_id && account_id != "none"
 
         if account
           active_request = SupportRequest.unscoped.where(account: account).active.first
@@ -53,12 +54,14 @@ class ApplicationController < ActionController::Base
         ActsAsTenant.current_tenant = account # Explicitly set for models
       else
         # For non-admins, they must belong to the account
-        if account_id && AccountUser.unscoped.where(user_id: user.id, account_id: account_id).exists?
+        if account_id && account_id != "none" && AccountUser.unscoped.where(user_id: user.id, account_id: account_id).exists?
           account = Account.find(account_id)
           set_current_tenant(account)
+        elsif account_id == "none"
+          set_current_tenant(nil)
         else
           # Fallback to single account if no account selected or membership lost
-          user_account_ids = AccountUser.unscoped.where(user_id: user.id).pluck(:account_id)
+          user_account_ids = AccountUser.unscoped.where(user_id: user.id).pluck(:account_id).uniq
           if user_account_ids.count == 1
             account = Account.find(user_account_ids.first)
             set_current_tenant(account)

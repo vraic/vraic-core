@@ -5,6 +5,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   setup do
     Capybara.default_max_wait_time = 10
+    resize_to_desktop
   end
 
   def login_as(user)
@@ -20,8 +21,12 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     visit new_session_url
     fill_in "Email", with: user.email_address
 
-    click_button "Sign in with password"
-    fill_in "Password", with: "password"
+    if page.has_button?("Sign in with password")
+      click_button "Sign in with password"
+    end
+
+    # We use a broader search and wait for the field to become interactable
+    find("input[name='password']", visible: :all).set("password")
     click_button "Continue"
 
     # We expect 2FA after signing in if enabled
@@ -64,18 +69,29 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       visit dashboard_path
       # Find the account section and click Select
       # Use a more specific selector to avoid ambiguous matches
-      # Search in both your-stores and business-stores
+      # Search in stores-grid and business-stores (if it still exists)
       selected = false
-      [ "#your-stores", "#business-stores" ].each do |section|
+      [ "#stores-grid", "#business-stores" ].each do |section|
         next unless page.has_css?(section)
         within section do
           if page.has_text?(name)
-            within find("h3", text: name).find(:xpath, "../..") do
+            # Find the card containing the name
+            # We look for h3 with the name
+            card = find("h3", text: name).find(:xpath, "ancestor::div[contains(@class, 'flex-col')]")
+            within card do
               if page.has_text?("Active")
                 selected = true
                 break
               elsif page.has_button?("Select")
                 click_on "Select"
+                selected = true
+                break
+              elsif page.has_button?("Visit Shop")
+                click_on "Visit Shop"
+                selected = true
+                break
+              elsif page.has_button?("Manage Store")
+                click_on "Manage Store"
                 selected = true
                 break
               end
@@ -94,9 +110,20 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def logout
-    # There are multiple Logout buttons (mobile and desktop)
-    # Use first to avoid ambiguous match
-    first(:button, "Logout").click
+    # The Logout button is now inside a Stimulus dropdown at the bottom of the sidebar
+    # We need to open it first.
+    if page.has_css?("#user-menu-button-desktop", visible: true)
+      click_on "user-menu-button-desktop"
+    elsif page.has_button?("Open sidebar")
+      click_on "Open sidebar"
+      click_on "user-menu-button-mobile"
+    elsif page.has_css?("#user-menu-button-mobile", visible: true)
+      click_on "user-menu-button-mobile"
+    end
+
+    # There are multiple Logout buttons (mobile and desktop dropdowns)
+    # They should be visible now.
+    first(:button, "Logout", visible: true).click
   end
 
   def grant_support_access(account, user = nil)
@@ -108,5 +135,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       expires_at: 72.hours.from_now,
       message: "Test authorization"
     )
+  end
+
+  def resize_to_mobile
+    page.current_window.resize_to(375, 812)
+  end
+
+  def resize_to_desktop
+    page.current_window.resize_to(1400, 1400)
   end
 end

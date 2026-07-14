@@ -11,12 +11,4 @@
     <strong class="block font-medium mb-1">Owner:</strong>
     <%= account.owner&.name %>
   </div>
-  <div>
-    <strong class="block font-medium mb-1">Users:</strong>
-    <ul class="list-disc list-inside">
-      <% account.users.each do |ac_usr| %>
-        <li><%= ac_usr.name %></li>
-      <% end %>
-    </ul>
-  </div>
 </div>

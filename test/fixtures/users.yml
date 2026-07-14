@@ -4,24 +4,29 @@ one:
   email_address: one@example.com
   password_digest: <%= password_digest %>
   name: Test User One
+  onboarded: true
 
 two:
   email_address: two@example.com
   password_digest: <%= password_digest %>
   name: Test User Two
+  onboarded: true
 
 unassigned:
   email_address: unassigned@example.com
   password_digest: <%= password_digest %>
   name: Test User Unassigned
+  onboarded: true
 
 administrator:
   email_address: admin@example.com
   password_digest: <%= password_digest %>
   admin: true
   name: Test Administrator
+  onboarded: true
 
 three:
   email_address: customer@example.com
   password_digest: <%= password_digest %>
   name: Test User Three
+  onboarded: true

@@ -9,7 +9,7 @@ class AccountUsersTenantTest < ActionDispatch::IntegrationTest
   end
 
   test "should only show account users for current tenant" do
-    get account_users_url
+    get account_account_users_url(@account)
     assert_response :success
     # User one belongs to account one. account_users(:one) is in account one.
     # account_users(:two) is in account two.
@@ -20,32 +20,32 @@ class AccountUsersTenantTest < ActionDispatch::IntegrationTest
   test "should automatically associate new account_user with current tenant" do
     @unassigned = users(:unassigned)
     assert_difference("AccountUser.count") do
-      post account_users_url, params: { account_user: { user_id: @unassigned.id, user_role: "store_staff" } }
+      post account_account_users_url(@account), params: { email_address: @unassigned.email_address, account_user: { user_role: "store_staff" } }
     end
 
     new_account_user = AccountUser.last
     assert_equal @account.id, new_account_user.account_id
-    assert_redirected_to account_user_url(new_account_user)
+    assert_redirected_to @account
   end
 
   test "should not show account dropdown for non-admin" do
-    get new_account_user_url
+    get new_account_account_user_url(@account)
     assert_response :success
     assert_select "select[name='account_user[account_id]']", count: 0
   end
 
-  test "should show account dropdown for admin" do
+  test "should show role dropdown for admin" do
     sign_in_as(users(:administrator))
-    get new_account_user_url
+    get new_account_account_user_url(@account)
     assert_response :success
-    assert_select "select[name='account_user[account_id]']"
+    assert_select "select[name='account_user[user_role]']"
   end
 
   test "admin can create account_user for any account" do
     sign_in_as(users(:administrator))
     @unassigned = users(:unassigned)
     assert_difference("AccountUser.count") do
-      post account_users_url, params: { account_user: { account_id: @other_account.id, user_id: @unassigned.id, user_role: "store_staff" } }
+      post account_account_users_url(@other_account), params: { email_address: @unassigned.email_address, account_user: { user_role: "store_staff" } }
     end
 
     assert_equal @other_account.id, AccountUser.last.account_id

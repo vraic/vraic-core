@@ -8,19 +8,21 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
     login_as @admin
   end
 
-  test "requesting to supply another store from the dashboard" do
+  test "requesting to supply another store via edit account" do
     # 1. Select the account that wants to be a supplier
     select_account("Account One")
 
-    visit dashboard_path
+    visit edit_account_path(accounts(:one))
+    click_link "Stores We Supply"
+    click_link "Supply A Store"
 
-    assert_text "Supply a Store"
-    assert_text "Request to become a supplier for another farm shop on the platform using Account One"
+    assert_text "Apply as Supplier"
+    assert_text "Applying to Supply"
+    assert_text "Applying from Store"
+    assert_text "Account One"
 
-    within "form[action='/supplier_requests']" do
-      select "Account Two", from: "Select Store to Supply"
-      click_on "Request to Supply"
-    end
+    select "Account Two", from: "Applying to Supply"
+    click_on "Send Supplier Request"
 
     assert_text "Supplier request was successfully sent."
 
@@ -31,23 +33,21 @@ class SupplierRequestsFlowTest < ApplicationSystemTestCase
     assert_equal "pending", request.status
   end
 
-  test "cannot see supply section if not an admin" do
-    @user = users(:two) # Standard user in Account Two
+  test "can see supply tab if manager" do
+    @user = users(:one)
     login_as @user
-    # select_account is not needed because they only have one account, it's auto-selected
-
-    visit dashboard_path
-    assert_no_text "Supply a Store"
+    visit edit_account_path(accounts(:one))
+    assert_text "Stores We Supply"
   end
 
   test "approved supplier request shows up in both tabs for appropriate accounts" do
     # 1. Account One requests to supply Account Two
     select_account("Account One")
-    visit dashboard_path
-    within "form[action='/supplier_requests']" do
-      select "Account Two", from: "Select Store to Supply"
-      click_on "Request to Supply"
-    end
+    visit new_supplier_request_path
+
+    select "Account Two", from: "Applying to Supply"
+    click_on "Send Supplier Request"
+
     assert_text "Supplier request was successfully sent."
 
     # 2. Account Two approves the request
