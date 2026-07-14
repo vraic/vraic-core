@@ -6,7 +6,9 @@ class TwoFactorVerificationsController < ApplicationController
 
   def new
     if !@user.otp_enabled?
-      @user.generate_email_otp! if @user.email_otp_token.blank? || @user.email_otp_sent_at < 5.minutes.ago
+      if @user.email_otp_token.blank? || @user.email_otp_sent_at.nil? || @user.email_otp_sent_at < 5.minutes.ago
+        @user.generate_email_otp!
+      end
     end
   end
 
