@@ -98,8 +98,8 @@ class User < ApplicationRecord
   end
 
   def sync_email_to_customers
-    customers.update_all(email_address: email_address)
-    suppliers.update_all(email_address: email_address)
+    customers.each { |c| c.update(email_address: email_address) }
+    suppliers.each { |s| s.update(email_address: email_address) }
   end
 
   def link_existing_customers
