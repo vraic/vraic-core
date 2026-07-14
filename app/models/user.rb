@@ -98,16 +98,18 @@ class User < ApplicationRecord
   end
 
   def sync_email_to_customers
-    customers.each { |c| c.update(email_address: email_address) }
-    suppliers.each { |s| s.update(email_address: email_address) }
+    Customer.unscoped.where(user_id: id).each { |c| c.update(email_address: email_address) }
+    Supplier.unscoped.where(user_id: id).each { |s| s.update(email_address: email_address) }
   end
 
   def link_existing_customers
-    Customer.unscoped.where(email_address: email_address, user_id: nil).each do |customer|
-      customer.update(user: self)
-    end
-    Supplier.unscoped.where(email_address: email_address, user_id: nil).each do |supplier|
-      supplier.update(user: self)
+    ActsAsTenant.without_tenant do
+      Customer.unscoped.where(email_address: email_address, user_id: nil).each do |customer|
+        customer.update(user: self)
+      end
+      Supplier.unscoped.where(email_address: email_address, user_id: nil).each do |supplier|
+        supplier.update(user: self)
+      end
     end
   end
 
