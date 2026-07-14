@@ -9,6 +9,7 @@ class TwoFactorAuthsController < ApplicationController
 
   # POST /two_factor_auth
   def create
+    @user.reload
     respond_to do |format|
       if @user.validate_otp(params[:otp_code])
         if @user.update(otp_required_for_login: true)
