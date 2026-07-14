@@ -13,10 +13,10 @@ class SecuritySetupsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "How would you like to sign in?"
   end
 
-  test "choosing email login updates preference" do
+  test "choosing email login updates preference and redirects to onboarding" do
     post security_setup_path, params: { choice: "email_login" }
 
-    assert_redirected_to dashboard_path
+    assert_redirected_to onboarding_path
     @user.reload
     assert @user.prefers_email_login?
     assert @user.security_choice_made?

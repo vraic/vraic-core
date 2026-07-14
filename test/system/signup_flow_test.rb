@@ -9,24 +9,23 @@ class SignupFlowTest < ApplicationSystemTestCase
     fill_in "Password", with: "ComplexPassword123!"
     click_button "Create User"
 
-    assert_text "Dashboard"
-    assert_text "Welcome, New Store Owner"
-    assert_text "No stores joined yet"
+    assert_text "How would you like to sign in?"
+    click_on "Continue with email codes"
+
+    assert_text "Tell us about yourself"
+    click_on "I'm a Store Owner"
 
     # 2. Create a Store
-    # We need a link to create a store on the dashboard
-    click_link "Create a Store"
-
+    assert_current_path new_account_path
     fill_in "Name", with: "My Shiny Store"
     fill_in "Address", with: "123 Farm Lane"
     click_button "Create Account"
 
     assert_text "Account was successfully created"
 
-    # 3. Check Dashboard for Supplier Widget
-    visit dashboard_path
-    assert_text "My Shiny Store"
-    assert_text "Role: Store Manager"
-    assert_text "Supply a Store"
+    # 3. Check for Supplier tab in edit account page
+    visit edit_account_path(Account.last)
+    assert_text "General"
+    assert_text "Stores We Supply"
   end
 end

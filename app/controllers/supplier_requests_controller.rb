@@ -1,5 +1,5 @@
 class SupplierRequestsController < ApplicationController
-  before_action :require_account!
+  before_action :require_account!, except: %i[ new ]
   before_action :set_supplier_request, only: %i[ update destroy ]
 
   def index
@@ -7,8 +7,36 @@ class SupplierRequestsController < ApplicationController
   end
 
   def new
-    @supplier_request = SupplierRequest.new
-    authorize @supplier_request
+    @receiver_account = Account.find_by(id: params[:receiver_account_id])
+
+    # Reload user to ensure we have the latest account associations (important after new store creation)
+    Current.user.reload
+    @managed_accounts = ActsAsTenant.without_tenant { Current.user.account_users.store_manager.includes(:account).map(&:account) }
+
+    # If sender_account_id is provided, try to use it
+    if params[:sender_account_id].present?
+      sender = @managed_accounts.find { |a| a.id == params[:sender_account_id].to_i }
+      if sender
+        session[:managed_account_id] = sender.id
+        # Need to set tenant for the current request context if we just changed it
+        ActsAsTenant.current_tenant = sender
+        Current.account = sender
+      end
+    end
+
+    # If the current account is not one we manage as store_manager, we act as if no account is selected
+    effective_current_account = @managed_accounts.include?(Current.account) ? Current.account : nil
+
+    if @managed_accounts.any? && effective_current_account.nil?
+      # If they have accounts but none (that they manage) is selected, show selection
+      @supplier_request = SupplierRequest.new(receiver_account: @receiver_account)
+    elsif effective_current_account
+      @supplier_request = SupplierRequest.new(receiver_account: @receiver_account, sender_account: effective_current_account)
+      authorize @supplier_request
+    else
+      @supplier_request = SupplierRequest.new(receiver_account: @receiver_account)
+      # No managed accounts, skip authorization here as we'll show the "Account Required" view
+    end
   end
 
   def create

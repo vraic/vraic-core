@@ -19,12 +19,13 @@ class Customer < ApplicationRecord
   has_many :inventory_groups, through: :inventory_group_customers
 
   before_validation :link_by_email
+  before_save :set_subscribed_at, if: :will_save_change_to_subscribed_to_newsletter?
   after_save :sync_email_to_user, if: :saved_change_to_email_address?
   after_save :ensure_account_user, if: -> { saved_change_to_user_id? && user_id.present? }
 
   anonymise do
     overwrite do
-      ignore :account_id, :user_id, :customer_account_id, :subscribed_to_newsletter
+      ignore :account_id, :user_id, :customer_account_id, :subscribed_to_newsletter, :subscribed_at
       hex :name
       email :email_address
       hex :phone
@@ -43,10 +44,10 @@ class Customer < ApplicationRecord
       # Link Account
       if customer_account.nil? && user.present?
         # Use unscoped to find account users across all tenants
-        target_account_users = AccountUser.unscoped.where(user_id: user.id)
+        target_account_users = AccountUser.unscoped.where(user_id: user.id, user_role: [ :store_manager, :store_staff ])
         # Try to find account where they are owner
         account = Account.where(owner_id: user.id).first
-        # Fallback to any account they belong to
+        # Fallback to any account they manage
         account ||= Account.where(id: target_account_users.select(:account_id)).first
         self.customer_account = account
       end
@@ -60,6 +61,19 @@ class Customer < ApplicationRecord
   def ensure_account_user
     return unless user_id && account_id
     # We use unscoped here to find/create AccountUser across any existing tenant context
-    AccountUser.unscoped.where(account_id: account_id, user_id: user_id).first_or_create!(user_role: :customer)
+    # Wrapping in without_tenant ensures ActsAsTenant doesn't overwrite account_id if Current.account is set
+    ActsAsTenant.without_tenant do
+      AccountUser.unscoped.where(account_id: account_id, user_id: user_id).first_or_create!(user_role: :customer)
+    end
+  end
+
+  private
+
+  def set_subscribed_at
+    if subscribed_to_newsletter?
+      self.subscribed_at = Time.current
+    else
+      self.subscribed_at = nil
+    end
   end
 end

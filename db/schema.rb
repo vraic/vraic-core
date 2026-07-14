@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_14_074939) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.integer "user_role", default: 0
+    t.index ["account_id", "user_id"], name: "index_account_users_on_account_id_and_user_id", unique: true
   end
 
   create_table "accounts", force: :cascade do |t|
@@ -197,6 +198,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
     t.string "email_address"
     t.string "name"
     t.string "phone"
+    t.datetime "subscribed_at"
     t.boolean "subscribed_to_newsletter", default: false, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
@@ -238,12 +240,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
     t.datetime "deleted_at"
     t.text "description"
     t.integer "inventory_group_id"
+    t.integer "low_stock_threshold", default: 0, null: false
     t.string "name"
     t.integer "parent_id"
     t.integer "price_cents"
     t.string "price_currency"
     t.integer "unit_type", default: 0
     t.datetime "updated_at", null: false
+    t.boolean "warn_when_low_on_stock", default: false, null: false
     t.string "weight_unit"
     t.decimal "weight_value", precision: 10, scale: 2
     t.index ["account_id"], name: "index_inventory_items_on_account_id"
@@ -327,6 +331,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
+  create_table "refer_referral_codes", force: :cascade do |t|
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.integer "referrals_count", default: 0
+    t.integer "referrer_id", null: false
+    t.string "referrer_type", null: false
+    t.datetime "updated_at", null: false
+    t.integer "visits_count", default: 0
+    t.index ["code"], name: "index_refer_referral_codes_on_code", unique: true
+    t.index ["referrer_type", "referrer_id"], name: "index_refer_referral_codes_on_referrer"
+  end
+
+  create_table "refer_referrals", force: :cascade do |t|
+    t.datetime "completed_at", precision: nil
+    t.datetime "created_at", null: false
+    t.integer "referee_id", null: false
+    t.string "referee_type", null: false
+    t.integer "referral_code_id"
+    t.integer "referrer_id", null: false
+    t.string "referrer_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["referee_type", "referee_id"], name: "index_refer_referrals_on_referee"
+    t.index ["referral_code_id"], name: "index_refer_referrals_on_referral_code_id"
+    t.index ["referrer_type", "referrer_id"], name: "index_refer_referrals_on_referrer"
+  end
+
+  create_table "refer_visits", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ip"
+    t.integer "referral_code_id", null: false
+    t.text "referrer"
+    t.string "referring_domain"
+    t.datetime "updated_at", null: false
+    t.text "user_agent"
+    t.index ["referral_code_id"], name: "index_refer_visits_on_referral_code_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -364,6 +405,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
     t.string "email_address"
     t.string "name"
     t.string "phone"
+    t.datetime "subscribed_at"
     t.boolean "subscribed_to_newsletter", default: false, null: false
     t.integer "supplier_account_id"
     t.datetime "updated_at", null: false
@@ -421,6 +463,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
     t.datetime "email_otp_sent_at"
     t.string "email_otp_token"
     t.string "name"
+    t.boolean "onboarded", default: false, null: false
     t.boolean "otp_required_for_login", default: false, null: false
     t.string "otp_secret"
     t.string "password_digest", null: false
@@ -458,6 +501,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_120755) do
   add_foreign_key "orders", "accounts"
   add_foreign_key "orders", "customers"
   add_foreign_key "orders", "users"
+  add_foreign_key "refer_visits", "refer_referral_codes", column: "referral_code_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "supplier_prices", "inventory_items"
   add_foreign_key "supplier_prices", "suppliers"

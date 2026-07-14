@@ -42,20 +42,6 @@
                 <%= f.email_field :email_address, id: "email", autocomplete: "email", class: "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500" %>
               </div>
             </div>
-
-            <% if @customer %>
-              <div class="col-span-full flex items-center gap-2">
-                <%= check_box_tag :subscribed_to_newsletter_customer, "1", @customer.subscribed_to_newsletter, class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %>
-                <%= label_tag :subscribed_to_newsletter_customer, "Subscribe to customer newsletter", class: "text-sm font-medium text-gray-900 dark:text-white" %>
-              </div>
-            <% end %>
-
-            <% if @supplier %>
-              <div class="col-span-full flex items-center gap-2">
-                <%= check_box_tag :subscribed_to_newsletter_supplier, "1", @supplier.subscribed_to_newsletter, class: "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %>
-                <%= label_tag :subscribed_to_newsletter_supplier, "Subscribe to supplier newsletter", class: "text-sm font-medium text-gray-900 dark:text-white" %>
-              </div>
-            <% end %>
           </div>
 
           <div class="mt-8 flex">
@@ -161,6 +147,17 @@
         <%= form_with model: @user, url: settings_path, method: :delete, class: "flex items-start md:col-span-2", data: { turbo_confirm: "Are you sure you want to delete your account? This cannot be undone." } do |f| %>
           <%= f.submit "Yes, delete my account", class: "rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400" %>
         <% end %>
+      </div>
+
+      <div class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+        <div>
+          <h2 class="text-base/7 font-semibold text-gray-900 dark:text-white">Store Account</h2>
+          <p class="mt-1 text-sm/6 text-gray-500 dark:text-gray-400">Want to sell your own products? Convert your account to a store account here.</p>
+        </div>
+
+        <div class="md:col-span-2">
+          <%= link_to "Convert account to a store account", new_account_path, class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400" %>
+        </div>
       </div>
     </div>
   </main>

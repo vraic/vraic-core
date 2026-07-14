@@ -27,6 +27,13 @@ class InventoryItem < ApplicationRecord
   validates :weight_value, presence: true, if: :per_weight?
   validates :weight_unit, presence: true, if: :per_weight?
 
+  scope :low_stock, -> {
+    left_outer_joins(:inventory_levels)
+    .where(warn_when_low_on_stock: true)
+    .group(:id)
+    .having("COALESCE(SUM(inventory_levels.quantity), 0) <= low_stock_threshold")
+  }
+
   def display_name
     if parent
       "#{parent.name} - #{variant_label}"

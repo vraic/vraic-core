@@ -1,0 +1,17 @@
+<% content_for :title, @newsletter.subject %>
+
+<div class="mb-6">
+  <%= link_to customer_newsletters_path, class: "text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300" do %>
+    <span aria-hidden="true">&larr;</span> Back to Newsletters
+  <% end %>
+</div>
+
+<div class="bg-white px-6 py-32 lg:px-8 rounded-lg shadow dark:bg-gray-900">
+  <div class="mx-auto max-w-3xl text-base leading-7 text-gray-700 dark:text-gray-300">
+    <p class="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-400"><%= @newsletter.sent_at.to_fs(:long) %></p>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white"><%= @newsletter.subject %></h1>
+    <div class="mt-10 max-w-2xl lexxy-content">
+      <%= @newsletter.content %>
+    </div>
+  </div>
+</div>

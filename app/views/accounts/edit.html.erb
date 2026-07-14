@@ -1,10 +1,25 @@
 <% content_for :title, "Editing account" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing account</h1>
+<div class="w-full">
+  <h1 class="font-bold text-4xl mb-6">Editing account</h1>
 
-  <%= render "form", account: @account %>
+  <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+      <%= link_to "General", edit_account_path(@account, tab: "general"), class: "#{@tab == 'general' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" %>
+      <%= link_to "Stores We Supply", edit_account_path(@account, tab: "stores_we_supply"), class: "#{@tab == 'stores_we_supply' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium" %>
+    </nav>
+  </div>
 
-  <%= link_to "Show this account", @account, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to accounts", accounts_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <div class="md:w-2/3 w-full">
+    <% if @tab == "general" %>
+      <%= render "form", account: @account %>
+    <% elsif @tab == "stores_we_supply" %>
+      <%= render "stores_we_supply", account: @account %>
+    <% end %>
+
+    <div class="mt-8 flex flex-col sm:flex-row gap-2">
+      <%= link_to "Show this account", @account, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 inline-block font-medium" %>
+      <%= link_to "Back to accounts", accounts_path, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 inline-block font-medium" %>
+    </div>
+  </div>
 </div>

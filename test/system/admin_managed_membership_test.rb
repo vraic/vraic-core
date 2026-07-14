@@ -16,32 +16,37 @@ class AdminManagedMembershipTest < ApplicationSystemTestCase
     select_account("Account One")
 
     # Join Account Two
-    within find("h2", text: "Join a Store").find(:xpath, "..") do
-      select "Account Two", from: "Select Store to Join"
-      click_on "Join Store"
+    within "#stores-grid" do
+      card = find("h3", text: "Account Two").find(:xpath, "ancestor::div[contains(@class, 'flex-col')]")
+      within card do
+        click_on "Visit Shop"
+      end
     end
 
     assert_text "You have successfully joined Account Two"
 
     # Verify we are still managing Account One and see Account Two joined
-    assert_text "Stores joined by Account One"
-    within "#business-stores" do
+    within "#stores-grid" do
       assert_text "Account Two"
+      assert_text "business membership"
     end
 
     # Join Account Three
-    within find("h2", text: "Join a Store").find(:xpath, "..") do
-      select "Account Three", from: "Select Store to Join"
-      click_on "Join Store"
+    within "#stores-grid" do
+      card = find("h3", text: "Account Three").find(:xpath, "ancestor::div[contains(@class, 'flex-col')]")
+      within card do
+        click_on "Visit Shop"
+      end
     end
 
     assert_text "You have successfully joined Account Three"
 
     # Verify we are still managing Account One and see both stores joined
-    assert_text "Stores joined by Account One"
-    within find("h2", text: "Stores joined by Account One").find(:xpath, "..") do
+    within "#stores-grid" do
       assert_text "Account Two"
+      assert_text "business membership"
       assert_text "Account Three"
+      assert_text "business membership"
     end
 
     # Verify joined stores are NOT in the "Join a Store" list anymore

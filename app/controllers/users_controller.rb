@@ -40,7 +40,7 @@ class UsersController < ApplicationController
         end
 
         start_new_session_for(@user) if is_signup
-        format.html { redirect_to (is_signup ? root_path : @user), notice: "User was successfully created." }
+        format.html { redirect_to (is_signup ? security_setup_path : @user), notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
         format.html { render :new, status: :unprocessable_content }

@@ -1,4 +1,5 @@
 <%= form_with(model: account, class: "contents") do |form| %>
+  <%= hidden_field_tag :return_to, params[:return_to] if params[:return_to].present? %>
   <% if account.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(account.errors.count, "error") %> prohibited this account from being saved:</h2>
@@ -29,6 +30,16 @@
   <% else %>
     <%= form.hidden_field :owner_id, value: account.owner_id || Current.user.id %>
   <% end %>
+
+  <div class="my-5">
+    <%= form.label :header_image, class: label_class %>
+    <div class="mt-2">
+      <% if account.header_image.attached? %>
+        <%= image_tag account.header_image.variant(:thumb), class: "mb-2 rounded" %>
+      <% end %>
+      <%= form.file_field :header_image, class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400" %>
+    </div>
+  </div>
 
   <div class="inline">
     <%= form.submit class: primary_button_class("w-full sm:w-auto") %>

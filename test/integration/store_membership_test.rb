@@ -9,8 +9,8 @@ class StoreMembershipTest < ActionDispatch::IntegrationTest
 
   test "user can join a store from the dashboard" do
     get dashboard_path
-    assert_select "h2", "Join a Store"
-    assert_select "select[name='account_id']"
+    assert_select "h2", "Stores"
+    assert_select "h3", @account.name
 
     assert_difference "Customer.count", 1 do
       assert_difference "AccountUser.count", 1 do
@@ -23,10 +23,11 @@ class StoreMembershipTest < ActionDispatch::IntegrationTest
     assert_equal @account.id, session[:managed_account_id]
     assert_match /You have successfully joined #{@account.name}/, response.body
 
-    # Verify they are now a member
+    # Verify they are now a member and shown as customer
     get dashboard_path
-    assert_select "h2", "Your Stores"
+    assert_select "h2", "Stores"
     assert_select "h3", @account.name
+    assert_select "span", "customer"
   end
 
   test "user cannot join a store they are already a member of" do
@@ -34,9 +35,8 @@ class StoreMembershipTest < ActionDispatch::IntegrationTest
     Customer.create!(account: @account, user: @user, name: @user.name, email_address: @user.email_address)
 
     get dashboard_path
-    # Should not show in "Join a Store" dropdown if my logic is correct
-    # Account.where.not(id: Current.user.account_ids)
-    assert_select "select[name='account_id'] option", { text: @account.name, count: 0 }
+    # Should show as customer in the grid
+    assert_select "span", "customer"
 
     # Try to post anyway
     post store_memberships_path, params: { account_id: @account.id }

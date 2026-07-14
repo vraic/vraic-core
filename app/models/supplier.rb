@@ -19,11 +19,12 @@ class Supplier < ApplicationRecord
   has_many :supplier_prices, dependent: :destroy
 
   before_validation :link_by_email
+  before_save :set_subscribed_at, if: :will_save_change_to_subscribed_to_newsletter?
   after_save :sync_email_to_user, if: :saved_change_to_email_address?
 
   anonymise do
     overwrite do
-      ignore :account_id, :supplier_account_id, :user_id, :subscribed_to_newsletter
+      ignore :account_id, :supplier_account_id, :user_id, :subscribed_to_newsletter, :subscribed_at
       hex :name
       email :email_address
       hex :phone
@@ -71,5 +72,13 @@ class Supplier < ApplicationRecord
 
   def sync_email_to_user
     user&.update(email_address: email_address) if user&.email_address != email_address
+  end
+
+  def set_subscribed_at
+    if subscribed_to_newsletter?
+      self.subscribed_at = Time.current
+    else
+      self.subscribed_at = nil
+    end
   end
 end

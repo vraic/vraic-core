@@ -2,41 +2,34 @@ require "application_system_test_case"
 
 class DashboardMembershipsTest < ApplicationSystemTestCase
   setup do
-    @user = users(:three) # A user who might not be in all accounts
-    # Ensure they have at least one account to see the dashboard normally
-    # Actually users(:three) is already a customer in Account One
+    @user = User.create!(name: "Joiner", email_address: "joiner@example.com", password: "Password123!@#Strong", password_confirmation: "Password123!@#Strong", onboarded: true, security_choice_made: true)
+    # Ensure there's a store to join
+    @store_to_join = accounts(:two)
   end
 
   test "joining a store updates the dashboard" do
     login_as @user
-    # users(:three) is in Account One (from fixtures maybe? let's check)
 
     visit dashboard_path
 
     # Check if Account Two is available to join
-    assert_text "Join a Store"
-    assert_selector "select#account_id option", text: "Account Two"
-
-    # Join Account Two
-    select "Account Two", from: "Select Store to Join"
-    click_on "Join Store"
-
-    assert_text "You have successfully joined Account Two"
-
-    # Now check dashboard again (should be redirected there)
-    # The controller redirects to dashboard_path.
-
-    assert_match /\/dashboard|\//, current_path
-    # dashboard is the root if authenticated
-
-    # Account Two should now be in "Your Stores"
-    within ".grid" do # Your Stores grid
-      assert_text "Account Two"
+    within "#stores-grid" do
+      assert_text @store_to_join.name
+      card = find("h3", text: @store_to_join.name).find(:xpath, "ancestor::div[contains(@class, 'flex-col')]")
+      within card do
+        click_on "Visit Shop"
+      end
     end
 
-    # Account Two should NOT be in "Join a Store" anymore
-    if has_text?("Join a Store")
-      assert_no_selector "select#account_id option", text: "Account Two"
+    assert_text "You have successfully joined #{@store_to_join.name}"
+
+    # Now check dashboard again (should be redirected there)
+    assert_current_path dashboard_path
+
+    # Account Two should now be in the stores grid with customer label
+    within "#stores-grid" do
+      assert_text @store_to_join.name
+      assert_text "customer"
     end
   end
 end

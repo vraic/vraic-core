@@ -13,6 +13,15 @@ class B2bContextRestrictionTest < ApplicationSystemTestCase
       name: @account_one.name,
       email_address: @admin_user.email_address
     )
+
+    # Also setup Account Two as a supplier for Account One
+    ActsAsTenant.with_tenant(@account_one) do
+      Supplier.create!(
+        name: @store.name,
+        email_address: @admin_user.email_address,
+        supplier_account: @store
+      )
+    end
   end
 
   test "account admin switching to a joined store sees restricted view" do
@@ -21,14 +30,18 @@ class B2bContextRestrictionTest < ApplicationSystemTestCase
     # Start with Account One
     select_account("Account One")
 
-    # Switch to Account Two
-    within "#business-stores" do
-      within find("h3", text: "Account Two").find(:xpath, "../..") do
-        click_on "Select"
+    # Switch to Account Two via Suppliers table
+    within "#suppliers-table" do
+      assert_text "Account Two"
+      row = find("tr", text: "Account Two")
+      within row do
+        click_on "Visit Shop & Order"
       end
     end
 
-    assert_text "Switched to Account Two"
+    assert_current_path new_order_path
+    assert_text "New order"
+    assert_text "Account Two"
 
     # Should NOT see staff-only sidebar items
     within "#desktop-sidebar-main-nav" do

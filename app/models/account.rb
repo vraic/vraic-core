@@ -1,4 +1,9 @@
 class Account < ApplicationRecord
+  has_referrals
+  has_one_attached :header_image do |attachable|
+    attachable.variant :thumb, resize_to_limit: [ 200, 200 ]
+    attachable.variant :card, resize_to_limit: [ 600, 400 ]
+  end
   audited
   has_associated_audits
   has_prefix_id :acct
@@ -20,9 +25,24 @@ class Account < ApplicationRecord
   validates :name, presence: true
   validates :owner_id, presence: true
 
-  before_destroy :cleanup_side_effects
+  after_create :create_default_referral_code
+  after_create :assign_owner_as_manager
+
+  def default_referral_code
+    name.downcase.gsub(/[^a-z0-9]/, "")
+  end
 
   private
+
+  def assign_owner_as_manager
+    ActsAsTenant.without_tenant do
+      AccountUser.unscoped.where(account_id: id, user_id: owner_id).first_or_create!(user_role: :store_manager)
+    end
+  end
+
+  def create_default_referral_code
+    referral_codes.create(code: default_referral_code)
+  end
 
   def cleanup_side_effects
     Customer.unscoped.where(account_id: id).delete_all!

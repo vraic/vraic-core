@@ -1,10 +1,9 @@
-<% content_for :title, "Editing account user" %>
+<% content_for :title, "Editing Permissions for #{@account_user.user.name}" %>
 
 <div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing account user</h1>
+  <h1 class="font-bold text-4xl mb-8">Editing Permissions for <%= @account_user.user.name %></h1>
 
   <%= render "form", account_user: @account_user %>
 
-  <%= link_to "Show this account user", @account_user, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to account users", account_users_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <%= link_to "Back to account", @account_user.account, class: secondary_button_class("mt-4 inline-block") %>
 </div>

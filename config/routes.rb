@@ -7,6 +7,13 @@ Rails.application.routes.draw do
       post :deliver
     end
   end
+  namespace :customer do
+    resources :newsletters, only: [ :index, :show ] do
+      collection do
+        post :subscribe
+      end
+    end
+  end
   resources :suppliers do
     member do
       get :inventory
@@ -47,13 +54,13 @@ Rails.application.routes.draw do
       delete :really_destroy
     end
   end
-  resources :account_users
   resources :accounts do
     member do
       post :join
       post :leave
       get :audits
     end
+    resources :account_users, shallow: true
   end
   resources :support_requests do
     member do
@@ -91,6 +98,7 @@ Rails.application.routes.draw do
   end
   resource :two_factor_auth, only: [ :show, :create, :destroy ]
   resource :two_factor_verification, only: [ :new, :create ]
+  resource :onboarding, only: [ :show, :update ]
   resource :security_setup, only: [ :show, :create ] do
     member do
       get :password

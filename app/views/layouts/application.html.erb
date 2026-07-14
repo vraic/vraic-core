@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Vraic Operating System" %></title>
+    <title><%= content_for(:title) || "vraic.je" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Vraic OS">
@@ -28,7 +28,8 @@
 
 
     <el-dialog>
-      <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
+      <% unless content_for?(:no_sidebar) %>
+        <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
         <el-dialog-backdrop class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"></el-dialog-backdrop>
 
         <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
@@ -121,6 +122,26 @@
                           <% end %>
                         </li>
                       <% end %>
+                      <% if customer? %>
+                        <li>
+                          <%= link_to customer_newsletters_path, class: nav_link_classes(:customer_newsletters) do %>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:customer_newsletters) %>">
+                              <path d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Newsletters
+                          <% end %>
+                        </li>
+                      <% end %>
+                      <% if manager? %>
+                        <li>
+                          <%= link_to edit_account_path(Current.account), class: nav_link_classes(:accounts) do %>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:accounts) %>">
+                              <path d="M13.5 21V12.75H10.5V21M4.5 21H19.5M3 12.75H21M5.25 12.75V5.25C5.25 4.85218 5.40804 4.47064 5.68934 4.18934C5.97064 3.90804 6.35218 3.75 6.75 3.75H17.25C17.6478 3.75 18.0294 3.90804 18.3107 4.18934C18.592 4.47064 18.75 4.85218 18.75 5.25V12.75" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Store Settings
+                          <% end %>
+                        </li>
+                      <% end %>
                     </ul>
                   </li>
                   <% if staff? %>
@@ -157,41 +178,88 @@
                       <% end %>
                     </li>
                   <% end %>
-                  <li>
-                    <%= link_to settings_path, class: nav_link_classes(:settings) do %>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:settings) %>">
-                        <path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
-                      Settings
-                    <% end %>
-                  </li>
-                  <li>
-                    <%= link_to support_requests_path, class: nav_link_classes(:support_requests) do %>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:support_requests) %>">
-                        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0V15m0-12V9m9 3H15m-12 0H9m1.5-3.5L15 13.5m-4.5.5L6 9" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
-                      Support
-                    <% end %>
-                  </li>
-                  <li class="mb-4">
-                    <%= button_to session_path, method: :delete, class: "w-full group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:text-red-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-white/5 cursor-pointer" do %>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 shrink-0 text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400">
-                        <path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
-                      Logout
-                    <% end %>
-                  </li>
+                  <% if switchable_accounts.size > 1 %>
+                    <li>
+                      <button type="button" command="show-modal" commandfor="account-switcher" class="group flex w-full gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5">
+                        <svg class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                        </svg>
+                        Switch Account
+                      </button>
+                    </li>
+                  <% end %>
                 </ul>
+
+                <div class="-mx-6 mt-auto border-t border-gray-200 dark:border-white/10">
+                  <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#hide">
+                    <button type="button" data-action="click->dropdown#toggle" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5 w-full text-left" id="user-menu-button-mobile" aria-expanded="false" aria-haspopup="true">
+                      <span class="sr-only">Your profile</span>
+                      <span class="flex flex-col truncate">
+                        <span aria-hidden="true" class="truncate"><%= Current.user&.name %></span>
+                        <span aria-hidden="true" class="text-xs text-gray-500 truncate font-normal"><%= current_user_role %></span>
+                      </span>
+                      <svg class="size-5 text-gray-400 ml-auto" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 17a.75.75 0 0 1-.75-.75V5.612l-3.96 4.158a.75.75 0 1 1-1.08-1.04l5.25-5.5a.75.75 0 0 1 1.08 0l5.25 5.5a.75.75 0 1 1-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0 1 10 17Z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+
+                    <div data-dropdown-target="menu" class="hidden absolute bottom-full left-0 z-10 w-64 mb-2 ml-4 origin-bottom-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-800 dark:ring-white/10" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-mobile" tabindex="-1">
+                      <%= link_to "Settings", settings_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5", role: "menuitem", tabindex: "-1" %>
+                      <%= link_to "Support", support_requests_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5", role: "menuitem", tabindex: "-1" %>
+                      <div class="border-t border-gray-100 dark:border-white/5 my-1"></div>
+                      <%= button_to "Logout", session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5 cursor-pointer", role: "menuitem", tabindex: "-1" %>
+                    </div>
+                  </div>
+                </div>
               <% end %>
             </div>
           </el-dialog-panel>
         </div>
       </dialog>
+
+      <dialog id="account-switcher" class="backdrop:bg-transparent bg-transparent border-0 p-0 overflow-visible">
+        <el-dialog-backdrop class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0" command="close" commandfor="account-switcher"></el-dialog-backdrop>
+        <div class="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
+          <el-dialog-panel class="relative w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left shadow-xl transition-all dark:bg-gray-800 dark:ring-1 dark:ring-white/10 pointer-events-auto">
+            <div class="absolute top-0 right-0 pt-4 pr-4">
+              <button type="button" command="close" commandfor="account-switcher" class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none dark:bg-gray-800 dark:text-gray-500 dark:hover:text-gray-400">
+                <span class="sr-only">Close</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white" id="modal-title">Switch Account</h3>
+              <div class="mt-4">
+                <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                  <% switchable_accounts.each do |entry| %>
+                    <li class="py-4">
+                      <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                          <span class="text-sm font-medium text-gray-900 dark:text-white"><%= entry[:name] %></span>
+                          <span class="text-xs text-gray-500 dark:text-gray-400"><%= entry[:role] %></span>
+                        </div>
+                        <% if Current.account&.id == entry[:id] %>
+                          <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-900/20 dark:text-green-400 dark:ring-green-500/20">Active</span>
+                        <% else %>
+                          <%= button_to "Switch", managed_account_path(account_id: entry[:id]), method: :patch, class: "rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:hover:bg-gray-600" %>
+                        <% end %>
+                      </div>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+      <% end %>
     </el-dialog>
 
     <!-- Static sidebar for desktop -->
-    <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col dark:bg-gray-900">
+    <% unless content_for?(:no_sidebar) %>
+      <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col dark:bg-gray-900">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 dark:border-white/10 dark:bg-black/10">
         <div class="flex h-16 shrink-0 items-center">
@@ -273,6 +341,26 @@
                         <% end %>
                       </li>
                     <% end %>
+                    <% if customer? %>
+                      <li>
+                        <%= link_to customer_newsletters_path, class: nav_link_classes(:customer_newsletters) do %>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:customer_newsletters) %>">
+                            <path d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                          Newsletters
+                        <% end %>
+                      </li>
+                    <% end %>
+                    <% if manager? %>
+                      <li>
+                        <%= link_to edit_account_path(Current.account), class: nav_link_classes(:accounts) do %>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:accounts) %>">
+                            <path d="M13.5 21V12.75H10.5V21M4.5 21H19.5M3 12.75H21M5.25 12.75V5.25C5.25 4.85218 5.40804 4.47064 5.68934 4.18934C5.97064 3.90804 6.35218 3.75 6.75 3.75H17.25C17.6478 3.75 18.0294 3.90804 18.3107 4.18934C18.592 4.47064 18.75 4.85218 18.75 5.25V12.75" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                          Store Settings
+                        <% end %>
+                      </li>
+                    <% end %>
                   </ul>
                 </li>
                     <% if staff? %>
@@ -298,11 +386,9 @@
               </ul>
             </li>
           </ul>
-        </nav>
 
-        <nav>
-          <ul role="list" class="-mx-2 space-y-1">
-            <% if authenticated? %>
+          <% if authenticated? %>
+            <ul role="list" class="-mx-2 mt-auto space-y-1">
               <% if Current.user&.admin? %>
                 <li>
                   <%= link_to accounts_path, class: nav_link_classes(:accounts) do %>
@@ -314,37 +400,46 @@
                   <% end %>
                 </li>
               <% end %>
-              <li class="mt-auto">
-                <%= link_to settings_path, class: nav_link_classes(:settings) do %>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:settings) %>">
-                    <path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round" />
+              <% if switchable_accounts.size > 1 %>
+                <li>
+                  <button type="button" command="show-modal" commandfor="account-switcher" class="group flex w-full gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:text-indigo-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5">
+                    <svg class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                    </svg>
+                    Switch Account
+                  </button>
+                </li>
+              <% end %>
+            </ul>
+
+            <div class="-mx-6 mt-6 border-t border-gray-200 dark:border-white/10">
+              <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#hide">
+                <button type="button" data-action="click->dropdown#toggle" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5 w-full text-left" id="user-menu-button-desktop" aria-expanded="false" aria-haspopup="true">
+                  <span class="sr-only">Your profile</span>
+                  <span class="flex flex-col truncate">
+                    <span aria-hidden="true" class="truncate"><%= Current.user&.name %></span>
+                    <span aria-hidden="true" class="text-xs text-gray-500 truncate font-normal"><%= current_user_role %></span>
+                  </span>
+                  <svg class="size-5 text-gray-400 ml-auto" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 17a.75.75 0 0 1-.75-.75V5.612l-3.96 4.158a.75.75 0 1 1-1.08-1.04l5.25-5.5a.75.75 0 0 1 1.08 0l5.25 5.5a.75.75 0 1 1-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0 1 10 17Z" clip-rule="evenodd" />
                   </svg>
-                  Settings
-                <% end %>
-              </li>
-              <li>
-                <%= link_to support_requests_path, class: nav_link_classes(:support_requests) do %>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="<%= nav_icon_classes(:support_requests) %>">
-                    <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0V15m0-12V9m9 3H15m-12 0H9m1.5-3.5L15 13.5m-4.5.5L6 9" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  Support
-                <% end %>
-              </li>
-              <li class="mb-4">
-                <%= button_to session_path, method: :delete, class: "w-full group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:text-red-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-white/5 cursor-pointer" do %>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 shrink-0 text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400">
-                    <path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  Logout
-                <% end %>
-              </li>
-            <% end %>
-          </ul>
+                </button>
+
+                <div data-dropdown-target="menu" class="hidden absolute bottom-full left-0 z-10 w-64 mb-2 ml-4 origin-bottom-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-800 dark:ring-white/10" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button-desktop" tabindex="-1">
+                  <%= link_to "Settings", settings_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5", role: "menuitem", tabindex: "-1" %>
+                  <%= link_to "Support", support_requests_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5", role: "menuitem", tabindex: "-1" %>
+                  <div class="border-t border-gray-100 dark:border-white/5 my-1"></div>
+                  <%= button_to "Logout", session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5 cursor-pointer", role: "menuitem", tabindex: "-1" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </nav>
       </div>
     </div>
+    <% end %>
 
+    <% unless content_for?(:no_sidebar) %>
     <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-xs sm:px-6 lg:hidden dark:bg-gray-900 dark:shadow-none dark:after:pointer-events-none dark:after:absolute dark:after:inset-0 dark:after:border-b dark:after:border-white/10 dark:after:bg-black/10">
       <button type="button" command="show-modal" commandfor="sidebar" class="-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden dark:text-gray-400 dark:hover:text-white">
         <span class="sr-only">Open sidebar</span>
@@ -354,8 +449,9 @@
       </button>
       <div class="flex-1 text-sm/6 font-semibold text-gray-900 dark:text-white"><%= content_for?(:title) ? yield(:title) : "Dashboard" %></div>
     </div>
+    <% end %>
 
-    <main class="py-10 lg:pl-72">
+    <main class="py-10 <%= content_for?(:no_sidebar) ? '' : 'lg:pl-72' %>">
       <div class="px-4 sm:px-6 lg:px-8">
         <% if Current.user&.admin? && Current.account %>
           <div class="mb-8 bg-indigo-600 px-4 py-2 rounded-lg text-white text-center text-sm font-medium shadow-sm flex items-center justify-center gap-4">

@@ -116,6 +116,6 @@ class InventoryItemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def inventory_item_params
-      params.require(:inventory_item).permit(:name, :description, :price, :inventory_group_id, :parent_id, :unit_type, :weight_value, :weight_unit)
+      params.require(:inventory_item).permit(:name, :description, :price, :inventory_group_id, :parent_id, :unit_type, :weight_value, :weight_unit, :warn_when_low_on_stock, :low_stock_threshold)
     end
 end

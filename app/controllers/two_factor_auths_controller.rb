@@ -12,7 +12,8 @@ class TwoFactorAuthsController < ApplicationController
     respond_to do |format|
       if @user.validate_otp(params[:otp_code])
         if @user.update(otp_required_for_login: true)
-          format.html { redirect_to settings_path, notice: "2FA has been enabled via OTP.", status: :see_other }
+          path = @user.onboarded? ? settings_path : onboarding_path
+          format.html { redirect_to path, notice: "2FA has been enabled via OTP.", status: :see_other }
           format.json { render :show, status: :created, location: @user }
         else
           format.html { render :show, status: :unprocessable_content }

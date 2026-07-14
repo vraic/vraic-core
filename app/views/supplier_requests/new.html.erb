@@ -1,28 +1,98 @@
-<% content_for :title, "Send Supplier Request" %>
+<% content_for :title, "Apply as Supplier" %>
 
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Send Supplier Request</h1>
+<div class="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mb-8">
+    <%= link_to "← Back to Dashboard", dashboard_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+  </div>
 
-  <%= form_with(model: @supplier_request, class: "contents") do |form| %>
-    <% if @supplier_request.errors.any? %>
-      <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-        <h2><%= pluralize(@supplier_request.errors.count, "error") %> prohibited this request from being saved:</h2>
-        <ul>
-          <% @supplier_request.errors.each do |error| %>
-            <li><%= error.full_message %></li>
-          <% end %>
-        </ul>
+  <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">Apply as Supplier</h1>
+  
+  <% if @receiver_account %>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+      You are applying to become a supplier for <strong><%= @receiver_account.name %></strong>.
+    </p>
+  <% end %>
+
+  <% if @managed_accounts.empty? %>
+    <div class="rounded-md bg-yellow-50 p-6 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/50">
+      <div class="flex">
+        <div class="shrink-0">
+          <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625l6.281-10.875zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-300">Account Required</h3>
+          <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-400">
+            <p>To become a supplier for another store, you first need to set up your own store on Vraic.</p>
+          </div>
+          <div class="mt-4">
+            <%= link_to "Create your Store", new_account_path(return_to: new_supplier_request_path(receiver_account_id: @receiver_account&.id)), class: primary_button_class %>
+          </div>
+        </div>
       </div>
-    <% end %>
-
-    <div class="my-5">
-      <%= form.label :receiver_account_id, "Target Account", class: label_class %>
-      <%= form.collection_select :receiver_account_id, Account.where.not(id: ActsAsTenant.current_tenant&.id), :id, :name, { prompt: "Select an account" }, class: input_class %>
     </div>
+  <% elsif Current.account.nil? %>
+    <div class="bg-white shadow sm:rounded-lg dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">Select a Store to apply from</h3>
+        <div class="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
+          <p>Please choose which of your stores you would like to use to supply <strong><%= @receiver_account&.name %></strong>.</p>
+        </div>
+        <div class="mt-5 space-y-3">
+          <% @managed_accounts.each do |account| %>
+            <%= button_to managed_account_path(account_id: account.id), method: :patch, params: { return_to: new_supplier_request_path(receiver_account_id: @receiver_account&.id) }, class: "w-full flex items-center justify-between rounded-md bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:ring-0 dark:hover:bg-white/20" do %>
+              <span><%= account.name %></span>
+              <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+              </svg>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white shadow sm:rounded-lg dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <div class="px-4 py-5 sm:p-6">
+        <%= form_with(model: @supplier_request, class: "space-y-6") do |form| %>
+          <% if @supplier_request.errors.any? %>
+            <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md">
+              <h2><%= pluralize(@supplier_request.errors.count, "error") %> prohibited this request from being saved:</h2>
+              <ul>
+                <% @supplier_request.errors.each do |error| %>
+                  <li><%= error.full_message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
 
-    <div class="inline">
-      <%= form.submit "Send Request", class: primary_button_class %>
-      <%= link_to "Cancel", supplier_requests_path, class: secondary_button_class %>
+          <div>
+            <%= form.label :receiver_account_id, "Applying to Supply", class: label_class %>
+            <div class="mt-2">
+              <% if @receiver_account %>
+                <%= form.hidden_field :receiver_account_id %>
+                <div class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 bg-gray-50 px-3 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                  <%= @receiver_account.name %>
+                </div>
+              <% else %>
+                <%= form.collection_select :receiver_account_id, Account.where.not(id: ActsAsTenant.current_tenant&.id), :id, :name, { prompt: "Select an account" }, class: input_class %>
+              <% end %>
+            </div>
+          </div>
+
+          <div>
+            <label class="<%= label_class %>">Applying from Store</label>
+            <div class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 bg-gray-50 px-3 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+              <%= Current.account.name %>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <%= form.submit "Send Supplier Request", class: primary_button_class %>
+            <%= link_to "Cancel", dashboard_path, class: secondary_button_class %>
+          </div>
+        <% end %>
+      </div>
     </div>
   <% end %>
 </div>

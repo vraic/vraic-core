@@ -5,7 +5,14 @@ class SupplierRequestPolicy < ApplicationPolicy
 
   def create?
     # Must be global admin OR admin of the sender account
-    user.admin? || user.account_users.find_by(account: ActsAsTenant.current_tenant)&.store_manager?
+    return true if user.admin?
+
+    sender = record.respond_to?(:sender_account) ? record.sender_account : nil
+    sender ||= ActsAsTenant.current_tenant
+
+    return false unless sender
+
+    AccountUser.unscoped.exists?(user: user, account: sender, user_role: :store_manager)
   end
 
   def update?

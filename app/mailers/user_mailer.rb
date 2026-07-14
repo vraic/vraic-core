@@ -9,4 +9,10 @@ class UserMailer < ApplicationMailer
     @token = token
     mail to: user.email_address, subject: "Your 2FA Verification Code"
   end
+
+  def account_invitation(user, account)
+    @user = user
+    @account = account
+    mail to: user.email_address, subject: "You've been invited to #{@account.name} on Vraic OS"
+  end
 end
