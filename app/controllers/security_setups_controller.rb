@@ -22,6 +22,7 @@ class SecuritySetupsController < ApplicationController
     @user = Current.user
 
     if @user.update(password_params.merge(prefers_email_login: false, security_choice_made: true))
+      @user.password = @user.password_confirmation = nil
       redirect_to two_factor_security_setup_path, notice: "Password saved successfully."
     else
       render :password, status: :unprocessable_content

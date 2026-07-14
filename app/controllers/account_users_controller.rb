@@ -33,11 +33,9 @@ class AccountUsersController < ApplicationController
     if user.nil?
       user = User.new(email_address: email)
       user.name = email.split("@").first.to_s.humanize
-      user.password = SecureRandom.alphanumeric(32)
-      user.password_confirmation = user.password
+      user.password = user.password_confirmation = SecureRandom.alphanumeric(32)
       user.prefers_email_login = true
       user.save!
-      user.password = user.password_confirmation = nil
     end
 
     @account_user = AccountUser.new(account_user_params)
@@ -48,6 +46,7 @@ class AccountUsersController < ApplicationController
 
     respond_to do |format|
       if @account_user.save
+        user.password = user.password_confirmation = nil
         UserMailer.account_invitation(user, @account).deliver_later
         format.html { redirect_to @account, notice: "Account user was successfully created." }
         format.json { render :show, status: :created, location: @account_user }

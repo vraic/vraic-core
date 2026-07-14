@@ -33,6 +33,7 @@ class SessionsController < ApplicationController
       session[:otp_user_id] = user.id
       session[:security_setup_user_id] = user.id unless user.security_choice_made?
       user.generate_email_otp!
+      user.password = user.password_confirmation = nil
       redirect_to new_two_factor_verification_path, notice: "We emailed you a one-time code."
     end
   end
@@ -47,11 +48,8 @@ class SessionsController < ApplicationController
   def find_or_create_email_login_user(email_address)
     User.find_or_create_by!(email_address: email_address) do |user|
       user.name = email_address.split("@").first.to_s.humanize
-      user.password = SecureRandom.alphanumeric(32)
-      user.password_confirmation = user.password
+      user.password = user.password_confirmation = SecureRandom.alphanumeric(32)
       user.prefers_email_login = true
-    end.tap do |user|
-      user.password = user.password_confirmation = nil
     end
   end
 end

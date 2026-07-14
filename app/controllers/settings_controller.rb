@@ -15,6 +15,7 @@ class SettingsController < ApplicationController
   def update_password
     if @user.authenticate(params[:current_password])
       if @user.update(password_params)
+        @user.password = @user.password_confirmation = nil
         redirect_to settings_path, notice: "Password updated successfully."
       else
         render :show, status: :unprocessable_content

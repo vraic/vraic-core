@@ -40,6 +40,7 @@ class UsersController < ApplicationController
         end
 
         start_new_session_for(@user) if is_signup
+        @user.password = @user.password_confirmation = nil
         format.html { redirect_to (is_signup ? security_setup_path : @user), notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
@@ -53,6 +54,7 @@ class UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
+        @user.password = @user.password_confirmation = nil
         format.html { redirect_to @user, notice: "User was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @user }
       else
