@@ -46,7 +46,8 @@ class User < ApplicationRecord
   end
 
   def generate_otp_secret!
-    update_columns(otp_secret: ROTP::Base32.random_base32)
+    self.otp_secret = ROTP::Base32.random_base32
+    save!(validate: false)
   end
 
   def otp_qr_code
@@ -66,7 +67,9 @@ class User < ApplicationRecord
 
   def generate_email_otp!
     token = SecureRandom.alphanumeric(8).upcase
-    update_columns(email_otp_token: token, email_otp_sent_at: Time.current)
+    self.email_otp_token = token
+    self.email_otp_sent_at = Time.current
+    save!(validate: false)
     UserMailer.two_factor_code(self, token).deliver_later
   end
 
@@ -76,7 +79,9 @@ class User < ApplicationRecord
   end
 
   def clear_email_otp!
-    update_columns(email_otp_token: nil, email_otp_sent_at: nil)
+    self.email_otp_token = nil
+    self.email_otp_sent_at = nil
+    save!(validate: false)
   end
 
   def email_login_only?
