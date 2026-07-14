@@ -33,11 +33,11 @@ class AccountUsersController < ApplicationController
     if user.nil?
       user = User.new(email_address: email)
       user.name = email.split("@").first.to_s.humanize
-      generated_password = SecureRandom.alphanumeric(32)
-      user.password = generated_password
-      user.password_confirmation = generated_password
+      user.password = SecureRandom.alphanumeric(32)
+      user.password_confirmation = user.password
       user.prefers_email_login = true
       user.save!
+      user.password = user.password_confirmation = nil
     end
 
     @account_user = AccountUser.new(account_user_params)

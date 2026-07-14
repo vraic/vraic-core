@@ -47,10 +47,11 @@ class SessionsController < ApplicationController
   def find_or_create_email_login_user(email_address)
     User.find_or_create_by!(email_address: email_address) do |user|
       user.name = email_address.split("@").first.to_s.humanize
-      generated_password = SecureRandom.alphanumeric(32)
-      user.password = generated_password
-      user.password_confirmation = generated_password
+      user.password = SecureRandom.alphanumeric(32)
+      user.password_confirmation = user.password
       user.prefers_email_login = true
+    end.tap do |user|
+      user.password = user.password_confirmation = nil
     end
   end
 end
