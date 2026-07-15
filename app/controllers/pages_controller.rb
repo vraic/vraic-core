@@ -2,11 +2,22 @@ class PagesController < ApplicationController
   allow_unauthenticated_access only: :home
 
   def home
-    redirect_to dashboard_path if authenticated?
+    if authenticated?
+      if customer_only?
+        redirect_to shop_path
+      else
+        redirect_to dashboard_path
+      end
+    end
   end
 
   def dashboard
     redirect_to new_session_path unless authenticated?
+
+    if customer_only?
+      redirect_to shop_path
+      return
+    end
 
     if Current.user && !Current.user.admin? && Current.user.accounts.empty?
       process_referral
@@ -26,7 +37,14 @@ class PagesController < ApplicationController
       @loyalty_program = Current.account.loyalty_program
     end
 
-    @customer_orders = Order.unscoped.joins(:customer).where(customers: { user_id: Current.user.id }).order(created_at: :desc).limit(10)
+    @customer_orders = Order.unscoped.includes(:account).joins(:customer).where(customers: { user_id: Current.user.id }).order(created_at: :desc).limit(5)
+    @top_products = InventoryItem.unscoped.includes(:account)
+                                 .joins(order_items: { order: :customer })
+                                 .where(customers: { user_id: Current.user.id })
+                                 .group(:id)
+                                 .select("inventory_items.*, COUNT(order_items.id) as order_count")
+                                 .order("order_count DESC")
+                                 .limit(5)
   end
 
   private

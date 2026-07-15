@@ -27,6 +27,10 @@ class Account < ApplicationRecord
   validates :name, presence: true
   validates :owner_id, presence: true
 
+  scope :b2c, -> { where(is_b2c: true) }
+  scope :b2b, -> { where(is_b2b: true) }
+  scope :internal, -> { where(is_internal: true) }
+
   after_create :create_default_referral_code
   after_create :assign_owner_as_manager
 

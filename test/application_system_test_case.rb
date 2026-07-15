@@ -12,8 +12,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     Capybara.reset_sessions!
     # Use the fast-path login for system tests to avoid flaky 2FA UI interactions
     visit test_login_path(user_id: user.id)
-    assert_text "Dashboard", wait: 10
-    assert_current_path dashboard_path
+
+    # Wait for the page to load - customers are redirected to shop, staff to dashboard
+    assert_selector "nav", visible: :any, wait: 10
   end
 
   def login_via_ui(user)
@@ -47,8 +48,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       click_on "Verify"
     end
 
-    assert_text "Dashboard", wait: 10
-    assert_current_path dashboard_path
+    assert_selector "nav", wait: 10
   end
 
   def select_account(name)

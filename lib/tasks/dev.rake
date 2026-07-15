@@ -30,7 +30,9 @@ namespace :db do
     account_one = Account.create!(
       name: "Vraic Farms",
       address: "123 Farm Road, Jersey",
-      owner_id: admin.id
+      owner_id: admin.id,
+      is_b2c: true,
+      is_b2b: true
     )
 
     LoyaltyProgram.create!(
@@ -53,7 +55,14 @@ namespace :db do
       password: "ThisIsAVeryLongAndSecurePassword123!"
     )
     AccountUser.create!(account: account_one, user: account_one_staff, user_role: :store_staff)
-    puts "Created Vraic Farms with store manager (account-one@example.com) and staff (account-one-staff@example.com)"
+
+    account_one_customer = User.create!(
+      name: "Jane Customer",
+      email_address: "account-one-customer@example.com",
+      password: "ThisIsAVeryLongAndSecurePassword123!"
+    )
+    AccountUser.create!(account: account_one, user: account_one_customer, user_role: :customer)
+    puts "Created Vraic Farms with store manager (account-one@example.com), staff (account-one-staff@example.com) and customer (account-one-customer@example.com)"
 
     # 3. Suppliers
     supplier_names = [ "Paradise Veg", "Jolly Hoggs", "Dark Shrooms", "Coastal Fish" ]
@@ -102,7 +111,7 @@ namespace :db do
       }
 
       locations = [
-        Location.create!(name: "Farm Shop"),
+        Location.create!(name: "Farm Shop", collection_point: true),
         Location.create!(name: "Cold Store"),
         Location.create!(name: "Roadside Stall")
       ]
@@ -112,7 +121,8 @@ namespace :db do
 
       regular_customers = [
         Customer.create!(name: FFaker::Name.name, email_address: FFaker::Internet.email),
-        Customer.create!(name: FFaker::Name.name, email_address: FFaker::Internet.email)
+        Customer.create!(name: FFaker::Name.name, email_address: FFaker::Internet.email),
+        Customer.create!(name: "Jane Customer", email_address: "account-one-customer@example.com", user: account_one_customer)
       ]
 
       group_data.each do |group_name, item_names|
@@ -189,7 +199,7 @@ namespace :db do
     suppliers.each do |s_acc|
       ActsAsTenant.with_tenant(s_acc) do
         s_group = InventoryGroup.create!(name: "#{s_acc.name} Wholesale")
-        loc = Location.create!(name: "Main Warehouse")
+        loc = Location.create!(name: "Main Warehouse", collection_point: true)
         [ "Bulk Item A", "Bulk Item B", "Bulk Item C", "Special Resource" ].each do |name|
           item = InventoryItem.create!(
             name: "#{s_acc.name} #{name}",
@@ -213,6 +223,9 @@ namespace :db do
     # 8. Pending Request for realism
     pending_name = "#{FFaker::Company.name} (Pending)"
     pending_acc = Account.create!(name: pending_name, owner_id: admin.id)
+    ActsAsTenant.with_tenant(pending_acc) do
+      Location.create!(name: "Collection Point", collection_point: true)
+    end
     SupplierRequest.create!(sender_account: pending_acc, receiver_account: account_one)
     puts "Added a pending Supplier Request from #{pending_name}"
 
