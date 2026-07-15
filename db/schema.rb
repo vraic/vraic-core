@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_14_074939) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_14_205908) do
   create_table "account_users", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at", null: false
@@ -277,6 +277,40 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_074939) do
     t.index ["account_id"], name: "index_locations_on_account_id"
   end
 
+  create_table "loyalty_cards", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "customer_id", null: false
+    t.string "identifier"
+    t.integer "loyalty_program_id", null: false
+    t.integer "points_balance", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_loyalty_cards_on_customer_id"
+    t.index ["identifier"], name: "index_loyalty_cards_on_identifier", unique: true
+    t.index ["loyalty_program_id"], name: "index_loyalty_cards_on_loyalty_program_id"
+  end
+
+  create_table "loyalty_programs", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.integer "currency_to_points_ratio", default: 1
+    t.decimal "points_to_currency_ratio", precision: 10, scale: 2, default: "0.1"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_loyalty_programs_on_account_id"
+  end
+
+  create_table "loyalty_transactions", force: :cascade do |t|
+    t.integer "amount", null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.integer "loyalty_card_id", null: false
+    t.integer "order_id"
+    t.integer "transaction_type", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["loyalty_card_id"], name: "index_loyalty_transactions_on_loyalty_card_id"
+    t.index ["order_id"], name: "index_loyalty_transactions_on_order_id"
+  end
+
   create_table "newsletters", force: :cascade do |t|
     t.integer "account_id", null: false
     t.datetime "created_at", null: false
@@ -319,6 +353,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_074939) do
     t.datetime "created_at", null: false
     t.string "currency", default: "GBP", null: false
     t.integer "customer_id", null: false
+    t.integer "loyalty_discount_amount_cents", default: 0
+    t.integer "loyalty_points_redeemed", default: 0
     t.text "notes"
     t.string "number"
     t.integer "status", default: 0, null: false
@@ -492,6 +528,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_074939) do
   add_foreign_key "inventory_levels", "inventory_items"
   add_foreign_key "inventory_levels", "locations"
   add_foreign_key "locations", "accounts"
+  add_foreign_key "loyalty_cards", "customers"
+  add_foreign_key "loyalty_cards", "loyalty_programs"
+  add_foreign_key "loyalty_programs", "accounts"
+  add_foreign_key "loyalty_transactions", "loyalty_cards"
+  add_foreign_key "loyalty_transactions", "orders"
   add_foreign_key "newsletters", "accounts"
   add_foreign_key "notes", "accounts"
   add_foreign_key "notes", "users"

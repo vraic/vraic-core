@@ -44,6 +44,20 @@
               <% end %>
             </tbody>
             <tfoot>
+              <% if @order.loyalty_discount_amount_cents > 0 %>
+                <tr class="bg-gray-50 dark:bg-gray-900/50">
+                  <td colspan="4" class="<%= td_class %> text-right text-sm text-gray-500">Subtotal</td>
+                  <td class="<%= td_class %> text-right text-sm text-gray-900 dark:text-white">
+                    <%= (@order.total_amount + @order.loyalty_discount).format %>
+                  </td>
+                </tr>
+                <tr class="bg-indigo-50 dark:bg-indigo-900/20">
+                  <td colspan="4" class="<%= td_class %> text-right text-sm text-indigo-700 dark:text-indigo-400">Loyalty Discount (<%= @order.loyalty_points_redeemed %> points)</td>
+                  <td class="<%= td_class %> text-right text-sm text-indigo-700 dark:text-indigo-400">
+                    - <%= @order.loyalty_discount.format %>
+                  </td>
+                </tr>
+              <% end %>
               <tr class="bg-gray-50 dark:bg-gray-900/50">
                 <td colspan="4" class="<%= td_class %> text-right font-bold">Total</td>
                 <td class="<%= td_class %> text-right font-bold text-lg text-indigo-600">

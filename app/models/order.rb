@@ -14,6 +14,7 @@ class Order < ApplicationRecord
   belongs_to :user, optional: true
   has_many :order_items, dependent: :destroy
   has_many :staff_notes, as: :notable, class_name: "Note", dependent: :destroy
+  has_many :loyalty_transactions, dependent: :nullify
 
   accepts_nested_attributes_for :order_items, allow_destroy: true
 
@@ -26,10 +27,30 @@ class Order < ApplicationRecord
 
   before_validation :generate_number, on: :create
   before_validation :calculate_total
+  after_create :process_loyalty_redemption
   after_create :send_received_email
+  after_update :process_loyalty_accrual, if: -> { saved_change_to_status? && complete? }
   after_update :send_status_emails, if: :saved_change_to_status?
 
+  def loyalty_discount
+    Money.new(loyalty_discount_amount_cents, Money.default_currency)
+  end
+
   private
+
+  def process_loyalty_accrual
+    return unless account.loyalty_program&.active?
+    return if loyalty_transactions.accrual.exists? # Prevent double accrual
+
+    card = customer.loyalty_card || customer.create_loyalty_card(loyalty_program: account.loyalty_program)
+    points = account.loyalty_program.currency_to_points(total_amount.to_f)
+    card.add_points!(points, self) if points > 0
+  end
+
+  def process_loyalty_redemption
+    return unless loyalty_points_redeemed > 0
+    customer.loyalty_card.redeem_points!(loyalty_points_redeemed, self)
+  end
 
   def generate_number
     return if number.present?
@@ -42,7 +63,19 @@ class Order < ApplicationRecord
 
   def calculate_total
     order_items.each { |item| item.set_default_price if item.new_record? }
-    self.total_amount_cents = order_items.reject(&:marked_for_destruction?).sum { |item| item.price_cents * item.quantity }
+    base_total_cents = order_items.reject(&:marked_for_destruction?).sum { |item| item.price_cents * item.quantity }
+
+    if loyalty_points_redeemed > 0 && customer&.loyalty_card && account.loyalty_program&.active?
+      program = account.loyalty_program
+      # Ensure they have enough points
+      points = [ loyalty_points_redeemed, customer.loyalty_card.points_balance ].min
+      self.loyalty_points_redeemed = points
+      self.loyalty_discount_amount_cents = (program.points_to_currency(points) * 100).to_i
+    else
+      self.loyalty_discount_amount_cents = 0
+    end
+
+    self.total_amount_cents = [ base_total_cents - loyalty_discount_amount_cents, 0 ].max
   end
 
   def send_received_email

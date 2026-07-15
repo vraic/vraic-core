@@ -12,12 +12,18 @@ class PagesController < ApplicationController
       process_referral
     end
 
-    if Current.account && (staff? || manager?)
-      @open_orders_count = Order.ordered.count
-      @pending_supplier_requests_count = SupplierRequest.where(receiver_account: Current.account, status: :pending).count
-      @incomplete_tasks_count = Task.incomplete.count
-      @low_stock_items_count = InventoryItem.low_stock.count.size
-      @suppliers = Supplier.all
+    if Current.account
+      if staff? || manager?
+        @open_orders_count = Order.ordered.count
+        @pending_supplier_requests_count = SupplierRequest.where(receiver_account: Current.account, status: :pending).count
+        @incomplete_tasks_count = Task.incomplete.count
+        @low_stock_items_count = InventoryItem.low_stock.count.size
+        @suppliers = Supplier.all
+      end
+
+      @customer = Customer.find_by(user_id: Current.user.id)
+      @loyalty_card = @customer&.loyalty_card if @customer
+      @loyalty_program = Current.account.loyalty_program
     end
 
     @customer_orders = Order.unscoped.joins(:customer).where(customers: { user_id: Current.user.id }).order(created_at: :desc).limit(10)

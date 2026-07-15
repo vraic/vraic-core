@@ -17,6 +17,7 @@ class Customer < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_many :inventory_group_customers, dependent: :destroy
   has_many :inventory_groups, through: :inventory_group_customers
+  has_one :loyalty_card, dependent: :destroy
 
   before_validation :link_by_email
   before_save :set_subscribed_at, if: :will_save_change_to_subscribed_to_newsletter?

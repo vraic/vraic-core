@@ -30,6 +30,8 @@ module ApplicationHelper
       controller_path == "newsletters"
     when :customer_newsletters
       controller_path == "customer/newsletters"
+    when :loyalty
+      controller_name == "loyalty_cards"
     when :accounts
       controller_name == "accounts" || controller_name == "supplier_requests"
     when :support_requests
@@ -168,5 +170,17 @@ module ApplicationHelper
 
       (accounts + b2b_accounts).uniq { |a| a[:id] }
     end
+  end
+
+  def loyalty_card
+    return @loyalty_card if defined?(@loyalty_card)
+    if Current.account && Current.user
+      customer = Customer.find_by(user_id: Current.user.id)
+      @loyalty_card = customer&.loyalty_card
+    end
+  end
+
+  def loyalty_program
+    Current.account&.loyalty_program
   end
 end

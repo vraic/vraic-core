@@ -33,7 +33,7 @@ class InventoryItemPolicy < ApplicationPolicy
     def resolve
       if user.admin?
         authorized_scope
-      elsif staff?
+      elsif staff? || customer?
         scope.all
       else
         scope.none

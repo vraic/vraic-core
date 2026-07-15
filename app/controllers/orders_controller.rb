@@ -69,11 +69,13 @@ class OrdersController < ApplicationController
     @order = Order.new
     @order.order_items.build
     authorize @order
+    prepare_loyalty_data
   end
 
   # GET /orders/1/edit
   def edit
     authorize @order
+    prepare_loyalty_data
   end
 
   # POST /orders or /orders.json
@@ -141,9 +143,18 @@ class OrdersController < ApplicationController
       @order = Order.find(params[:id])
     end
 
+    def prepare_loyalty_data
+      @loyalty_program = Current.account.loyalty_program
+      if @loyalty_program&.active?
+        @customers_data = Current.account.customers.includes(:loyalty_card).each_with_object({}) do |customer, hash|
+          hash[customer.id] = { loyalty_card: customer.loyalty_card }
+        end
+      end
+    end
+
     # Only allow a list of trusted parameters through.
     def order_params
-      permitted_attributes = [ :customer_id, :notes, :status,
+      permitted_attributes = [ :customer_id, :notes, :status, :loyalty_points_redeemed,
                                order_items_attributes: [ :id, :inventory_item_id, :location_id, :quantity, :price, :_destroy ] ]
 
       params.require(:order).permit(permitted_attributes)
