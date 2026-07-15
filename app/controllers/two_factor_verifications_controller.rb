@@ -2,11 +2,13 @@ class TwoFactorVerificationsController < ApplicationController
   allow_unauthenticated_access
   layout "sessions"
 
+  EMAIL_OTP_EXPIRY = 15.minutes
+
   before_action :set_user
 
   def new
     if !@user.otp_enabled?
-      if @user.email_otp_token.blank? || @user.email_otp_sent_at.nil? || @user.email_otp_sent_at < 1.hour.ago
+      if @user.email_otp_token.blank? || @user.email_otp_sent_at.nil? || @user.email_otp_sent_at < EMAIL_OTP_EXPIRY.ago
         @user.generate_email_otp!
       end
     end

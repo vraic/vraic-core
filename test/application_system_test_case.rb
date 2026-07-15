@@ -116,24 +116,17 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     if page.has_css?("#user-menu-button-desktop", visible: true, wait: 2)
       button = find("#user-menu-button-desktop")
       button.click
-      # Wait for the dropdown menu to be visible, narrowing scope to same container
-      within button.find(:xpath, "..") do
-        assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
-      end
+      assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
     elsif page.has_css?("#user-menu-button-mobile", visible: true, wait: 2)
       button = find("#user-menu-button-mobile")
       button.click
-      within button.find(:xpath, "..") do
-        assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
-      end
+      assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
     elsif page.has_button?("Open sidebar")
       click_on "Open sidebar"
       if page.has_css?("#user-menu-button-mobile", visible: true, wait: 5)
         button = find("#user-menu-button-mobile")
         button.click
-        within button.find(:xpath, "..") do
-          assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
-        end
+        assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
       end
     end
 
