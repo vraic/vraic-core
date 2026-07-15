@@ -1,0 +1,5 @@
+one:
+  customer: one
+  loyalty_program: one
+  identifier: LOYALTY123
+  points_balance: 100

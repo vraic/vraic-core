@@ -9,6 +9,7 @@ class LoyaltyProgramTest < ApplicationSystemTestCase
 
     # Ensure customer is linked to user and location is a collection point
     @customer.update!(user: @customer_user)
+    @customer.loyalty_card&.destroy
     locations(:one).update!(collection_point: true)
   end
 
@@ -62,6 +63,7 @@ class LoyaltyProgramTest < ApplicationSystemTestCase
     visit order_path(order)
     click_on "Mark as Awaiting Collection"
     click_on "Mark as Complete"
+    assert_text "Order has been completed."
     logout
 
     # 4. Customer checks balance and redeems points

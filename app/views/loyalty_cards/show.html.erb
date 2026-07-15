@@ -36,13 +36,13 @@
     <div class="bg-white px-8 py-10 flex flex-col items-center">
       <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 mb-6">
         <% qrcode = RQRCode::QRCode.new(@loyalty_card.identifier) %>
-        <%= qrcode.as_svg(
+        <%= sanitize(qrcode.as_svg(
           color: "000",
           shape_rendering: "crispEdges",
           module_size: 5,
           standalone: true,
           use_path: true
-        ).html_safe %>
+        ), tags: %w(svg path), attributes: %w(version width height shape-rendering d fill transform)) %>
       </div>
       <div class="text-gray-900 font-mono text-xl tracking-widest"><%= @loyalty_card.identifier %></div>
       <p class="text-gray-500 text-sm mt-2">Scan at checkout to earn or redeem points</p>

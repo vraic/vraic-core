@@ -114,19 +114,26 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     # We need to open it first.
     # Try desktop first
     if page.has_css?("#user-menu-button-desktop", visible: true, wait: 2)
-      click_on "user-menu-button-desktop"
-      # Wait for the dropdown menu to be visible
-      find("[data-dropdown-target='menu']", visible: true, wait: 5)
+      button = find("#user-menu-button-desktop")
+      button.click
+      # Wait for the dropdown menu to be visible, narrowing scope to same container
+      within button.find(:xpath, "..") do
+        assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
+      end
     elsif page.has_css?("#user-menu-button-mobile", visible: true, wait: 2)
-      click_on "user-menu-button-mobile"
-      find("[data-dropdown-target='menu']", visible: true, wait: 5)
+      button = find("#user-menu-button-mobile")
+      button.click
+      within button.find(:xpath, "..") do
+        assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
+      end
     elsif page.has_button?("Open sidebar")
       click_on "Open sidebar"
-      # Give sidebar animation time
-      sleep 0.5
       if page.has_css?("#user-menu-button-mobile", visible: true, wait: 5)
-        click_on "user-menu-button-mobile"
-        find("[data-dropdown-target='menu']", visible: true, wait: 5)
+        button = find("#user-menu-button-mobile")
+        button.click
+        within button.find(:xpath, "..") do
+          assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
+        end
       end
     end
 
@@ -134,6 +141,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     # They should be visible now.
     # We use match: :first because there might be one for mobile and one for desktop in the DOM
     first("button, input[type='submit']", text: "Logout", visible: true, wait: 10).click
+
+    # Verify we are logged out
+    assert_text "Sign in", wait: 10
   end
 
   def grant_support_access(account, user = nil)

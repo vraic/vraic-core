@@ -70,7 +70,7 @@ class LoyaltyCardsController < ApplicationController
           {
             key: "terms",
             label: "Terms & Conditions",
-            value: "Points can be redeemed against future orders. 1 point = #{number_to_currency(@loyalty_card.loyalty_program.points_to_currency_ratio)} discount."
+            value: "Points can be redeemed against future orders. 1 point = #{view_context.number_to_currency(@loyalty_card.loyalty_program.points_to_currency_ratio)} discount."
           }
         ]
       },
