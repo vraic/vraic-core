@@ -112,18 +112,31 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def logout
     # The Logout button is now inside a Stimulus dropdown at the bottom of the sidebar
     # We need to open it first.
-    if page.has_css?("#user-menu-button-desktop", visible: true)
-      click_on "user-menu-button-desktop"
+    # Try desktop first
+    if page.has_css?("#user-menu-button-desktop", visible: true, wait: 2)
+      button = find("#user-menu-button-desktop")
+      button.click
+      assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
+    elsif page.has_css?("#user-menu-button-mobile", visible: true, wait: 2)
+      button = find("#user-menu-button-mobile")
+      button.click
+      assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
     elsif page.has_button?("Open sidebar")
       click_on "Open sidebar"
-      click_on "user-menu-button-mobile"
-    elsif page.has_css?("#user-menu-button-mobile", visible: true)
-      click_on "user-menu-button-mobile"
+      if page.has_css?("#user-menu-button-mobile", visible: true, wait: 5)
+        button = find("#user-menu-button-mobile")
+        button.click
+        assert_selector "[data-dropdown-target='menu']", visible: true, wait: 5
+      end
     end
 
     # There are multiple Logout buttons (mobile and desktop dropdowns)
     # They should be visible now.
-    first(:button, "Logout", visible: true).click
+    # We use match: :first because there might be one for mobile and one for desktop in the DOM
+    first("button, input[type='submit']", text: "Logout", visible: true, wait: 10).click
+
+    # Verify we are logged out
+    assert_text "Sign in", wait: 10
   end
 
   def grant_support_access(account, user = nil)

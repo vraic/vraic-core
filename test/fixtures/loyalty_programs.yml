@@ -1,0 +1,11 @@
+one:
+  account: one
+  active: true
+  points_to_currency_ratio: 0.1
+  currency_to_points_ratio: 1.0
+
+two:
+  account: two
+  active: false
+  points_to_currency_ratio: 0.1
+  currency_to_points_ratio: 1.0

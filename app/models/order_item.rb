@@ -20,6 +20,10 @@ class OrderItem < ApplicationRecord
     end
   end
 
+  def total_price
+    price * quantity
+  end
+
   private
 
   def sufficient_stock

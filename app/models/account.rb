@@ -20,6 +20,8 @@ class Account < ApplicationRecord
   has_many :locations, dependent: :destroy
   has_many :tasks, dependent: :destroy
   has_many :support_requests, dependent: :destroy
+  has_one :loyalty_program, dependent: :destroy
+  accepts_nested_attributes_for :loyalty_program
   belongs_to :owner, class_name: "User", foreign_key: "owner_id"
 
   validates :name, presence: true

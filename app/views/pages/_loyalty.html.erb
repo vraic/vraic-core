@@ -1,0 +1,31 @@
+<% if loyalty_card || loyalty_program&.active? %>
+  <div id="loyalty-program" class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
+    <h2 class="text-xl font-bold mb-4">Loyalty Program</h2>
+
+    <% if loyalty_card %>
+      <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div class="flex-1">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white"><%= Current.account.name %> Loyalty Card</h3>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Current Balance: <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400"><%= loyalty_card.points_balance %> points</span></p>
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Equivalent Value: <%= humanized_money_with_symbol Money.new(loyalty_card.loyalty_program.points_to_currency(loyalty_card.points_balance) * 100, Money.default_currency) %></p>
+        </div>
+        
+        <div class="flex flex-col gap-2 w-full sm:w-auto">
+          <%= link_to "View Card", loyalty_card_path(loyalty_card), class: "text-center rounded-md px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium" %>
+          <%= link_to "Download PDF", offline_loyalty_card_path(loyalty_card), class: "text-center rounded-md px-3.5 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium" %>
+          <%= link_to "Save to Wallet", wallet_loyalty_card_path(loyalty_card), class: "text-center rounded-md px-3.5 py-2.5 bg-black text-white font-medium" %>
+        </div>
+      </div>
+    <% else %>
+      <div class="bg-indigo-50 dark:bg-indigo-900/20 shadow sm:rounded-lg p-6">
+        <h3 class="text-lg font-medium text-indigo-900 dark:text-indigo-300">Join our Loyalty Program!</h3>
+        <div class="mt-2 max-w-xl text-sm text-indigo-700 dark:text-indigo-400">
+          <p>Earn points on your purchases and redeem them for discounts. Get <%= loyalty_program.currency_to_points_ratio %> point(s) for every <%= Money.default_currency.symbol %>1 spent!</p>
+        </div>
+        <div class="mt-5">
+          <%= button_to "Enroll Now", loyalty_cards_path, method: :post, class: "inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

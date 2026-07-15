@@ -58,6 +58,7 @@ class AccountsController < ApplicationController
   # GET /accounts/1/edit
   def edit
     authorize @account
+    @account.build_loyalty_program unless @account.loyalty_program
     @tab = params[:tab] || "general"
   end
 
@@ -117,6 +118,7 @@ class AccountsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def account_params
-      params.require(:account).permit(:name, :address, :owner_id, :header_image)
+      params.require(:account).permit(:name, :address, :owner_id, :header_image,
+        loyalty_program_attributes: [ :id, :points_to_currency_ratio, :currency_to_points_ratio, :active ])
     end
 end

@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :loyalty_cards, only: [ :index, :create, :show ] do
+    member do
+      get :wallet
+      get :offline
+    end
+  end
   resources :newsletters do
     collection do
       get :report

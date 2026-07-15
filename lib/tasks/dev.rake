@@ -21,10 +21,10 @@ namespace :db do
     admin = User.create!(
       name: "Global Admin",
       email_address: "admin@example.com",
-      password: "password",
+      password: "ThisIsAVeryLongAndSecurePassword123!",
       admin: true
     )
-    puts "Created Global Admin: admin@example.com / password"
+    puts "Created Global Admin: admin@example.com / ThisIsAVeryLongAndSecurePassword123!"
 
     # 2. Main Account (Account One)
     account_one = Account.create!(
@@ -33,17 +33,24 @@ namespace :db do
       owner_id: admin.id
     )
 
+    LoyaltyProgram.create!(
+      account: account_one,
+      active: true,
+      currency_to_points_ratio: 1,
+      points_to_currency_ratio: 0.1
+    )
+
     account_one_admin = User.create!(
       name: "Vraic Farms Admin",
       email_address: "account-one@example.com",
-      password: "password"
+      password: "ThisIsAVeryLongAndSecurePassword123!"
     )
     AccountUser.create!(account: account_one, user: account_one_admin, user_role: :store_manager)
 
     account_one_staff = User.create!(
       name: "John Doe at Vraic Farms",
       email_address: "account-one-staff@example.com",
-      password: "password"
+      password: "ThisIsAVeryLongAndSecurePassword123!"
     )
     AccountUser.create!(account: account_one, user: account_one_staff, user_role: :store_staff)
     puts "Created Vraic Farms with store manager (account-one@example.com) and staff (account-one-staff@example.com)"
@@ -62,7 +69,7 @@ namespace :db do
       s_user = User.create!(
         name: "#{name} Staff",
         email_address: email,
-        password: "password"
+        password: "ThisIsAVeryLongAndSecurePassword123!"
       )
       AccountUser.create!(account: s_acc, user: s_user, user_role: :store_manager)
       suppliers << s_acc
