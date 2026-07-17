@@ -38,11 +38,10 @@ class NavigationVisibilityTest < ActionDispatch::IntegrationTest
   test "customer user sees only limited links" do
     sign_in_as(@customer)
     get dashboard_path
-    assert_redirected_to shop_path
-    follow_redirect!
+    assert_response :success
 
     assert_select "nav" do
-      assert_select "a", text: /Dashboard/, count: 0
+      assert_select "a", text: /Dashboard/
       assert_select "a", text: /Orders/
       assert_select "a", text: /Tasks/, count: 0
       assert_select "a", text: /Customers/, count: 0

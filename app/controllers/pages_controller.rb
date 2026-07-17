@@ -18,11 +18,6 @@ class PagesController < ApplicationController
       process_referral
     end
 
-    if customer_only? && Current.user.account_users.count == 1
-      redirect_to shop_path
-      return
-    end
-
     if Current.account
       if staff? || manager?
         @open_orders_count = Order.ordered.count

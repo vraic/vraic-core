@@ -20,17 +20,11 @@ class StoreMembershipTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to dashboard_path
     follow_redirect!
-    if response.redirect?
-      follow_redirect!
-    end
     assert_equal @account.id, session[:managed_account_id]
     assert_match /You have successfully joined #{@account.name}/, response.body
 
     # Verify they are now a member and shown as customer
     get dashboard_path
-    if response.redirect?
-      follow_redirect!
-    end
     assert_equal "customer", @user.account_users.find_by(account: @account).user_role
   end
 
@@ -39,18 +33,12 @@ class StoreMembershipTest < ActionDispatch::IntegrationTest
     Customer.create!(account: @account, user: @user, name: @user.name, email_address: @user.email_address)
 
     get dashboard_path
-    if response.redirect?
-      follow_redirect!
-    end
     assert_equal "customer", @user.account_users.find_by(account: @account).user_role
 
     # Try to post anyway
     post store_memberships_path, params: { account_id: @account.id }
     assert_redirected_to dashboard_path
     follow_redirect!
-    if response.redirect?
-      follow_redirect!
-    end
     assert_match /You are already a member of #{@account.name}/, response.body
   end
 end

@@ -25,8 +25,6 @@ class ReferralFlowTest < ActionDispatch::IntegrationTest
     sign_in_as(@user)
 
     get dashboard_path
-    assert_redirected_to shop_path
-    follow_redirect!
     assert_response :success
 
     customer = Customer.find_by(account: @account, user: @user)
