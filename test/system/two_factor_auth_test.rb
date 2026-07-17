@@ -37,6 +37,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     assert_text "Two-Factor Verification"
     assert_text "Please enter the code from your authenticator app"
 
+    assert_selector "input[name='otp_code']", wait: 10
     fill_in "Verification Code", with: totp.now
     click_button "Verify"
 
@@ -76,6 +77,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     assert token.present?, "Expected email OTP token to be generated"
 
+    assert_selector "input[name='otp_code']", wait: 10
     fill_in "Verification Code", with: token.to_s.strip.upcase
     click_button "Verify"
 

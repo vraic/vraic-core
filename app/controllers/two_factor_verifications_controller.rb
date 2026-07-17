@@ -20,10 +20,11 @@ class TwoFactorVerificationsController < ApplicationController
       @user.clear_email_otp!
       start_new_session_for @user
       session.delete(:otp_user_id)
+
       if session.delete(:security_setup_user_id) == @user.id && !@user.security_choice_made?
-        redirect_to security_setup_path
+        redirect_to security_setup_path, status: :see_other
       else
-        redirect_to after_authentication_url
+        redirect_to after_authentication_url, status: :see_other
       end
     else
       flash.now[:alert] = "Invalid verification code."
