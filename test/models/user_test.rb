@@ -31,7 +31,7 @@ class UserTest < ActiveSupport::TestCase
     user = users(:one)
     user.generate_email_otp!
     token = user.email_otp_token
-    
+
     assert_match /\A\d{3}[A-Z]{3}\z/, token, "Token #{token} does not match the required format: 3 numbers then 3 letters (uppercase)"
   end
 end

@@ -17,7 +17,9 @@ namespace :db do
       name: "Global Admin",
       email_address: "admin@example.com",
       password: "ThisIsAVeryLongAndSecurePassword123!",
-      admin: true
+      admin: true,
+      security_choice_made: true,
+      onboarded: true
     )
     puts "Created Global Admin: admin@example.com / ThisIsAVeryLongAndSecurePassword123!"
 
@@ -40,21 +42,27 @@ namespace :db do
     account_one_admin = User.create!(
       name: "Vraic Farms Admin",
       email_address: "account-one@example.com",
-      password: "ThisIsAVeryLongAndSecurePassword123!"
+      password: "ThisIsAVeryLongAndSecurePassword123!",
+      security_choice_made: true,
+      onboarded: true
     )
     AccountUser.create!(account: account_one, user: account_one_admin, user_role: :store_manager)
 
     account_one_staff = User.create!(
       name: "John Doe at Vraic Farms",
       email_address: "account-one-staff@example.com",
-      password: "ThisIsAVeryLongAndSecurePassword123!"
+      password: "ThisIsAVeryLongAndSecurePassword123!",
+      security_choice_made: true,
+      onboarded: true
     )
     AccountUser.create!(account: account_one, user: account_one_staff, user_role: :store_staff)
 
     account_one_customer = User.create!(
       name: "Jane Customer",
       email_address: "account-one-customer@example.com",
-      password: "ThisIsAVeryLongAndSecurePassword123!"
+      password: "ThisIsAVeryLongAndSecurePassword123!",
+      security_choice_made: true,
+      onboarded: true
     )
     AccountUser.create!(account: account_one, user: account_one_customer, user_role: :customer)
     puts "Created Vraic Farms with store manager (account-one@example.com), staff (account-one-staff@example.com) and customer (account-one-customer@example.com)"
@@ -73,7 +81,9 @@ namespace :db do
       s_user = User.create!(
         name: "#{name} Staff",
         email_address: email,
-        password: "ThisIsAVeryLongAndSecurePassword123!"
+        password: "ThisIsAVeryLongAndSecurePassword123!",
+        security_choice_made: true,
+        onboarded: true
       )
       AccountUser.create!(account: s_acc, user: s_user, user_role: :store_manager)
       suppliers << s_acc
