@@ -32,6 +32,7 @@ module Authorization
   def customer_only?
     return false unless Current.user
     return false if Current.user.admin?
+    return false if Current.user.account_users.none?
     !Current.user.account_users.exists?(user_role: [ :store_manager, :store_staff ])
   end
 

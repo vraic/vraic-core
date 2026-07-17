@@ -14,13 +14,13 @@ class PagesController < ApplicationController
   def dashboard
     redirect_to new_session_path unless authenticated?
 
-    if customer_only?
-      redirect_to shop_path
-      return
-    end
-
     if Current.user && !Current.user.admin? && Current.user.accounts.empty?
       process_referral
+    end
+
+    if customer_only? && Current.user.account_users.count == 1
+      redirect_to shop_path
+      return
     end
 
     if Current.account

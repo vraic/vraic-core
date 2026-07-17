@@ -4,7 +4,7 @@ namespace :db do
     puts "Clearing database..."
 
     ActiveRecord::Base.connection.execute("PRAGMA foreign_keys = OFF;")
-    tables = ActiveRecord::Base.connection.tables - ["schema_migrations", "ar_internal_metadata"]
+    tables = ActiveRecord::Base.connection.tables - [ "schema_migrations", "ar_internal_metadata" ]
     tables.each do |table_name|
       ActiveRecord::Base.connection.execute("DELETE FROM #{table_name}")
     end
@@ -153,7 +153,7 @@ namespace :db do
             InventoryLevel.create!(
               inventory_item: item,
               location: loc,
-              quantity: rand(10..100)
+              quantity: rand(100..500)
             )
           end
         end
@@ -178,7 +178,7 @@ namespace :db do
       Newsletter.create!(
         subject: "New Harvest Coming Soon",
         content: "<h1>Upcoming Harvest</h1><p>We are expecting a bumper crop of potatoes next week.</p>",
-        target: :everyone
+        target: :everyone,
         # Draft
       )
       puts "Created sample newsletters"
@@ -227,7 +227,7 @@ namespace :db do
       Customer.all.each do |customer|
         # 1-3 orders per customer
         rand(1..3).times do
-          status = [:ordered, :awaiting_collection, :complete].sample
+          status = [ :ordered, :awaiting_collection, :complete ].sample
           order = Order.new(
             customer: customer,
             user: account_one_staff,
