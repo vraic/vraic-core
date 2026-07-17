@@ -23,9 +23,13 @@ class Account < ApplicationRecord
   has_one :loyalty_program, dependent: :destroy
   accepts_nested_attributes_for :loyalty_program
   belongs_to :owner, class_name: "User", foreign_key: "owner_id"
+  
+  enum :gocardless_mode, { sandbox: 0, production: 1 }
+  encrypts :gocardless_access_token
 
   validates :name, presence: true
   validates :owner_id, presence: true
+  validates :gocardless_access_token, length: { minimum: 8 }, allow_blank: true
 
   scope :b2c, -> { where(is_b2c: true) }
   scope :b2b, -> { where(is_b2b: true) }
