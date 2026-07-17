@@ -37,11 +37,12 @@ class StaffNavigationTest < ApplicationSystemTestCase
   test "customer sees global shop and customer-facing links" do
     login_as(@customer)
 
-    # Redirected to shop
-    assert_current_path shop_path
+    # No longer redirected to shop automatically
+    visit dashboard_path
+    assert_current_path dashboard_path
 
     within "nav" do
-      refute_text "Dashboard"
+      assert_text "Dashboard"
       assert_text "Newsletters"
       assert_text "Loyalty"
 

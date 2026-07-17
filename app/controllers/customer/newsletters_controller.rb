@@ -8,8 +8,15 @@ class Customer::NewslettersController < ApplicationController
       if subscribed_customer_ids.any?
         # This is a bit tricky with multi-tenancy. We want newsletters from accounts where they are subscribed.
         # Newsletter model also acts_as_tenant :account.
-        subscribed_account_ids = @customers.select(&:subscribed_to_newsletter?).map(&:account_id)
-        @newsletters = Newsletter.unscoped.where(account_id: subscribed_account_ids)
+        subscribed_customers = @customers.select(&:subscribed_to_newsletter?)
+
+        # We need to build a query that respects each customer's subscribed_at date
+        t = Newsletter.arel_table
+        arel_conditions = subscribed_customers.map do |customer|
+          t[:account_id].eq(customer.account_id).and(t[:sent_at].gteq(customer.subscribed_at))
+        end.reduce(:or)
+
+        @newsletters = Newsletter.unscoped.where(arel_conditions)
                                  .where.not(sent_at: nil)
                                  .order(sent_at: :desc)
                                  .limit(10)

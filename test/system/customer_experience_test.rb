@@ -11,13 +11,13 @@ class CustomerExperienceTest < ApplicationSystemTestCase
     end
   end
 
-  test "customer is redirected from dashboard to shop" do
+  test "customer sees dashboard and can navigate to shop" do
     visit dashboard_path
-    assert_current_path shop_path
+    assert_current_path dashboard_path
 
     # On desktop nav
     within "#desktop-sidebar-main-nav" do
-      assert_no_text "Dashboard"
+      assert_text "Dashboard"
       assert_text "Shop"
       assert_text "Newsletters"
       assert_text "Loyalty"

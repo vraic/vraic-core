@@ -74,9 +74,8 @@
       <% customer = Customer.find_by(user: Current.user, account: Current.account) %>
       <% unless customer&.gocardless_configured? %>
         <p class="text-sm text-gray-600 mt-2">To use GoCardless, complete one-time setup first.</p>
-        <%= button_to "Set up GoCardless", customer_gocardless_setup_path,
-                      method: :post,
-                      params: { setup: { bank_account_token: "#{customer&.id}-setup" } },
+        <%= link_to "Set up GoCardless", customer_gocardless_setup_path(setup: { bank_account_token: "#{customer&.id}-setup" }),
+                      data: { turbo_method: :post },
                       class: secondary_button_class %>
       <% end %>
     <% end %>
