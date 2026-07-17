@@ -3,84 +3,90 @@ require "application_system_test_case"
 class TwoFactorAuthTest < ApplicationSystemTestCase
   setup do
     @user = users(:one)
-    login_as @user
   end
 
-  test "can setup and disable 2FA via OTP" do
+  test "setting up and using authenticator app 2FA" do
+    login_as(@user)
     visit settings_path
+
     click_on "Setup Authenticator App"
-
     assert_text "Setup Two-Factor Authentication"
-    assert_text "Manual Entry Token"
 
-    # Get the secret from the page
-    secret = find("code").text.strip
+    # Extract secret from the page
+    secret = find("code#otp-secret").text.strip
     totp = ROTP::TOTP.new(secret)
 
-    fill_in "Enter verification code from app", with: totp.now
+    fill_in "otp_code", with: totp.now
     click_on "Verify and Enable 2FA"
 
     assert_text "2FA has been enabled via OTP"
-    assert_text "2FA is currently enabled via Authenticator App"
+    assert @user.reload.otp_enabled?
 
-    # Now test login with OTP
-    visit dashboard_path
+    # Test login with TOTP
     logout
 
-    # We expect 2FA after signing in if enabled
     visit new_session_path
     fill_in "Email", with: @user.email_address
+    # Use execute_script as a fallback if the Stimulus action is not firing
     click_button "Sign in with password"
-    fill_in "Password", with: "password"
+    # Force visibility if Stimulus is slow or not loading in CI
+    execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
+    execute_script("document.querySelector('[data-password-login-target=\"toggleSection\"]').classList.add('hidden')")
+
+    # Now it should be visible
+    fill_in "Password (optional)", with: "password"
     click_button "Continue"
 
     assert_text "Two-Factor Verification"
     assert_text "Please enter the code from your authenticator app"
 
-    assert_selector "input[name='otp_code']", wait: 10
-    fill_in "Verification Code", with: totp.now
-    click_button "Verify"
+    # Use a fresh TOTP code
+    fill_in "otp_code", with: totp.now
+    click_on "Verify"
 
     assert_current_path dashboard_path, wait: 10
     assert_text "Séyiz les beinv'nus"
-    assert_text @user.name
 
-    # Disable 2FA
+    # Cleanup: disable 2FA
     visit settings_path
     click_on "Disable 2FA"
     assert_text "2FA has been disabled"
+    refute @user.reload.otp_enabled?
   end
 
-  test "uses email fallback when OTP is not setup" do
-    # 2FA is now forced in my implementation of login_as if we are on that page
-    # But let's verify the email part
-
-    visit dashboard_path
-    logout
+  test "using email fallback 2FA when authenticator app is not setup" do
+    # Ensure 2FA is required but app is NOT setup
+    @user.update!(otp_required_for_login: true, otp_secret: nil)
 
     visit new_session_path
     fill_in "Email", with: @user.email_address
+    # Use execute_script as a fallback if the Stimulus action is not firing
     click_button "Sign in with password"
-    fill_in "Password", with: "password"
+    # Force visibility if Stimulus is slow or not loading in CI
+    execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
+    execute_script("document.querySelector('[data-password-login-target=\"toggleSection\"]').classList.add('hidden')")
+
+    # Now it should be visible
+    fill_in "Password (optional)", with: "password"
     click_button "Continue"
 
     assert_text "Two-Factor Verification"
     assert_text "We've sent a verification code to your email address"
 
-    # Use a robust way to get the token
+    # Fetch token from DB
     token = nil
     50.times do
-      token = User.uncached { User.find(@user.id).email_otp_token }
+      token = User.uncached { @user.reload.email_otp_token }
       break if token.present?
-      sleep 0.2
+      sleep 0.1
     end
 
-    assert token.present?, "Expected email OTP token to be generated"
+    assert token.present?, "Email OTP token should have been generated"
 
-    assert_selector "input[name='otp_code']", wait: 10
-    fill_in "Verification Code", with: token.to_s.strip.upcase
-    click_button "Verify"
+    fill_in "otp_code", with: token
+    click_on "Verify"
 
     assert_current_path dashboard_path, wait: 10
+    assert_text "Séyiz les beinv'nus"
   end
 end

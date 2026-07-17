@@ -6,6 +6,7 @@ class TwoFactorVerificationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "new regenerates email otp when existing token is expired" do
+    @user.update!(otp_required_for_login: true)
     post session_path, params: { email_address: @user.email_address, password: "password" }
     assert_redirected_to new_two_factor_verification_path
 
