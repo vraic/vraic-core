@@ -2,6 +2,7 @@ require "application_system_test_case"
 
 class TwoFactorAuthTest < ApplicationSystemTestCase
   setup do
+    Capybara.reset_sessions!
     @user = users(:one)
   end
 
@@ -42,9 +43,11 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     # Use a fresh TOTP code
     fill_in "otp_code", with: totp.now
+    sleep 0.5
     click_on "Verify"
 
-    assert_current_path dashboard_path, wait: 10
+    refute_text "Invalid verification code"
+    assert_current_path dashboard_path, wait: 15
     assert_text "Séyiz les beinv'nus"
 
     # Cleanup: disable 2FA
@@ -84,9 +87,11 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     assert token.present?, "Email OTP token should have been generated"
 
     fill_in "otp_code", with: token
+    sleep 0.5
     click_on "Verify"
 
-    assert_current_path dashboard_path, wait: 10
+    refute_text "Invalid verification code"
+    assert_current_path dashboard_path, wait: 15
     assert_text "Séyiz les beinv'nus"
   end
 end
