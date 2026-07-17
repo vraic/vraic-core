@@ -17,7 +17,7 @@
       <div>
         <%= f.label :otp_code, "Verification Code", class: label_class %>
         <div class="mt-2">
-          <%= f.text_field :otp_code, autofocus: true, autocomplete: "one-time-code", inputmode: "numeric", class: input_class, required: true %>
+          <%= f.text_field :otp_code, autofocus: true, autocomplete: "one-time-code", inputmode: @user.otp_enabled? ? "numeric" : "text", class: input_class, required: true %>
         </div>
       </div>
 
