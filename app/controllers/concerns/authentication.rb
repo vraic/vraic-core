@@ -34,12 +34,11 @@ module Authentication
       redirect_to new_session_path
     end
 
-    def after_authentication_url
+    def after_authentication_url(user = nil)
       return_to = session.delete(:return_to_after_authenticating)
       return return_to if return_to.present?
 
-      # Use Current.session.user directly as Current.user might not be delegated properly in all contexts
-      user = Current.session&.user || Current.user
+      user ||= Current.session&.user || Current.user
 
       if user&.admin?
         dashboard_url

@@ -25,7 +25,7 @@ class TwoFactorVerificationsController < ApplicationController
         session.delete(:security_setup_user_id)
         security_setup_url
       else
-        after_authentication_url
+        after_authentication_url(@user)
       end
 
       redirect_to target_url, notice: "Signed in successfully.", status: :see_other

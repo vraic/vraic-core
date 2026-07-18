@@ -18,8 +18,12 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     secret = find("code#otp-secret").text.strip
     totp = ROTP::TOTP.new(secret)
 
-    fill_in "otp_code", with: totp.now
-    click_on "Verify and Enable 2FA"
+    # Use deterministic time for code generation and verification.
+    # This is a best practice to avoid flakiness in CI caused by TOTP window expiry.
+    travel_to Time.zone.local(2026, 7, 18, 12, 0, 0) do
+      fill_in "otp_code", with: totp.now
+      click_on "Verify and Enable 2FA"
+    end
 
     assert_text "2FA has been enabled via OTP"
     assert @user.reload.otp_enabled?
@@ -47,67 +51,74 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
   test "2FA login phase 2: entering valid TOTP code completes login" do
     # Setup user with TOTP enabled
-    @user.update!(otp_required_for_login: true, otp_secret: ROTP::Base32.random)
+    @user.generate_otp_secret!
     secret = @user.otp_secret.strip
     totp = ROTP::TOTP.new(secret)
+    @user.update!(otp_required_for_login: true)
 
-    # Perform Phase 1 Login
-    visit new_session_path
-    fill_in "Email", with: @user.email_address
-    click_button "Sign in with password"
-    execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
-    fill_in "Password (optional)", with: "password"
-    click_button "Continue"
+    # Use deterministic time for the entire flow
+    travel_to Time.zone.local(2026, 7, 18, 12, 0, 0) do
+      # Perform Phase 1 Login
+      visit new_session_path
+      fill_in "Email", with: @user.email_address
+      click_button "Sign in with password"
+      execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
+      fill_in "Password (optional)", with: "password"
+      click_button "Continue"
 
-    # Phase 2: Verification
-    assert_text "Two-Factor Verification"
-    assert_text "Please enter the code from your authenticator app"
+      # Phase 2: Verification
+      assert_text "Two-Factor Verification"
+      assert_text "Please enter the code from your authenticator app"
 
-    find("input[name='otp_code']").set(totp.now)
-    # Ensure the value is set
-    assert_field "otp_code", with: /^\d{6}$/
+      fill_in "otp_code", with: totp.now
+      # Ensure the value is set
+      assert_field "otp_code", with: /^\d{6}$/
 
-    click_button "Verify"
+      click_button "Verify"
 
-    refute_text "Invalid verification code"
-    assert_text "Signed in successfully.", wait: 15
-    assert_current_path dashboard_path
+      refute_text "Invalid verification code"
+      assert_text "Signed in successfully.", wait: 15
+      assert_current_path dashboard_path
+    end
   end
 
   test "2FA login phase 2: entering valid email OTP code completes login" do
     # Ensure 2FA is required but app is NOT setup
     @user.update!(otp_required_for_login: true, otp_secret: nil)
 
-    # Perform Phase 1 Login
-    visit new_session_path
-    fill_in "Email", with: @user.email_address
-    click_button "Sign in with password"
-    execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
-    fill_in "Password (optional)", with: "password"
-    click_button "Continue"
+    # Use deterministic time for the entire flow
+    travel_to Time.zone.local(2026, 7, 18, 12, 0, 0) do
+      # Perform Phase 1 Login
+      visit new_session_path
+      fill_in "Email", with: @user.email_address
+      click_button "Sign in with password"
+      execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
+      fill_in "Password (optional)", with: "password"
+      click_button "Continue"
 
-    # Phase 2: Verification
-    assert_text "Two-Factor Verification"
-    assert_text "We've sent a verification code to your email address"
+      # Phase 2: Verification
+      assert_text "Two-Factor Verification"
+      assert_text "We've sent a verification code to your email address"
 
-    # Fetch token from DB
-    token = nil
-    50.times do
-      token = User.uncached { @user.reload.email_otp_token }
-      break if token.present?
-      sleep 0.1
+      # Fetch token from DB
+      token = nil
+      50.times do
+        token = User.uncached { @user.reload.email_otp_token }
+        break if token.present?
+        sleep 0.1
+      end
+
+      assert token.present?, "Email OTP token should have been generated"
+
+      fill_in "otp_code", with: token
+      # Ensure the value is set
+      assert_field "otp_code", with: token
+
+      click_button "Verify"
+
+      refute_text "Invalid verification code"
+      assert_text "Signed in successfully.", wait: 15
+      assert_current_path dashboard_path
     end
-
-    assert token.present?, "Email OTP token should have been generated"
-
-    find("input[name='otp_code']").set(token)
-    # Ensure the value is set
-    assert_field "otp_code", with: token
-
-    click_button "Verify"
-
-    refute_text "Invalid verification code"
-    assert_text "Signed in successfully.", wait: 15
-    assert_current_path dashboard_path
   end
 end
