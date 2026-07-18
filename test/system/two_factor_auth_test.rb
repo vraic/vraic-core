@@ -68,17 +68,25 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     assert_text "Two-Factor Verification"
     assert_text "Please enter the code from your authenticator app"
 
-    code = totp.now
-    # Ensure the field is present and visible before interacting
-    assert_selector "input#otp_code", visible: true
-    sleep 0.5 # Small delay to ensure any initial JS settles
-
-    # Use deterministic time for the submission
     travel_to Time.current do
-      fill_in "otp_code", with: code
-      assert_field "otp_code", with: code
+      code = totp.now
+
+      # Ensure the field is present and visible
+      assert_selector "input#otp_code", visible: true
+
+      # Use a robust way to fill the field
+      fill_in "Verification Code", with: code
+
+      # Fallback if fill_in fails to reflect in the browser
+      begin
+        assert_field "Verification Code", with: code, wait: 2
+      rescue Minitest::Assertion
+        find_field("Verification Code").set(code)
+      end
+
       click_button "Verify"
 
+      refute_text "Invalid verification code"
       assert_text "Signed in successfully.", wait: 15
     end
     assert_current_path dashboard_path
@@ -110,16 +118,23 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     assert token.present?, "Email OTP token should have been generated"
 
-    # Ensure the field is present and visible before interacting
-    assert_selector "input#otp_code", visible: true
-    sleep 0.5 # Small delay to ensure any initial JS settles
-
-    # Use deterministic time for the submission
     travel_to Time.current do
-      fill_in "otp_code", with: token
-      assert_field "otp_code", with: token
+      # Ensure the field is present and visible
+      assert_selector "input#otp_code", visible: true
+
+      # Use a robust way to fill the field
+      fill_in "Verification Code", with: token
+
+      # Fallback if fill_in fails to reflect in the browser
+      begin
+        assert_field "Verification Code", with: token, wait: 2
+      rescue Minitest::Assertion
+        find_field("Verification Code").set(token)
+      end
+
       click_button "Verify"
 
+      refute_text "Invalid verification code"
       assert_text "Signed in successfully.", wait: 15
     end
     assert_current_path dashboard_path

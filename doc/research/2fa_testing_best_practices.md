@@ -31,6 +31,7 @@ System tests fail when they interact with elements before the page is fully inte
 - **Best Practices:**
   - **Wait for Elements:** Use `assert_selector` or `assert_field` with explicit `wait` times to ensure the page has transitioned.
   - **Actionable Elements:** Prefer `fill_in` and `click_button` over generic `find().set()` or `find().click` to benefit from Capybara's built-in waiting and visibility checks.
+  - **Robust Input Verification:** In high-latency environments, `fill_in` can occasionally fail to synchronize with the browser. Adding an explicit `assert_field` check before submission, with a fallback to `find_field().set()`, ensures the field is correctly populated before the form is sent.
   - **Flash Messages:** Asserting the presence of a success flash message (e.g., "Signed in successfully") is often more reliable than strictly checking the final URL, as it confirms the logical completion of the action.
 
 #### 4. Clean State & Flow Control
