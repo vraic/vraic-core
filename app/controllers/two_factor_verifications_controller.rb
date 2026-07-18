@@ -22,9 +22,9 @@ class TwoFactorVerificationsController < ApplicationController
       session.delete(:otp_user_id)
 
       if session.delete(:security_setup_user_id) == @user.id && !@user.security_choice_made?
-        redirect_to security_setup_path, status: :see_other
+        redirect_to security_setup_path, notice: "Signed in successfully.", status: :see_other
       else
-        redirect_to after_authentication_url, status: :see_other
+        redirect_to after_authentication_url, notice: "Signed in successfully.", status: :see_other
       end
     else
       flash.now[:alert] = "Invalid verification code."

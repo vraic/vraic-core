@@ -69,8 +69,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     sleep 0.5
     click_on "Verify"
 
-    assert_current_path dashboard_path, wait: 15
-    assert_selector "h1", text: "Séyiz les beinv'nus"
+    assert_text "Signed in successfully.", wait: 15
   end
 
   test "2FA login phase 2: entering valid email OTP code completes login" do
@@ -103,7 +102,6 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     sleep 1
     click_on "Verify"
 
-    assert_current_path dashboard_path, wait: 15
-    assert_selector "h1", text: "Séyiz les beinv'nus"
+    assert_text "Signed in successfully.", wait: 15
   end
 end

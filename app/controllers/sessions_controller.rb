@@ -31,7 +31,7 @@ class SessionsController < ApplicationController
         redirect_to new_two_factor_verification_path, status: :see_other
       else
         start_new_session_for user
-        redirect_to after_authentication_url, status: :see_other
+        redirect_to after_authentication_url, notice: "Signed in successfully.", status: :see_other
       end
     elsif params[:password].present?
       redirect_to new_session_path, alert: "Try another email address or password.", status: :see_other
