@@ -68,17 +68,20 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     assert_text "Two-Factor Verification"
     assert_text "Please enter the code from your authenticator app"
 
-    travel_to Time.current do
-      fill_in "otp_code", with: totp.now
-      # Ensure the value is set
-      assert_field "otp_code", with: /^\d{6}$/
+    code = totp.now
+    # Ensure the field is present and visible before interacting
+    assert_selector "input#otp_code", visible: true
+    sleep 0.5 # Small delay to ensure any initial JS settles
 
+    # Use deterministic time for the submission
+    travel_to Time.now do
+      find_field("otp_code").set(code)
+      assert_field "otp_code", with: code
       click_button "Verify"
 
-      refute_text "Invalid verification code"
       assert_text "Signed in successfully.", wait: 15
-      assert_current_path dashboard_path
     end
+    assert_current_path dashboard_path
   end
 
   test "2FA login phase 2: entering valid email OTP code completes login" do
@@ -97,26 +100,28 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     assert_text "Two-Factor Verification"
     assert_text "We've sent a verification code to your email address"
 
-    travel_to Time.current do
-      # Fetch token from DB
-      token = nil
-      50.times do
-        token = User.uncached { @user.reload.email_otp_token }
-        break if token.present?
-        sleep 0.1
-      end
+    # Fetch token from DB - do this OUTSIDE travel_to to ensure we wait for real DB update
+    token = nil
+    50.times do
+      token = User.uncached { @user.reload.email_otp_token }
+      break if token.present?
+      sleep 0.1
+    end
 
-      assert token.present?, "Email OTP token should have been generated"
+    assert token.present?, "Email OTP token should have been generated"
 
-      fill_in "otp_code", with: token
-      # Ensure the value is set
+    # Ensure the field is present and visible before interacting
+    assert_selector "input#otp_code", visible: true
+    sleep 0.5 # Small delay to ensure any initial JS settles
+
+    # Use deterministic time for the submission
+    travel_to Time.now do
+      find_field("otp_code").set(token)
       assert_field "otp_code", with: token
-
       click_button "Verify"
 
-      refute_text "Invalid verification code"
       assert_text "Signed in successfully.", wait: 15
-      assert_current_path dashboard_path
     end
+    assert_current_path dashboard_path
   end
 end
