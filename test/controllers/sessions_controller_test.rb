@@ -21,7 +21,14 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     @user.update!(otp_required_for_login: false, prefers_email_login: false)
     post session_path, params: { email_address: @user.email_address, password: "password" }
 
-    assert_redirected_to root_path
+    # Users are now redirected to dashboard or shop based on role
+    if @user.admin?
+      assert_redirected_to dashboard_path
+    elsif @user.account_users.any? && @user.account_users.all?(&:customer?)
+      assert_redirected_to shop_path
+    else
+      assert_redirected_to dashboard_path
+    end
     assert_not_nil cookies[:session_id]
   end
 

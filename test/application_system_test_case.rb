@@ -133,7 +133,12 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     # There are multiple Logout buttons (mobile and desktop dropdowns)
     # They should be visible now.
     # We use match: :first because there might be one for mobile and one for desktop in the DOM
-    first("button, input[type='submit']", text: "Logout", visible: true, wait: 10).click
+    begin
+      retries ||= 0
+      find("button, input[type='submit']", text: "Logout", visible: true, wait: 10, match: :first).click
+    rescue Selenium::WebDriver::Error::StaleElementReferenceError, Selenium::WebDriver::Error::UnknownError
+      retry if (retries += 1) < 3
+    end
 
     # Verify we are logged out
     assert_text "Sign in", wait: 10
