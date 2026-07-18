@@ -20,7 +20,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     # Use deterministic time for code generation and verification.
     # This is a best practice to avoid flakiness in CI caused by TOTP window expiry.
-    travel_to Time.zone.local(2026, 7, 18, 12, 0, 0) do
+    travel_to Time.current do
       fill_in "otp_code", with: totp.now
       click_on "Verify and Enable 2FA"
     end
@@ -56,20 +56,19 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     totp = ROTP::TOTP.new(secret)
     @user.update!(otp_required_for_login: true)
 
-    # Use deterministic time for the entire flow
-    travel_to Time.zone.local(2026, 7, 18, 12, 0, 0) do
-      # Perform Phase 1 Login
-      visit new_session_path
-      fill_in "Email", with: @user.email_address
-      click_button "Sign in with password"
-      execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
-      fill_in "Password (optional)", with: "password"
-      click_button "Continue"
+    # Perform Phase 1 Login
+    visit new_session_path
+    fill_in "Email", with: @user.email_address
+    click_button "Sign in with password"
+    execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
+    fill_in "Password (optional)", with: "password"
+    click_button "Continue"
 
-      # Phase 2: Verification
-      assert_text "Two-Factor Verification"
-      assert_text "Please enter the code from your authenticator app"
+    # Phase 2: Verification
+    assert_text "Two-Factor Verification"
+    assert_text "Please enter the code from your authenticator app"
 
+    travel_to Time.current do
       fill_in "otp_code", with: totp.now
       # Ensure the value is set
       assert_field "otp_code", with: /^\d{6}$/
@@ -86,20 +85,19 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     # Ensure 2FA is required but app is NOT setup
     @user.update!(otp_required_for_login: true, otp_secret: nil)
 
-    # Use deterministic time for the entire flow
-    travel_to Time.zone.local(2026, 7, 18, 12, 0, 0) do
-      # Perform Phase 1 Login
-      visit new_session_path
-      fill_in "Email", with: @user.email_address
-      click_button "Sign in with password"
-      execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
-      fill_in "Password (optional)", with: "password"
-      click_button "Continue"
+    # Perform Phase 1 Login
+    visit new_session_path
+    fill_in "Email", with: @user.email_address
+    click_button "Sign in with password"
+    execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
+    fill_in "Password (optional)", with: "password"
+    click_button "Continue"
 
-      # Phase 2: Verification
-      assert_text "Two-Factor Verification"
-      assert_text "We've sent a verification code to your email address"
+    # Phase 2: Verification
+    assert_text "Two-Factor Verification"
+    assert_text "We've sent a verification code to your email address"
 
+    travel_to Time.current do
       # Fetch token from DB
       token = nil
       50.times do

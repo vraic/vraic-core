@@ -134,14 +134,19 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     # They should be visible now.
     # We use match: :first because there might be one for mobile and one for desktop in the DOM
     begin
-      retries ||= 0
+      click_retries ||= 0
       find("button, input[type='submit']", text: "Logout", visible: true, wait: 10, match: :first).click
     rescue Selenium::WebDriver::Error::StaleElementReferenceError, Selenium::WebDriver::Error::UnknownError
-      retry if (retries += 1) < 3
+      retry if (click_retries += 1) < 3
     end
 
     # Verify we are logged out
-    assert_text "Sign in", wait: 10
+    begin
+      logout_retries ||= 0
+      assert_text "Sign in", wait: 10
+    rescue Selenium::WebDriver::Error::StaleElementReferenceError, Selenium::WebDriver::Error::UnknownError
+      retry if (logout_retries += 1) < 3
+    end
   end
 
   def grant_support_access(account, user = nil)
