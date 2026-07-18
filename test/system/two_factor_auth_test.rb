@@ -74,8 +74,8 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     sleep 0.5 # Small delay to ensure any initial JS settles
 
     # Use deterministic time for the submission
-    travel_to Time.now do
-      find_field("otp_code").set(code)
+    travel_to Time.current do
+      fill_in "otp_code", with: code
       assert_field "otp_code", with: code
       click_button "Verify"
 
@@ -115,8 +115,8 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     sleep 0.5 # Small delay to ensure any initial JS settles
 
     # Use deterministic time for the submission
-    travel_to Time.now do
-      find_field("otp_code").set(token)
+    travel_to Time.current do
+      fill_in "otp_code", with: token
       assert_field "otp_code", with: token
       click_button "Verify"
 
