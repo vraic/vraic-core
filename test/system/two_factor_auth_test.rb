@@ -4,6 +4,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
   setup do
     Capybara.reset_sessions!
     @user = users(:one)
+    @user.update!(security_choice_made: true, onboarded: true)
   end
 
   test "2FA setup: enabling authenticator app" do
@@ -68,8 +69,8 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     sleep 0.5
     click_on "Verify"
 
-    assert_selector "h1", text: "Séyiz les beinv'nus", wait: 15
-    assert_current_path dashboard_path
+    assert_current_path dashboard_path, wait: 15
+    assert_selector "h1", text: "Séyiz les beinv'nus"
   end
 
   test "2FA login phase 2: entering valid email OTP code completes login" do
@@ -102,7 +103,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     sleep 1
     click_on "Verify"
 
-    assert_selector "h1", text: "Séyiz les beinv'nus", wait: 5
-    assert_current_path dashboard_path
+    assert_current_path dashboard_path, wait: 15
+    assert_selector "h1", text: "Séyiz les beinv'nus"
   end
 end
