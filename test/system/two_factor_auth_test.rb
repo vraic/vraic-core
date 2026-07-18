@@ -37,10 +37,7 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     visit new_session_path
     fill_in "Email", with: @user.email_address
     click_button "Sign in with password"
-    # Force visibility if Stimulus is slow or not loading in CI
     execute_script("document.querySelectorAll('[data-password-login-target=\"passwordFields\"]').forEach(el => el.classList.remove('hidden'))")
-    execute_script("document.querySelector('[data-password-login-target=\"toggleSection\"]').classList.add('hidden')")
-
     fill_in "Password (optional)", with: "password"
     click_button "Continue"
 
@@ -51,7 +48,8 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
   test "2FA login phase 2: entering valid TOTP code completes login" do
     # Setup user with TOTP enabled
     @user.update!(otp_required_for_login: true, otp_secret: ROTP::Base32.random)
-    totp = ROTP::TOTP.new(@user.otp_secret)
+    secret = @user.otp_secret.strip
+    totp = ROTP::TOTP.new(secret)
 
     # Perform Phase 1 Login
     visit new_session_path
@@ -65,11 +63,15 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
     assert_text "Two-Factor Verification"
     assert_text "Please enter the code from your authenticator app"
 
-    fill_in "otp_code", with: totp.now
-    sleep 0.5
-    click_on "Verify"
+    find("input[name='otp_code']").set(totp.now)
+    # Ensure the value is set
+    assert_field "otp_code", with: /^\d{6}$/
 
+    click_button "Verify"
+
+    refute_text "Invalid verification code"
     assert_text "Signed in successfully.", wait: 15
+    assert_current_path dashboard_path
   end
 
   test "2FA login phase 2: entering valid email OTP code completes login" do
@@ -98,10 +100,14 @@ class TwoFactorAuthTest < ApplicationSystemTestCase
 
     assert token.present?, "Email OTP token should have been generated"
 
-    fill_in "otp_code", with: token
-    sleep 1
-    click_on "Verify"
+    find("input[name='otp_code']").set(token)
+    # Ensure the value is set
+    assert_field "otp_code", with: token
 
+    click_button "Verify"
+
+    refute_text "Invalid verification code"
     assert_text "Signed in successfully.", wait: 15
+    assert_current_path dashboard_path
   end
 end

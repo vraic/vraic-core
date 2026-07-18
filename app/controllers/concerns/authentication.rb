@@ -38,9 +38,12 @@ module Authentication
       return_to = session.delete(:return_to_after_authenticating)
       return return_to if return_to.present?
 
-      if Current.user.admin?
+      # Use Current.session.user directly as Current.user might not be delegated properly in all contexts
+      user = Current.session&.user || Current.user
+
+      if user&.admin?
         dashboard_url
-      elsif Current.user.account_users.any? && Current.user.account_users.all?(&:customer?)
+      elsif user&.account_users&.any? && user.account_users.all?(&:customer?)
         shop_url
       else
         dashboard_url
