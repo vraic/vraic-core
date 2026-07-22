@@ -104,7 +104,7 @@ gem "ahoy_matey"
 gem "ahoy_email"
 gem "refer"
 
-gem "prawn", "~> 2.4"
+gem "prawn", "~> 2.5"
 gem "prawn-table", "~> 0.2.2"
 gem "barby", "~> 0.7.0"
 
